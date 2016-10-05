@@ -1,0 +1,10 @@
+{
+  "security": {
+    "authms": "http://156.148.37.152:3000",
+    "key":"jwt.xxxx"
+  },
+  "db": {
+    "connection":"mongodb://localhost/contents",
+    "collection":"content"
+  }
+}
