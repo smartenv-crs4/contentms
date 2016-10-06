@@ -20,7 +20,6 @@ var content = require('../../schemas/content.js').content;
  */
 module.exports = function(req, res, next) {
   let id = req.params.id
-  //TODO SEE IF IS ADMIN (middleware ale)
   content.update(id, req.body)
   .then(up => {
     res.setHeader("Location", "localhost:3010/api/v1/contents/"+up._id);

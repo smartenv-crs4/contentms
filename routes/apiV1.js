@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
 //contents
 router.get("/contents/",        require('./contents/contents_search.js'));
 router.get("/contents/:id",     require('./contents/contents_get.js'));

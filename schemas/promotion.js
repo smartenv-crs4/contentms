@@ -34,18 +34,9 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).find({}, function(e, result) {
-        if(e) reject(e);
-        else resolve(result);
-      });
-    }
-  )
-}
-      
-/*
       let query = {};
-      let query_aggregate = {};
       Object.keys(filter).forEach((key) => {
+        //distance search
         if(key == "position") {
           let lon   = Number(filter[key][0]);
           let lat   = Number(filter[key][1]);
@@ -53,9 +44,33 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
           //WARNING $near non funziona con sharding
           query[key] = {'$near':[lon, lat], '$maxDistance':dist};
         }
-        else if(key == "name") {
-          query[key] = {'$regex': new RegExp(filter[key].join('|'), 'i')};
+
+        //fulltext search
+        else if(key == "text") {
+          let re = new RegExp(filter[key].join('|'), 'i');
+          query['$or'] = [{name: {'$regex': re}}, {description: {'$regex': re}}];
         }
+
+        //date range search
+        else if(key == "sdate" || key == "edate") {
+          try {
+            let sdate = filter["sdate"];
+            let edate = filter["edate"];
+
+            if(sdate) qEndDate = {'$gte': new Date(sdate)};
+            if(edate) qStartDate = {'$lte':new Date(edate)};
+
+            if(edate && sdate) query['$and'] = [{'startDate':qStartDate}, {'endDate': qEndDate}];
+            else if(sdate) query['endDate'] = qEndDate;
+            else if(edate) query['startDate'] = qStartDate;
+          }
+          catch(e) {
+            console.log(e);
+            reject({status:400, error:'wrong date syntax'})
+          }
+        }
+
+        //other search params, multiple instances allowed
         else {
           query[key] = {'$in' : filter[key]}
         }
@@ -73,7 +88,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
           else resolve(result);
         })
       });
-*/
+    }
+  );
+}
+
   
 PromotionSchema.statics.update = function(cid, pid, upd) {
   var that = this;
