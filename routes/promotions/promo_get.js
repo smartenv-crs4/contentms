@@ -1,5 +1,17 @@
 var promotion = require('../../schemas/promotion.js').promotion;
 
+/**
+ * @api {get} /contents/:id/promotions/:pid Get promotions by id 
+ * @apiGroup Contents
+ *
+ * @apiParam {String} id The id of the father activity.
+ * @apiParam {String} id The id of the promotion.
+ *
+ * @apiSuccess (200) {Object} body Json containing the activity.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
 module.exports = function(req, res, next) {
   let cid = req.params.id;
   let pid = req.params.pid;
