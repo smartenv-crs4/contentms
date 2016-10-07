@@ -1,9 +1,10 @@
 var supertest = require('supertest');
 var should = require('should');
+var baseUrl = "http://localhost:3010"; //TODO parametrizzare
+var prefix = '/api/v1/';
+var request = supertest.agent(baseUrl);
 
-var request = supertest.agent("http://localhost:3010");
-
-describe('/contents', () => {
+describe('--- Testing contents crud ---', () => {
   let new_item;
   let test_item = {
     "name"        : "Il golgo",
@@ -21,7 +22,7 @@ describe('/contents', () => {
   describe('POST /contents/', () => {
     it('respond with json Object containing the new test item', (done) => {
       request
-        .post('/api/v1/contents')
+        .post(prefix + 'contents')
         .send(test_item)
         .expect('Content-Type', /json/)
         .expect('Location')
@@ -39,7 +40,7 @@ describe('/contents', () => {
   describe('GET /contents/:id', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get('/api/v1/contents/' + new_item) 
+        .get(prefix + 'contents/' + new_item) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -54,7 +55,7 @@ describe('/contents', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put('/api/v1/contents/' + new_item)
+        .put(prefix + 'contents/' + new_item)
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -69,7 +70,7 @@ describe('/contents', () => {
   describe('GET /contents/', () => {
     it('respond with json Object containing contents array', (done) => {
       request
-        .get('/api/v1/contents')
+        .get(prefix + 'contents')
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -88,7 +89,7 @@ describe('/contents', () => {
   describe('DELETE /contents/:id', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete('/api/v1/contents/' + new_item)
+        .delete(prefix + 'contents/' + new_item)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -103,7 +104,7 @@ describe('/contents', () => {
   describe('GET /contents/:id - 404', () => {
     it('respond with 404 error', (done) => {
       request
-        .get('/api/v1/contents/' + new_item) 
+        .get(prefix + 'contents/' + new_item) 
         .expect(404, done);
     })
   });

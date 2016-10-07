@@ -23,7 +23,8 @@ module.exports = function(req, res, next) {
   let pid = req.params.pid
   promotion.update(cid, pid, req.body)
   .then(up => {
-    res.setHeader("Location", "localhost:3010/api/v1/contents/" + up.idcontent 
+    //TODO: parametrizzare
+    res.setHeader("Location", "localhost:3010/api/v1/contents/" + up.idcontent
       + "/promotions/" + up._id);
     res.json(up)
   })

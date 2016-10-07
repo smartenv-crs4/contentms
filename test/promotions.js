@@ -1,82 +1,160 @@
 var supertest = require('supertest');
+var mongoose = require('mongoose');
+var config = require('config');
+
+var promotions = require('../schemas/promotion');
+var contents = require('../schemas/content');
+
 var should = require('should');
+var baseUrl = 'http://localhost:3010'; //TODO parametrizzare
+var prefix = '/api/v1/';
+var request = supertest.agent(baseUrl);
 
-var request = supertest.agent("http://localhost:3010");
+var father_id;
+var new_items = [];
+var test_items = [
+    {
+      "name"        : "fregola night",
+      "type"        : "offer",
+      "description" : "cena a base di fregola",
+      "startDate"   : "2016-9-30",
+      "endDate"     : "2016-9-30",
+      "price"       : 25,
+      "position"    : [9.666168, 40.080108]
+    },
+    {
+      "name"        : "Autunno in barbagia - orgosolo",
+      "type"        : "offer",
+      "description" : "Manifestazione promozionale di artigianato e prodotti locali",
+      "startDate"   : "2016-10-14",
+      "endDate"     : "2016-10-16",
+      "price"       : 25,
+      "position"    : [9.666168, 40.080108]
+    }];
 
-describe('/contents', () => {
-  let new_item;
-  let test_item = {
-    "name"        : "Il golgo",
-    "type"        : "activity",
-    "description" : "Ristorante tipico",
-    "published"   : "true",
-    "town"        : "baunei",
-    "address"     : "localita' il golgo",
-    "category"    : 3,
-    "position"    : [9.666168, 40.080108],
-    "admins"      : [],
-    "owner"       : "57d0392d5ea81b820f36e41a"
-  }
+describe('--- Testing promotions crud ---', () => {
+  before((done) => {
+    mongoose.Promise = global.Promise;
+    mongoose.connect(config.get("db").connection, function(error) {
+      if(error) {
+        console.log('FATAL: unable to connect to mongo db:');
+        console.log(error);
+        process.exit();
+      }
+    });
 
-  describe('POST /contents/', () => {
-    it('respond with json Object containing the new test item', (done) => {
+    let content_father = {
+      "name"        : "Da Gianni",
+      "type"        : "activity",
+      "description" : "Ristorante tipico inserimento di test",
+      "published"   : "true",
+      "town"        : "Cagliari",
+      "address"     : "localita' cala mosca",
+      "category"    : 3,
+      "position"    : [9.666168, 40.080108],
+      "admins"      : [],
+      "owner"       : "57d0392d5ea81b820f36e41a"
+    };
+
+    (new contents.content(content_father))
+    .save()
+    .then((r) => {
+      father_id = r._id;
+      let promise_arr = [];
+      test_items.forEach((item) => {
+        item.idcontent = father_id;
+        promise_arr.push(
+          (new promotions.promotion(item))
+          .save()
+          .then((rr) => {
+            new_items.push(rr._id);
+          })
+          .catch(e => {throw(e)})
+        );
+      })
+      Promise.all(promise_arr).then(done());
+    })
+    .catch((e) => {
+      console.log(e);
+      process.exit();
+    });
+  });
+
+  after((done) => {
+    let promise_arr = [];
+    new_items.forEach((item) => {
+      promise_arr.push(promotions.promotion.delete(father_id, item));
+    })
+    promise_arr.push(contents.content.delete(father_id));
+    Promise.all(promise_arr).then(done());
+  });
+
+
+  describe('POST /contents/:id/promotions', () => {
+    it('respond with json Object containing the new test item', (done) => { 
+      let item = test_items[0];
+      item.idcontent = father_id;
       request
-        .post('/api/v1/contents')
-        .send(test_item)
+        .post(prefix + 'contents/' + father_id + '/promotions')
+        .send(item)
         .expect('Content-Type', /json/)
         .expect('Location')
         .expect(201)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body.should.have.property("owner");
-          res.body.should.have.property("admins");
-          new_item = res.body._id;
+          new_items.push(res.body._id);
           done();
-        });
-    });
+        })
+    })
   });
 
-  describe('GET /contents/:id', () => {
+
+  describe('GET /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get('/api/v1/contents/' + new_item) 
+        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[0]) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item);
+          res.body._id.should.be.equal(new_items[0]+'');
           done();
-        });
+        })
     });
   });
 
-  describe('PUT /contents/:id', () => {
+
+
+  describe('PUT /contents/:id/promotions/:pid', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put('/api/v1/contents/' + new_item)
+        .put(prefix + 'contents/' + father_id + '/promotions/' + new_items[2])
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
           res.body.description.should.be.equal(new_desc);
+          res.body.description.should.not.be.equal(test_items[0]);
           done();
         });
     });
   });
 
-  describe('GET /contents/', () => {
-    it('respond with json Object containing contents array', (done) => {
+
+  describe('GET /contents/:id/promotions/', () => {
+    it('respond with json Object containing promo array of 3 items', (done) => {
       request
-        .get('/api/v1/contents')
+        .get(prefix + 'contents/' + father_id + '/promotions/')
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
-          res.body.should.have.property("contents");
-          res.body.contents.should.be.instanceOf(Array);
-          if(res.body.contents.length > 0) {
-            res.body.contents.forEach((item) => {
+          res.body.should.have.property("promos");
+          res.body.promos.should.be.instanceOf(Array);
+          res.body.promos.length.should.be.equal(3);
+          if(res.body.promos.length > 0) {
+            res.body.promos.forEach((item) => {
               item.should.have.property("_id");
             });
           }
@@ -85,26 +163,28 @@ describe('/contents', () => {
     });
   });
 
-  describe('DELETE /contents/:id', () => {
+
+  describe('DELETE /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete('/api/v1/contents/' + new_item)
+        .delete(prefix + 'contents/' + father_id + '/promotions/' + new_items[2])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item);
+          res.body._id.should.be.equal(new_items[2]);
           done();
-        });
-    });
-  });
+        })
+    })
+  })
 
-
-  describe('GET /contents/:id - 404', () => {
+  describe('GET /contents/:id/promotions/:pid - 404', () => {
     it('respond with 404 error', (done) => {
       request
-        .get('/api/v1/contents/' + new_item) 
+        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[2]) 
         .expect(404, done);
     })
   });
+
+
 });
