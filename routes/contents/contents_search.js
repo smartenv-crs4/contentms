@@ -16,6 +16,7 @@ var content = require('../../schemas/content.js').content;
  * @apiUse BadRequest
  * @apiUse ServerError
  */
+
 module.exports = function(req, res, next) {
   let allowed_keys = ["type", "category", "town", "position", "by_uid", "text"];
   let one_instance_keys = ["position"]; //viene considerata solo la prima occorrenza nel url

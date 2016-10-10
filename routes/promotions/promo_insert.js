@@ -37,7 +37,7 @@ module.exports = function(req, res, next) {
     promo.save()
     .then(newpromo => {
       res.setHeader("Location", 
-        "localhost:3010/api/v1/contents/"
+        req.headers.host + '/api/v1/contents/' //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
         + newpromo.idcontent
         + "/promotions/" + newpromo._id);
 

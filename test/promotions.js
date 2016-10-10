@@ -144,7 +144,7 @@ describe('--- Testing promotions crud ---', () => {
 
 
   describe('GET /contents/:id/promotions/', () => {
-    it('respond with json Object containing promo array of 3 items', (done) => {
+    it('respond with json Object containing promo array of at least 2 items', (done) => {
       request
         .get(prefix + 'contents/' + father_id + '/promotions/')
         .expect('Content-Type', /json/)
@@ -152,7 +152,7 @@ describe('--- Testing promotions crud ---', () => {
         .end((req,res) => {
           res.body.should.have.property("promos");
           res.body.promos.should.be.instanceOf(Array);
-          res.body.promos.length.should.be.equal(3);
+          res.body.promos.length.should.be.aboveOrEqual(2);
           if(res.body.promos.length > 0) {
             res.body.promos.forEach((item) => {
               item.should.have.property("_id");
@@ -167,12 +167,12 @@ describe('--- Testing promotions crud ---', () => {
   describe('DELETE /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete(prefix + 'contents/' + father_id + '/promotions/' + new_items[2])
+        .delete(prefix + 'contents/' + father_id + '/promotions/' + new_items[1])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_items[2]);
+          res.body._id.should.be.equal(new_items[1]+'');
           done();
         })
     })
@@ -181,7 +181,7 @@ describe('--- Testing promotions crud ---', () => {
   describe('GET /contents/:id/promotions/:pid - 404', () => {
     it('respond with 404 error', (done) => {
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[2]) 
+        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[1]) 
         .expect(404, done);
     })
   });

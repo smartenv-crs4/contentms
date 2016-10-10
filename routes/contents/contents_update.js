@@ -22,7 +22,7 @@ module.exports = function(req, res, next) {
   let id = req.params.id
   content.update(id, req.body)
   .then(up => {
-    res.setHeader("Location", "localhost:3010/api/v1/contents/"+up._id);
+    res.setHeader("Location", req.header.host + "/api/v1/contents/"+up._id); //WARNING, alcuni browser potrebbero non mettere la porta in req.headers.host
     res.json(up)
   })
   .catch(e => {

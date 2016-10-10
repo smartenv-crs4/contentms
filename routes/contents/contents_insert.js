@@ -26,13 +26,12 @@ module.exports = function(req, res, next) {
   if(Object.keys(req.body).length === 0) {
     res.boom.badRequest('empty object');
   }
-  //TODO SEE IF IS ADMIN (middleware ale)
   else {
     let insertion = new content(req.body);
 
     insertion.save()
     .then(newoffer => {
-      res.setHeader("Location", "localhost:3010/api/v1/contents/"+newoffer._id);
+      res.setHeader("Location", req.headers.host + "/api/v1/contents/" + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
       res.status(201).json(newoffer)
     })
     .catch(e => {

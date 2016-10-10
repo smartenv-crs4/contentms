@@ -24,7 +24,7 @@ module.exports = function(req, res, next) {
   promotion.update(cid, pid, req.body)
   .then(up => {
     //TODO: parametrizzare
-    res.setHeader("Location", "localhost:3010/api/v1/contents/" + up.idcontent
+    res.setHeader("Location", req.headers.host + "/api/v1/contents/" + up.idcontent //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
       + "/promotions/" + up._id);
     res.json(up)
   })
