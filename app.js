@@ -46,6 +46,7 @@ else {
   app.use(security.checkTokenApi);
 }
 
+app.use((req, res, next) => {console.dir(req); next();});
 app.use('/', routes);
 app.use('/doc', express.static('doc',{root:'doc'}));
 app.use('/api/v1/', apiV1);

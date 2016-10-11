@@ -1,7 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var auth = require('tokenAndAuthorizationManager');
+
+auth.configure({ decodedTokenFieldName: "xxx", access_token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoidXNlcm1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzg5OTk2OTE5MzEyfQ.P78RVNGK9m0pY1nehyDGd8v-q28y_43GMECluzNTbEw",  authoritationMicroserviceUrl:"http://156.148.36.184:3005"});
 
 //contents
+//router.get("/contents/",        auth.checkAuthorization, require('./contents/contents_search.js'));
 router.get("/contents/",        require('./contents/contents_search.js'));
 router.get("/contents/:id",     require('./contents/contents_get.js'));
 router.post("/contents/",       require('./contents/contents_insert.js'));
