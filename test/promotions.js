@@ -1,11 +1,13 @@
 var supertest = require('supertest');
 var mongoose = require('mongoose');
 var config = require('config');
+var should = require('should');
 
+var db = require('../lib/db');
 var promotions = require('../schemas/promotion');
 var contents = require('../schemas/content');
 
-var should = require('should');
+
 var baseUrl = 'http://localhost:3010'; //TODO parametrizzare
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
@@ -33,15 +35,9 @@ var test_items = [
     }];
 
 describe('--- Testing promotions crud ---', () => {
+
   before((done) => {
-    mongoose.Promise = global.Promise;
-    mongoose.connect(config.get("db").connection, function(error) {
-      if(error) {
-        console.log('FATAL: unable to connect to mongo db:');
-        console.log(error);
-        process.exit();
-      }
-    });
+    db.connect()
 
     let content_father = {
       "name"        : "Da Gianni",

@@ -14,17 +14,6 @@ var apiV1 = require('./routes/apiV1');
 
 var app = express();
 
-//TODO spostare
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-mongoose.connect(config.get("db").connection, function(error) {
-  if(error) {
-    console.log('FATAL: unable to connect to mongo db:');
-    console.log(error);
-    process.exit();
-  }
-});
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -46,12 +35,11 @@ else {
   app.use(security.checkTokenApi);
 }
 
-app.use((req, res, next) => {console.dir(req); next();});
 app.use('/', routes);
 app.use('/doc', express.static('doc',{root:'doc'}));
 app.use('/api/v1/', apiV1);
 
-// catch 404 and forward to error handler
+//catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;

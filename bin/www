@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app   = require('../app');
 var debug = require('debug')('contents-ms:server');
-var http = require('http');
+var http  = require('http');
+var db    = require('../lib/db');
 
 /**
  * Get port from environment and store in Express.
@@ -28,6 +29,20 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
+/**
+ * Establish the DB connection
+ */
+try {
+  db.connect();
+}
+catch(e) {
+  console.log('FATAL: db connection failed');
+  console.log(e);
+  process.exit();
+}
+
 
 /**
  * Normalize a port into a number, string, or false.
