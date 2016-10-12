@@ -1,23 +1,49 @@
 var supertest = require('supertest');
 var should = require('should');
+
+var db = require('../lib/db');
+var contents = require('../schemas/content');
+
 var baseUrl = "http://localhost:3010"; //TODO parametrizzare
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
 
+let test_item = {
+  "name"        : "Il golgo",
+  "type"        : "activity",
+  "description" : "Ristorante tipico",
+  "published"   : "true",
+  "town"        : "baunei",
+  "address"     : "localita' il golgo",
+  "category"    : 3,
+  "position"    : [9.666168, 40.080108],
+  "admins"      : [],
+  "owner"       : "57d0392d5ea81b820f36e41a"
+}
+
 describe('--- Testing contents crud ---', () => {
   let new_item;
-  let test_item = {
-    "name"        : "Il golgo",
-    "type"        : "activity",
-    "description" : "Ristorante tipico",
-    "published"   : "true",
-    "town"        : "baunei",
-    "address"     : "localita' il golgo",
-    "category"    : 3,
-    "position"    : [9.666168, 40.080108],
-    "admins"      : [],
-    "owner"       : "57d0392d5ea81b820f36e41a"
-  }
+
+  before((done) => {
+    db.connect();
+    (new contents.content(test_item))
+    .save()
+    .then((r) => {
+      new_item = r._id;
+      done();
+    })
+    .catch((e) => {
+      console.log(e);
+      process.exit();
+    })
+  });
+
+
+  after((done) => {
+    contents.content.delete(new_item);
+    done();
+  });
+
 
   describe('POST /contents/', () => {
     it('respond with json Object containing the new test item', (done) => {
@@ -31,11 +57,11 @@ describe('--- Testing contents crud ---', () => {
           res.body.should.have.property("_id");
           res.body.should.have.property("owner");
           res.body.should.have.property("admins");
-          new_item = res.body._id;
           done();
         });
     });
   });
+
 
   describe('GET /contents/:id', () => {
     it('respond with json Object containing the test doc', (done) => {
@@ -45,11 +71,12 @@ describe('--- Testing contents crud ---', () => {
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item);
+          res.body._id.should.be.equal(new_item+'');
           done();
         });
     });
   });
+
 
   describe('PUT /contents/:id', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
@@ -66,6 +93,7 @@ describe('--- Testing contents crud ---', () => {
         });
     });
   });
+
 
   describe('GET /contents/', () => {
     it('respond with json Object containing contents array', (done) => {
@@ -86,6 +114,7 @@ describe('--- Testing contents crud ---', () => {
     });
   });
 
+
   describe('DELETE /contents/:id', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
@@ -94,7 +123,7 @@ describe('--- Testing contents crud ---', () => {
         .expect(200)
         .end((req,res) => {
           res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item);
+          res.body._id.should.be.equal(new_item+'');
           done();
         });
     });
