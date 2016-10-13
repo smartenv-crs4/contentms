@@ -136,4 +136,4 @@ PromotionSchema.statics.delete = function(cid, pid) {
   )
 }
 
-exports.promotion = mongoose.model('promotion', PromotionSchema);
+exports.promotion = mongoose.model(collectionName, PromotionSchema);
