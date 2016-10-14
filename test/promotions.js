@@ -7,7 +7,6 @@ var db = require('../lib/db');
 var promotions = require('../schemas/promotion');
 var contents = require('../schemas/content');
 
-
 var baseUrl = 'http://localhost:3010'; //TODO parametrizzare
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
@@ -180,6 +179,60 @@ describe('--- Testing promotions crud ---', () => {
         .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[1]) 
         .expect(404, done);
     })
+  });
+
+  describe('POST /contents/:id/promotions/:pid/actions/{like,count,unlike}', () => {
+    it('(like) respond with 200 and {success:true}', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((req, res) => {
+          res.body.should.have.property("success");
+          res.body.success.should.be.equal(true);
+          done()
+        })
+    });
+
+    it('(count) respond with 200 and {likes: 1}', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/count')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((req, res) => {
+          res.body.should.have.property("promo");
+          res.body.promo.should.be.equal(new_items[0]+'');
+          res.body.should.have.property("likes");
+          res.body.likes.should.be.equal(1);
+          done()
+        })
+    });
+  
+    it('(unlike) respond with 200 and {success: true}', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((req, res) => {
+          res.body.should.have.property("success");
+          res.body.success.should.be.equal(true);
+          done()
+        })
+    });
+
+    it('(count) respond with {likes : 0} to confirm previous deletion', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/count')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((req, res) => {
+          res.body.should.have.property("promo");
+          res.body.promo.should.be.equal(new_items[0]+'');
+          res.body.should.have.property("likes");
+          res.body.likes.should.be.equal(0);
+          done()
+        })
+    });
   });
 
 

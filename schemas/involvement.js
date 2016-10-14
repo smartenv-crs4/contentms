@@ -23,11 +23,11 @@ InvolvementSchema.statics.add = function(pid, uid) {
 }
 
 
-InvolvementSchema.statics.remove = function(pid, uid) {
+InvolvementSchema.statics.delete = function(pid, uid) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOneAndRemove({idpromo:pid, iduser:uid}, function(e, removed) {
+      that.model(collectionName).remove({idpromo:pid, iduser:uid}, function(e, removed) {
         if(e) {
           switch(e.name) { 
             case 'CastError':
