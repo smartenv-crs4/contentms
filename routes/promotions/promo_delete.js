@@ -2,7 +2,7 @@ var promotion = require('../../schemas/promotion.js').promotion;
 
 /**
  * @api {delete} /contents/:id/promotions/:pid Delete one promotion by id
- * @apiGroup Contents
+ * @apiGroup Promotion
  *
  * @apiDescription Removes promotions information from the db.
  * @apiParam {String} id The id of this promotion.

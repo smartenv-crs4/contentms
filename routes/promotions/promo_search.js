@@ -2,7 +2,7 @@ var promotion = require('../../schemas/promotion.js').promotion;
 
 /**
  * @api {get} /contents/:id/promotions/ Search for promotions on the portal 
- * @apiGroup Contents
+ * @apiGroup Promotion
  * @apiDescription Parametric search over promotions, including date range, distance and full text
  *
  * @apiParam {String} [text] Text to search for in the description and name fields.

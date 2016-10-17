@@ -2,7 +2,7 @@ var promotion = require('../../schemas/promotion.js').promotion;
 
 /**
  * @api {get} /contents/:id/promotions/:pid Get promotions by id 
- * @apiGroup Contents
+ * @apiGroup Promotion
  *
  * @apiParam {String} id The id of the father activity.
  * @apiParam {String} id The id of the promotion.

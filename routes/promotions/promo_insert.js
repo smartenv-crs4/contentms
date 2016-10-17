@@ -2,24 +2,28 @@ var promotion = require('../../schemas/promotion.js').promotion;
 
 /**
  * @api {post} /contents/:id/promotions/ Add one promotion to an activity
- * @apiGroup Contents
+ * @apiGroup Promotion
  *
  * @apiParam {String} [id] The id of the father activity
  * 
- * @apiDescription Insert a new promotion for the specified activity, a json Object with the activity field must be passed in the body of the request.
+ * @apiDescription Insert a new promotion for the specified activity, a json Object with the promotion fields must be passed in the body of the request.
  * @apiExample Example: 
  *  {
- *    "name"        : "il golgo",
- *    "type"        : "insert",
- *    "description" : "description of insertion three",
- *    "published"   : "true",
- *    "town"        : "baunei",
- *    "address"     : "via cagliari, 1",
- *    "category"    : 3,
- *    "position"    : [9.666168, 40.080108]
+ *     "_id" : ObjectId("57eaf812338b185434b97f85"),
+ *     "description" : "cena a base di fregola con frutti di mare",
+ *     "endDate" : ISODate("2016-09-29T22:00:00.000Z"),
+ *     "idcontent" : ObjectId("57d0396d5ea81b820f36e41b"),
+ *     "name" : "fregola night",
+ *     "position" : [ 
+ *         9.666168, 
+ *         40.080108
+ *     ],
+ *     "price" : 25,
+ *     "startDate" : ISODate("2016-09-29T22:00:00.000Z"),
+ *     "type" : "offer"
  *  }
  *
- * @apiSuccess (201 - CREATED) {Object} body The Json containing the new activity.
+ * @apiSuccess (201 - CREATED) {Object} body The Json containing the new promotion.
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError

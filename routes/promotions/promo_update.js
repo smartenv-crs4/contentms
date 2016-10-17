@@ -2,7 +2,7 @@ var promotion = require('../../schemas/promotion.js').promotion;
 
 /**
  * @api {put} /contents/:id/promotions/:pid Update one promotion by id 
- * @apiGroup Contents
+ * @apiGroup Promotion
  *
  * @apiDescription Updates promotion information, only the fields present in the request json body are updated.
  * @apiParam {String} id The id of the promotion.
@@ -23,7 +23,6 @@ module.exports = function(req, res, next) {
   let pid = req.params.pid
   promotion.update(cid, pid, req.body)
   .then(up => {
-    //TODO: parametrizzare
     res.setHeader("Location", req.headers.host + "/api/v1/contents/" + up.idcontent //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
       + "/promotions/" + up._id);
     res.json(up)
