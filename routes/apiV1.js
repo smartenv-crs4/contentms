@@ -19,9 +19,12 @@ router.get("/contents/:id/promotions/:pid",     require('./promotions/promo_get.
 router.post("/contents/:id/promotions/",        require('./promotions/promo_insert.js'));
 router.put("/contents/:id/promotions/:pid",     require('./promotions/promo_update.js'));
 router.delete("/contents/:id/promotions/:pid",  require('./promotions/promo_delete.js'));
-router.post("/contents/:id/promotions/:pid/actions/like",   require('./promotions/promo_like.js').like);
-router.post("/contents/:id/promotions/:pid/actions/unlike", require('./promotions/promo_like.js').unlike);
-router.post("/contents/:id/promotions/:pid/actions/count",  require('./promotions/promo_like.js').count);
+router.post("/contents/:id/promotions/:pid/actions/like",   require('./promotions/promo_involvement.js').like);
+router.post("/contents/:id/promotions/:pid/actions/unlike", require('./promotions/promo_involvement.js').unlike);
+router.post("/contents/:id/promotions/:pid/actions/likes",  require('./promotions/promo_involvement.js').likes);
+router.post("/contents/:id/promotions/:pid/actions/participate",   require('./promotions/promo_involvement.js').participate);
+router.post("/contents/:id/promotions/:pid/actions/unparticipate", require('./promotions/promo_involvement.js').unparticipate);
+router.post("/contents/:id/promotions/:pid/actions/participants",  require('./promotions/promo_involvement.js').participants);
 
 
 module.exports = router;
