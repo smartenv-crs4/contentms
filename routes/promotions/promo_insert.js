@@ -29,12 +29,12 @@ module.exports = function(req, res, next) {
     res.boom.badRequest('empty object');
   }
   else {
-    let promo = new promotion(req.body);
+    let promo = req.body;
     promo.idcontent = req.params.id;
     promo.startDate = new Date(req.body.startDate);
     promo.endDate = new Date(req.body.endDate);
 
-    promo.save()
+    promotion.add(promo)
     .then(newpromo => {
       res.setHeader("Location", 
         req.headers.host + '/api/v1/contents/' //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host

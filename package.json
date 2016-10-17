@@ -19,7 +19,7 @@
     "request": "^2.74.0",
     "request-promise": "^4.0.2",
     "serve-favicon": "~2.3.0",
-    "tokenAndAuthorizationManager": "^1.0.4"
+    "tokenAndAuthorizationManager": "^1.0.10"
   },
   "devDependencies": {
     "mocha": "^3.0.2",

@@ -194,6 +194,13 @@ describe('--- Testing promotions crud ---', () => {
         })
     });
 
+    it('(like) duplication avoidance check, respond with 409 error:', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like')
+        .expect(409)
+        .end((req, res) => {done()});
+    });
+
     it('(likes) respond with 200 and {total: 1}', (done) => {
       request
         .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes')
@@ -250,6 +257,13 @@ describe('--- Testing promotions crud ---', () => {
           res.body.success.should.be.equal(true);
           done()
         })
+    });
+
+    it('(participate) duplication avoidance check, respond with 409 error:', (done) => {
+      request
+        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate')
+        .expect(409)
+        .end((req, res) => {done()});
     });
 
     it('(participants) respond with 200 and {total: 1}', (done) => {

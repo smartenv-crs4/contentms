@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var collectionName = 'promotion';
+var collectionName = require('config').db.collections.promotion;
 
 var PromotionSchema = new mongoose.Schema({
   name        : String,
@@ -14,7 +14,25 @@ var PromotionSchema = new mongoose.Schema({
   //images
 },
 {versionKey:false});
-  
+ 
+
+PromotionSchema.statics.add = function(newitem) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      let item = new that(newitem);
+      item.save()
+      .then((newoffer) => {
+        resolve(newoffer)
+      })
+      .catch(e => {
+        console.log(e);
+        reject({status:500, error:"server error"});
+      });
+    }
+  );
+}
+ 
 PromotionSchema.statics.findById = function(cid, pid) {
   var that = this;
   return new Promise(

@@ -1,21 +1,28 @@
-var involvements = require('../../schemas/involvement').involvement;
+var config        = require('config');
+var involvements  = require('../../schemas/involvement').involvement;
+var authField     = config.security.decodedTokenFieldName;
 
-var uid = '5800aa9c25a4441bba494893' //TODO leggere da request field authms
 
 function involve(req, res, type) {
+  let uid = req[authField]._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.add(req.params.pid, uid, type)
     .then((r) => {res.json(r)})
     .catch((e) => {
-      console.log(e);
-      res.boom.badImplementation(e.error);
+      if(e.status === 409)
+        res.boom.conflict(e.error);
+      else {
+        console.log(e);
+        res.boom.badImplementation(e.error);
+      }
     });
-  }  
+  }
 }
 
 
 function uninvolve(req, res, type) {
+  let uid = req[authField]._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.delete(req.params.pid, uid, type)

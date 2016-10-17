@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var category = require('./category.js');
-var collectionName = require('config').db.collection;
+var collectionName = require('config').db.collections.content;
 
 var ContentSchema = new mongoose.Schema({
   name        : String,
@@ -21,6 +21,25 @@ var ContentSchema = new mongoose.Schema({
 //      contacts
 },
 {versionKey:false});
+
+
+ContentSchema.statics.add = function(newitem) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      let item = new that(newitem);
+      item.save()
+      .then((newoffer) => {
+        resolve(newoffer)
+      })
+      .catch(e => {
+        console.log(e);
+        reject({status:500, error:"server error"});
+      });
+    }
+  );
+}
+
   
 ContentSchema.statics.findById = function(id) {
   var that = this;

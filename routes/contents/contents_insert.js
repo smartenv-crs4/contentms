@@ -27,11 +27,12 @@ module.exports = function(req, res, next) {
     res.boom.badRequest('empty object');
   }
   else {
-    let insertion = new content(req.body);
-
-    insertion.save()
+    content.add(req.body)
     .then(newoffer => {
-      res.setHeader("Location", req.headers.host + "/api/v1/contents/" + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+      res.setHeader("Location", 
+        req.headers.host + "/api/v1/contents/" 
+        + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+
       res.status(201).json(newoffer)
     })
     .catch(e => {

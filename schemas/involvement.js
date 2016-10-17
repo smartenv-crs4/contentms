@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var collectionName = 'involvement';
+var collectionName = require('config').db.collections.involvement;
 
 var InvolvementSchema = new mongoose.Schema({
   idpromo   : mongoose.Schema.ObjectId,
@@ -8,6 +8,7 @@ var InvolvementSchema = new mongoose.Schema({
 },
 {versionKey:false});
 
+InvolvementSchema.index({idpromo:1, iduser:1, type:1},{unique:true});
 
 InvolvementSchema.statics.add = function(pid, uid, type) {
   var that = this;
@@ -15,9 +16,13 @@ InvolvementSchema.statics.add = function(pid, uid, type) {
     function(resolve, reject) {
       let like = new that({iduser:uid, idpromo:pid, type:type});
       like.save()
-      .then(resolve({success:true}))
+      .then(() => {resolve({success:true})})
       .catch((e) => {
-        reject({status:500, error:"server error"});
+        console.log(e);
+        if(e.name === 'MongoError' && e.code === 11000)
+          reject({status:409, error:"involvement already set"});
+        else
+          reject({status:500, error:"server error"});
       });
     } 
   );

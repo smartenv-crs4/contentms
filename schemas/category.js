@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var collectionName = require('config').db.collections.category;
 
 var CategorySchema = new mongoose.Schema({
     _id         : Number,
@@ -7,4 +8,4 @@ var CategorySchema = new mongoose.Schema({
     description : String
 });
 
-exports.category = mongoose.model('category', CategorySchema);
+exports.category = mongoose.model(collectionName, CategorySchema);

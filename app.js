@@ -8,7 +8,6 @@ var request = require('request-promise');
 var config = require('config');
 var boom = require('express-boom');
 
-var security = require('./middleware/security.js');
 var routes = require('./routes/index');
 var apiV1 = require('./routes/apiV1');
 
@@ -27,12 +26,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(boom());
 
-//Token check
 if (app.get('env') === 'dev') {
-  console.log("INFO: Development mode, skipping token checks");
-}
-else {
-  app.use(security.checkTokenApi);
+  console.log("INFO: Development mode, skipping token checks"); 
 }
 
 app.use('/', routes);
