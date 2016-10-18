@@ -1,4 +1,6 @@
 var content = require('../../schemas/content.js').content;
+var config = require('config');
+var authField     = config.security.decodedTokenFieldName;
 
 /**
  * @api {post} /contents/ Add one activity to the datastore
@@ -27,17 +29,25 @@ module.exports = function(req, res, next) {
     res.boom.badRequest('empty object');
   }
   else {
-    content.add(req.body)
-    .then(newoffer => {
-      res.setHeader("Location", 
-        req.headers.host + "/api/v1/contents/" 
-        + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+    let contentItem = req.body;
+    contentItem.owner = req[authField]._id;
+    contentItem.admins = []; //admin gestibile solo tramite actions
+    if(!contentItem.owner) {
+      res.boom.forbidden('Invalid user');
+    }
+    else {
+      content.add(contentItem)
+      .then(newoffer => {
+        res.setHeader("Location", 
+          req.headers.host + "/api/v1/contents/" 
+          + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
 
-      res.status(201).json(newoffer)
-    })
-    .catch(e => {
-      console.log(e);
-      res.boom.badImplementation();
-    });
+        res.status(201).json(newoffer)
+      })
+      .catch(e => {
+        console.log(e);
+        res.boom.badImplementation();
+      });
+    }
   }
 }

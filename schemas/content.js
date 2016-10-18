@@ -4,7 +4,7 @@ var collectionName = require('config').db.collections.content;
 
 var ContentSchema = new mongoose.Schema({
   name        : String,
-  owner       : mongoose.Schema.ObjectId,
+  owner       : {type: mongoose.Schema.ObjectId, required:true},
   admins      : [mongoose.Schema.ObjectId],
   type        : String,
   description : String,
