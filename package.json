@@ -2,6 +2,10 @@
   "name": "contents-ms",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "name": "Dino Soru",
+    "email": "dino@crs4.it"
+  }
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha test"
