@@ -7,6 +7,8 @@ var contents = require('../schemas/content');
 var baseUrl = "http://localhost:3010"; //TODO parametrizzare
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
+var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
+var fakeuidpar = '?fakeuid=' + fakeuid
 
 let test_item = {
   "name"        : "Il golgo",
@@ -18,7 +20,7 @@ let test_item = {
   "category"    : 3,
   "position"    : [9.666168, 40.080108],
   "admins"      : [],
-  "owner"       : "57d0392d5ea81b820f36e41a"
+  "owner"       : fakeuid
 }
 
 describe('--- Testing contents crud ---', () => {
@@ -48,7 +50,7 @@ describe('--- Testing contents crud ---', () => {
   describe('POST /contents/', () => {
     it('respond with json Object containing the new test item', (done) => {
       request
-        .post(prefix + 'contents')
+        .post(prefix + 'contents' + fakeuidpar)
         .send(test_item)
         .expect('Content-Type', /json/)
         .expect('Location')
@@ -66,7 +68,7 @@ describe('--- Testing contents crud ---', () => {
   describe('GET /contents/:id', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get(prefix + 'contents/' + new_item) 
+        .get(prefix + 'contents/' + new_item + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -82,7 +84,7 @@ describe('--- Testing contents crud ---', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put(prefix + 'contents/' + new_item)
+        .put(prefix + 'contents/' + new_item + fakeuidpar)
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -98,7 +100,7 @@ describe('--- Testing contents crud ---', () => {
   describe('GET /contents/', () => {
     it('respond with json Object containing contents array', (done) => {
       request
-        .get(prefix + 'contents')
+        .get(prefix + 'contents' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -118,7 +120,7 @@ describe('--- Testing contents crud ---', () => {
   describe('DELETE /contents/:id', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete(prefix + 'contents/' + new_item)
+        .delete(prefix + 'contents/' + new_item + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((req,res) => {
@@ -133,7 +135,7 @@ describe('--- Testing contents crud ---', () => {
   describe('GET /contents/:id - 404', () => {
     it('respond with 404 error', (done) => {
       request
-        .get(prefix + 'contents/' + new_item) 
+        .get(prefix + 'contents/' + new_item + fakeuidpar) 
         .expect(404, done);
     })
   });
