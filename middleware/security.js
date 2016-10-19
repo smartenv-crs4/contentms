@@ -9,7 +9,9 @@ module.exports = {
 
     content.findById(content_id)
     .then(c => {
-      if(uid && (uid in c.admins || uid == c.owner))
+      if(!uid)
+        res.boom.forbidden('User identifier missing')
+      else if(uid in c.admins || uid == c.owner)
         next();
       else
         res.boom.forbidden('You are not administrator for this content');
