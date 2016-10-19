@@ -9,7 +9,7 @@ module.exports = {
 
     content.findById(content_id)
     .then(c => {
-      if(uid in c.admins || c.owner == uid)
+      if(uid && (uid in c.admins || uid == c.owner))
         next();
       else
         res.boom.forbidden('You are not administrator for this content');

@@ -99,11 +99,11 @@ ContentSchema.statics.update = function(id, upd) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true}, function(e, cont) {
+      that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {
         if(e) {
           switch(e.name) { 
             case 'CastError':
-              reject({status:404, error:"not found"});
+              reject({status:400, error:"model violation"});
               break;
             default:
               reject({status:500, error:"server error"});
