@@ -94,7 +94,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
   );
 } 
 
-  
+
 ContentSchema.statics.update = function(id, upd) {
   var that = this;
   return new Promise(
@@ -116,6 +116,36 @@ ContentSchema.statics.update = function(id, upd) {
   );
 }
 
+//private
+function updateAdmin(id, adminList, op) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      let upd = {}
+      if(op === 'add') {
+        upd = {$addToSet:{admins:adminList}};
+      }
+      else if(op === 'del') {
+        upd = {$pullAll:{admins:adminList}}; 
+      }
+      mongoose.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true}, function(e, cont) {
+        if(e) {
+          switch(e.name) { 
+            case 'CastError':
+              reject({status:400, error:"invalid id"});
+              break;
+            default:
+              reject({status:500, error:"server error"});
+              break;
+          }
+        }
+        else resolve({_id:cont._id, admins:cont.admins});
+      });
+    }
+  );
+}
+ContentSchema.statics.addAdmin = (id, adminList) => { return updateAdmin(id, adminList, 'add');}
+ContentSchema.statics.removeAdmin = (id, adminList) => { return updateAdmin(id, adminList, 'del');}
 
 ContentSchema.statics.delete = function(id) {
   var that = this;
@@ -137,4 +167,4 @@ ContentSchema.statics.delete = function(id) {
     }
   );
 }
-exports.content = mongoose.model('content', ContentSchema);
+exports.content = mongoose.model(collectionName, ContentSchema);
