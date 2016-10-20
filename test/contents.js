@@ -17,7 +17,7 @@ let test_item = {
   "published"   : "true",
   "town"        : "baunei",
   "address"     : "localita' il golgo",
-  "category"    : 3,
+  "category"    : [3],
   "position"    : [9.666168, 40.080108],
   "admins"      : [],
   "owner"       : fakeuid
@@ -138,5 +138,84 @@ describe('--- Testing contents crud ---', () => {
         .get(prefix + 'contents/' + new_item + fakeuidpar) 
         .expect(404, done);
     })
+  });
+
+  //actions
+  //restore the previously deleted test element
+  describe('--- Testing Content Actions ---', () => {
+    before((done) => {
+      (new contents.content(test_item))
+      .save()
+      .then((r) => {
+        new_item = r._id;
+        done();
+      })
+      .catch((e) => {
+        console.log(e);
+        process.exit();
+      })
+    });
+
+    describe('POST /contents/:id/actions/{addAdmin,removeAdmin}', () => {
+      let newAdmin = "bbbbbbbbbbbbbbbbbbbbbbbb";
+      it('respond with json Object containing the list of admins', (done) => {
+        request
+          .post(prefix + 'contents/' + new_item + '/actions/addAdmin' + fakeuidpar)
+          .send({"userId":newAdmin})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req,res) => {
+            res.body.should.have.property("_id");
+            res.body.should.have.property("admins");
+            res.body.admins.should.containEql(newAdmin);
+            done();
+          });
+      });
+
+      it('respond with the list of admins without the previously inserted user (length 0)', (done) => {
+        request
+          .post(prefix + 'contents/' + new_item + '/actions/removeAdmin' + fakeuidpar)
+          .send({"userId":newAdmin})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req,res) => {
+            res.body.should.have.property("_id");
+            res.body.should.have.property("admins").with.lengthOf(0);
+            res.body.admins.should.not.containEql(newAdmin);
+            done();
+          });
+      });
+    });
+
+    describe('POST /contents/:id/actions/{addCategory,removeCategory}', () => {
+      let newCat = 111; //fake cat
+      it('respond with json list of categories for this content', (done) => {
+        request
+          .post(prefix + 'contents/' + new_item + '/actions/addCategory' + fakeuidpar)
+          .send({"categoryId":newCat})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req,res) => {
+            res.body.should.have.property("_id");
+            res.body.should.have.property("category");
+            res.body.category.should.containEql(newCat);
+            done();
+          });
+      });
+
+      it('respond with the list of categories without the previously inserted category (length 1)', (done) => {
+        request
+          .post(prefix + 'contents/' + new_item + '/actions/removeCategory' + fakeuidpar)
+          .send({"categoryId":newCat})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req,res) => {
+            res.body.should.have.property("_id");
+            res.body.should.have.property("category").with.lengthOf(1);
+            res.body.category.should.not.containEql(newCat);
+            done();
+          });
+      });
+    });
   });
 });

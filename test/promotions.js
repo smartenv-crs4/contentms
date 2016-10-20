@@ -183,135 +183,135 @@ describe('--- Testing promotions crud ---', () => {
     })
   });
 
-  describe('POST /contents/:id/promotions/:pid/actions/{like,likes,unlike}', () => {
-    it('(like) respond with 200 and {success:true}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("success");
-          res.body.success.should.be.equal(true);
-          done()
-        })
+  describe('--- Testing Promotions Actions ---', () => {
+    describe('POST /contents/:id/promotions/:pid/actions/{like,likes,unlike}', () => {
+      it('(like) respond with 200 and {success:true}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("success");
+            res.body.success.should.be.equal(true);
+            done()
+          })
+      });
+
+      it('(like) duplication avoidance check, respond with 409 error:', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
+          .expect(409)
+          .end((req, res) => {done()});
+      });
+
+      it('(likes) respond with 200 and {total: 1}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("promo");
+            res.body.promo.should.be.equal(new_items[0]+'');
+            res.body.should.have.property("total");
+            res.body.total.should.be.equal(1);
+            res.body.should.have.property("type");
+            res.body.type.should.be.equal("like");
+            done()
+          })
+      });
+    
+      it('(unlike) respond with 200 and {success: true}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("success");
+            res.body.success.should.be.equal(true);
+            done()
+          })
+      });
+
+      it('(likes) respond with {total : 0} to confirm previous deletion', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("promo");
+            res.body.promo.should.be.equal(new_items[0]+'');
+            res.body.should.have.property("total");
+            res.body.total.should.be.equal(0);
+            res.body.should.have.property("type");
+            res.body.type.should.be.equal("like");
+            done()
+          })
+      });
     });
 
-    it('(like) duplication avoidance check, respond with 409 error:', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
-        .expect(409)
-        .end((req, res) => {done()});
-    });
+    describe('POST /contents/:id/promotions/:pid/actions/{participate,participants,unparticipate}', () => {
+      it('(participate) respond with 200 and {success:true}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("success");
+            res.body.success.should.be.equal(true);
+            done()
+          })
+      });
 
-    it('(likes) respond with 200 and {total: 1}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("promo");
-          res.body.promo.should.be.equal(new_items[0]+'');
-          res.body.should.have.property("total");
-          res.body.total.should.be.equal(1);
-          res.body.should.have.property("type");
-          res.body.type.should.be.equal("like");
-          done()
-        })
-    });
-  
-    it('(unlike) respond with 200 and {success: true}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("success");
-          res.body.success.should.be.equal(true);
-          done()
-        })
-    });
+      it('(participate) duplication avoidance check, respond with 409 error:', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
+          .expect(409)
+          .end((req, res) => {done()});
+      });
 
-    it('(likes) respond with {total : 0} to confirm previous deletion', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("promo");
-          res.body.promo.should.be.equal(new_items[0]+'');
-          res.body.should.have.property("total");
-          res.body.total.should.be.equal(0);
-          res.body.should.have.property("type");
-          res.body.type.should.be.equal("like");
-          done()
-        })
+      it('(participants) respond with 200 and {total: 1}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("promo");
+            res.body.promo.should.be.equal(new_items[0]+'');
+            res.body.should.have.property("total");
+            res.body.total.should.be.equal(1);
+            res.body.should.have.property("type");
+            res.body.type.should.be.equal("participation");
+            done()
+          })
+      });
+    
+      it('(unparticipate) respond with 200 and {success: true}', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("success");
+            res.body.success.should.be.equal(true);
+            done()
+          })
+      });
+
+      it('(participants) respond with {total : 0} to confirm previous deletion', (done) => {
+        request
+          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((req, res) => {
+            res.body.should.have.property("promo");
+            res.body.promo.should.be.equal(new_items[0]+'');
+            res.body.should.have.property("total");
+            res.body.total.should.be.equal(0);
+            res.body.should.have.property("type");
+            res.body.type.should.be.equal("participation");
+            done()
+          })
+      });
     });
   });
-
-  describe('POST /contents/:id/promotions/:pid/actions/{participate,participants,unparticipate}', () => {
-    it('(participate) respond with 200 and {success:true}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("success");
-          res.body.success.should.be.equal(true);
-          done()
-        })
-    });
-
-    it('(participate) duplication avoidance check, respond with 409 error:', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
-        .expect(409)
-        .end((req, res) => {done()});
-    });
-
-    it('(participants) respond with 200 and {total: 1}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("promo");
-          res.body.promo.should.be.equal(new_items[0]+'');
-          res.body.should.have.property("total");
-          res.body.total.should.be.equal(1);
-          res.body.should.have.property("type");
-          res.body.type.should.be.equal("participation");
-          done()
-        })
-    });
-  
-    it('(unparticipate) respond with 200 and {success: true}', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("success");
-          res.body.success.should.be.equal(true);
-          done()
-        })
-    });
-
-    it('(participants) respond with {total : 0} to confirm previous deletion', (done) => {
-      request
-        .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((req, res) => {
-          res.body.should.have.property("promo");
-          res.body.promo.should.be.equal(new_items[0]+'');
-          res.body.should.have.property("total");
-          res.body.total.should.be.equal(0);
-          res.body.should.have.property("type");
-          res.body.type.should.be.equal("participation");
-          done()
-        })
-    });
-
-  });
-
 });
