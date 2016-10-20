@@ -27,10 +27,10 @@ router.put("/contents/:id",     authWrap, security.isContentAdmin, require('./co
 router.delete("/contents/:id",  authWrap, security.isContentAdmin, require('./contents/contents_delete'));
 
 //content actions
-router.post("/contents/:id/actions/addadmin",       authWrap, security.isContentAdmin, require('./contents/contents_actions').addAdmin);
-router.post("/contents/:id/actions/removeadmin",    authWrap, security.isContentAdmin, require('./contents/contents_actions').removeAdmin);
-router.post("/contents/:id/actions/addcategory",    authWrap, security.isContentAdmin, require('./contents/contents_actions').addCategory);
-router.post("/contents/:id/actions/removecategory", authWrap, security.isContentAdmin, require('./contents/contents_actions').removeCategory);
+router.post("/contents/:id/actions/addAdmin",       authWrap, security.isContentAdmin, require('./contents/contents_actions').addAdmin);
+router.post("/contents/:id/actions/removeAdmin",    authWrap, security.isContentAdmin, require('./contents/contents_actions').removeAdmin);
+router.post("/contents/:id/actions/addCategory",    authWrap, security.isContentAdmin, require('./contents/contents_actions').addCategory);
+router.post("/contents/:id/actions/removeCategory", authWrap, security.isContentAdmin, require('./contents/contents_actions').removeCategory);
 
 
 //promotions

@@ -3,7 +3,8 @@ var content = require('../../schemas/content').content;
 module.exports = {
 
   addAdmin: (req, res, next) => {
-    content.addAdmin(req.params.id, [req.body.userId])
+    let uid = req.body.userId;
+    content.addAdmin(req.params.id, [uid])
     .then(r => {res.json(r);})
     .catch(e => {
       if(e.status === 400) res.boom.badRequest(e.error);
@@ -13,7 +14,8 @@ module.exports = {
 
 
   removeAdmin: (req, res, next) => {
-    content.removeAdmin(req.params.id, [req.body.userId])
+    let uid = req.body.userId;
+    content.removeAdmin(req.params.id, [uid])
     .then(r => {res.json(r);})
     .catch(e => {
       if(e.status === 400) res.boom.badRequest(e.error);
@@ -23,9 +25,29 @@ module.exports = {
 
 
   addCategory: (req, res, next) => {
+    var catId = req.body.categoryId;
+    if(Number.isInteger(catId)) {
+      content.addCategory(req.params.id, [catId])
+      .then(r => {res.json(r);})
+      .catch(e => {
+        if(e.status === 400) res.boom.badRequest(e.error);
+        else res.boom.badImplementation();
+      });
+    }
+    else res.boom.badRequest('Invalid category format');
   },
 
 
   removeCategory: (req, res, next) => {
+    var catId = req.body.categoryId;
+    if(Number.isInteger(catId)) {
+      content.removeCategory(req.params.id, [catId])
+      .then(r => {res.json(r);})
+      .catch(e => {
+        if(e.status === 400) res.boom.badRequest(e.error);
+        else res.boom.badImplementation();
+      });
+    }
+    else res.boom.badRequest('Invalid category format');
   }
 }

@@ -8,7 +8,7 @@ var ContentSchema = new mongoose.Schema({
   admins      : [mongoose.Schema.ObjectId],
   type        : String,
   description : String,
-  category    : {type: Number, ref:'category'},
+  category    : [{type: Number, ref:'category'}],
   published   : Boolean,
   town        : String,
   address     : String,
@@ -116,36 +116,57 @@ ContentSchema.statics.update = function(id, upd) {
   );
 }
 
-//private
-function updateAdmin(id, adminList, op) {
+//private - updates a generic array field
+function updateList(id, newItems, list, op) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      let upd = {}
-      if(op === 'add') {
-        upd = {$addToSet:{admins:adminList}};
+      let updateQuery= {};
+      let listFieldQuery = {};
+      let outFields = {};
+
+      listFieldQuery[list] = newItems;
+      outFields[list] = 1;
+
+      //operation
+      if(op === 'add') { 
+        listFieldQuery[list] = {"$each":listFieldQuery[list]};
+        updateQuery = {$addToSet:listFieldQuery};
       }
-      else if(op === 'del') {
-        upd = {$pullAll:{admins:adminList}}; 
-      }
-      mongoose.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true}, function(e, cont) {
+      else if(op === 'del')
+        updateQuery = {$pullAll:listFieldQuery}; 
+
+      mongoose.model(collectionName).findOneAndUpdate({_id:id}, updateQuery 
+                        , {new:true, runValidators:true, fields:outFields}
+                        , function(e, cont) {
         if(e) {
           switch(e.name) { 
             case 'CastError':
-              reject({status:400, error:"invalid id"});
+              reject({status:400, error:"invalid data"});
               break;
             default:
               reject({status:500, error:"server error"});
               break;
           }
         }
-        else resolve({_id:cont._id, admins:cont.admins});
+        else resolve(cont);
       });
     }
   );
 }
-ContentSchema.statics.addAdmin = (id, adminList) => { return updateAdmin(id, adminList, 'add');}
-ContentSchema.statics.removeAdmin = (id, adminList) => { return updateAdmin(id, adminList, 'del');}
+ContentSchema.statics.addAdmin        = (id, adminList) => { return updateList(id, adminList, 'admins', 'add');}
+ContentSchema.statics.removeAdmin     = (id, adminList) => { return updateList(id, adminList, 'admins', 'del');}
+ContentSchema.statics.addCategory     = (id, catList) => { return updateList(id, catList, 'category', 'add');}
+ContentSchema.statics.removeCategory  = (id, catList) => { return updateList(id, catList, 'category', 'del');}
+
+
+function castToObjectId(arrayOfOids) {
+  let castedArray = [];
+  arrayOfOids.forEach((item) => {
+    castedArray.push(new mongoose.Schema.ObjectId(item));
+  });
+  return castedArray;
+}
 
 ContentSchema.statics.delete = function(id) {
   var that = this;
