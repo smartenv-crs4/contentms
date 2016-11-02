@@ -3,7 +3,7 @@ var config = require('config');
 var router = express.Router();
 
 var security = require('../middleware/security');
-var auth = require('tokenAndAuthorizationManager'); 
+var auth = require('tokenmanager'); 
 var authField = config.security.decodedTokenFieldName;
 
 auth.configure(config.security)
