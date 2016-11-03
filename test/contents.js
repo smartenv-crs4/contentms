@@ -49,7 +49,7 @@ describe('--- Testing contents crud ---', () => {
   after((done) => {
     contents.content.delete(new_item)
     .then(() => {
-      init.stop(done());
+      init.stop(() => {done()});
     });
   });
 

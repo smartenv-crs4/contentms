@@ -54,29 +54,31 @@ describe('--- Testing promotions crud ---', () => {
       "admins"      : [],
       "owner"       : fakeuid
     };
-    (new contents.content(content_father))
-    .save()
-    .then((r) => {
-      father_id = r._id;
-      let promise_arr = [];
-      test_items.forEach((item) => {
-        item.idcontent = father_id;
-        promise_arr.push(
-          (new promotions.promotion(item))
-          .save()
-          .then((rr) => {
-            new_items.push(rr._id);
-          })
-          .catch(e => {throw(e)})
-        );
+
+    init.start(() => { 
+      (new contents.content(content_father))
+      .save()
+      .then((r) => {
+        father_id = r._id;
+        let promise_arr = [];
+        test_items.forEach((item) => {
+          item.idcontent = father_id;
+          promise_arr.push(
+            (new promotions.promotion(item))
+            .save()
+            .then((rr) => {
+              new_items.push(rr._id);
+            })
+            .catch(e => {throw(e)})
+          );
+        })
+
+        Promise.all(promise_arr).then(() => { done(); });
       })
-      Promise.all(promise_arr).then(() => {
-        init.start(done());
+      .catch((e) => {
+        console.log(e);
+        process.exit();
       });
-    })
-    .catch((e) => {
-      console.log(e);
-      process.exit();
     });
   });
 
@@ -87,7 +89,7 @@ describe('--- Testing promotions crud ---', () => {
     })
     promise_arr.push(contents.content.delete(father_id));
     Promise.all(promise_arr).then(() => {
-      init.stop(done());
+      init.stop(() => {done()});
     });
   });
 
