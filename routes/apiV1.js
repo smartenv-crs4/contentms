@@ -10,7 +10,7 @@ auth.configure(config.security)
 
 //authms middleware wrapper for dev environment (no authms required)
 function authWrap(req, res, next) {
-  if(req.app.get("env") === 'dev') { //In dev mode non richiede il ms authms, usa utente fake passato da url TODO rimuovere?
+  if(req.app.get("nocheck")) { //In dev mode non richiede il ms authms, usa utente fake passato da url TODO rimuovere?
     req[authField] = {};
     req[authField]._id = req.query.fakeuid;
     next();

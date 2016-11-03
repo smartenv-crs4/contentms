@@ -3,12 +3,16 @@ var should = require('should');
 
 var db = require('../lib/db');
 var contents = require('../schemas/content');
-
-var baseUrl = "http://localhost:3010"; //TODO parametrizzare
+var port = process.env.PORT || 3000;
+var baseUrl = "http://localhost:" + port;
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
 var fakeuidpar = '?fakeuid=' + fakeuid
+
+process.env.NODE_ENV='test';
+
+var init = require('../lib/init');
 
 let test_item = {
   "name"        : "Il golgo",
@@ -27,23 +31,26 @@ describe('--- Testing contents crud ---', () => {
   let new_item;
 
   before((done) => {
-    db.connect();
-    (new contents.content(test_item))
-    .save()
-    .then((r) => {
-      new_item = r._id;
-      done();
-    })
-    .catch((e) => {
-      console.log(e);
-      process.exit();
-    })
+    init.start(() => {
+      (new contents.content(test_item))
+      .save()
+      .then((r) => {
+        new_item = r._id;
+        done();
+      })
+      .catch((e) => {
+        console.log(e);
+        process.exit();
+      })
+    });
   });
 
 
   after((done) => {
-    contents.content.delete(new_item);
-    done();
+    contents.content.delete(new_item)
+    .then(() => {
+      init.stop(done());
+    });
   });
 
 

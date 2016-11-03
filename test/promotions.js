@@ -6,10 +6,14 @@ var should = require('should');
 var db = require('../lib/db');
 var promotions = require('../schemas/promotion');
 var contents = require('../schemas/content');
-
-var baseUrl = 'http://localhost:3010'; //TODO parametrizzare
+var port = process.env.PORT || 3000;
+var baseUrl = 'http://localhost:' + port;
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
+
+process.env.NODE_ENV='test';
+
+var init = require('../lib/init');
 
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
 var fakeuidpar = '?fakeuid=' + fakeuid;
@@ -38,8 +42,6 @@ var test_items = [
 describe('--- Testing promotions crud ---', () => {
 
   before((done) => {
-    db.connect()
-
     let content_father = {
       "name"        : "Da Gianni",
       "type"        : "activity",
@@ -52,7 +54,6 @@ describe('--- Testing promotions crud ---', () => {
       "admins"      : [],
       "owner"       : fakeuid
     };
-
     (new contents.content(content_father))
     .save()
     .then((r) => {
@@ -69,7 +70,9 @@ describe('--- Testing promotions crud ---', () => {
           .catch(e => {throw(e)})
         );
       })
-      Promise.all(promise_arr).then(done());
+      Promise.all(promise_arr).then(() => {
+        init.start(done());
+      });
     })
     .catch((e) => {
       console.log(e);
@@ -83,7 +86,9 @@ describe('--- Testing promotions crud ---', () => {
       promise_arr.push(promotions.promotion.delete(father_id, item));
     })
     promise_arr.push(contents.content.delete(father_id));
-    Promise.all(promise_arr).then(done());
+    Promise.all(promise_arr).then(() => {
+      init.stop(done());
+    });
   });
 
 

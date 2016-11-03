@@ -18,7 +18,7 @@ InvolvementSchema.statics.add = function(pid, uid, type) {
       like.save()
       .then(() => {resolve({success:true})})
       .catch((e) => {
-        console.log(e);
+//        console.log(e);
         if(e.name === 'MongoError' && e.code === 11000)
           reject({status:409, error:"involvement already set"});
         else
