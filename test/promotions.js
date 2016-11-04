@@ -1,6 +1,5 @@
 var supertest = require('supertest');
 var mongoose = require('mongoose');
-var config = require('config');
 var should = require('should');
 
 var db = require('../lib/db');

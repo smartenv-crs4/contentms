@@ -3,7 +3,6 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var request = require('request-promise');
-var config = require('config');
 var boom = require('express-boom');
 
 var routes = require('./routes/index');
@@ -23,7 +22,7 @@ app.use(boom());
 
 if (app.get('env') === 'dev' || app.get('env') === 'test' ) {
   app.set('nocheck', true);
-  console.log("INFO: Developmen/testt mode, skipping token checks"); 
+  console.log("INFO: Development/test mode, skipping token checks"); 
 }
 
 //routes

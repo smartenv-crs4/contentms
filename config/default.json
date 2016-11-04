@@ -1,18 +1,19 @@
 {
-  "security": {
-    "authoritationMicroserviceUrl": "http://156.148.36.184:3005",
-    "decodedTokenFieldName": "contentms",
-    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzkyMjM0MjYyOTAzfQ.tp79MBMuxZmiw7Tz5fyOVmfW91Pa3MsqoAww_0wF6FE"    
-  },
+  "production": {
+    "security": {
+      "authoritationMicroserviceUrl": "http://156.148.36.184:3005",
+      "decodedTokenFieldName": "contentms",
+      "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzkyMjM0MjYyOTAzfQ.tp79MBMuxZmiw7Tz5fyOVmfW91Pa3MsqoAww_0wF6FE"    
+    },
 
-
-  "db": {
-    "connection":"mongodb://localhost/contents",
-    "collections": {
-      "content"     : "content",
-      "promotion"   : "promotion",
-      "involvement" : "involvement",
-      "category"    : "category"
+    "db": {
+      "connection":"mongodb://localhost:27017/contents",
+      "collections": {
+        "content"     : "content",
+        "promotion"   : "promotion",
+        "involvement" : "involvement",
+        "category"    : "category"
+      }
     }
   }
 }

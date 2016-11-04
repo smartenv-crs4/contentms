@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var collectionName = require('config').db.collections.involvement;
+var collectionName = require('propertiesmanager').conf.db.collections.involvement;
 
 var InvolvementSchema = new mongoose.Schema({
   idpromo   : mongoose.Schema.ObjectId,

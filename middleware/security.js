@@ -1,9 +1,8 @@
-var config = require('config');
+var authField = require('propertiesmanager').conf.security.decodedTokenFieldName;
 var content = require('../schemas/content.js').content;
 
 module.exports = {
   isContentAdmin: (req, res, next) => {
-    let authField = config.security.decodedTokenFieldName;
     let uid = req[authField]._id;
     let content_id = req.params.id;
 

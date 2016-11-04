@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var category = require('./category.js');
-var collectionName = require('config').db.collections.content;
+var collectionName = require('propertiesmanager').conf.db.collections.content;
 
 var ContentSchema = new mongoose.Schema({
   name        : String,

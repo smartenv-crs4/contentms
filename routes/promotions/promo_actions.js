@@ -1,6 +1,5 @@
-var config        = require('config');
+var authField     = require('propertiesmanager').conf.security.decodedTokenFieldName;
 var involvements  = require('../../schemas/involvement').involvement;
-var authField     = config.security.decodedTokenFieldName;
 
 
 function involve(req, res, type) {

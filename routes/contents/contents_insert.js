@@ -1,6 +1,5 @@
 var content = require('../../schemas/content.js').content;
-var config = require('config');
-var authField     = config.security.decodedTokenFieldName;
+var authField = require('propertiesmanager').conf.security.decodedTokenFieldName;
 
 /**
  * @api {post} /contents/ Add one activity to the datastore

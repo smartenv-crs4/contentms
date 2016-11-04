@@ -1,5 +1,5 @@
 var express = require('express');
-var config = require('config');
+var config = require('propertiesmanager').conf;
 var router = express.Router();
 
 var security = require('../middleware/security');
