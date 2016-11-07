@@ -17,7 +17,6 @@ if(app.get('env') != 'test') {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(boom());
 
 if (app.get('env') === 'dev' || app.get('env') === 'test' ) {
@@ -55,8 +54,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || err.statusCode || 500);
-  res.send(err.message);
+  res.status(err.status || err.statusCode || 500).send();
 });
 
 
