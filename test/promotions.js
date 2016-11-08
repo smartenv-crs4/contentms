@@ -101,12 +101,15 @@ describe('--- Testing promotions crud ---', () => {
         .post(prefix + 'contents/' + father_id + '/promotions' + fakeuidpar)
         .send(item)
         .expect('Content-Type', /json/)
-        .expect('Location')
+        .expect('Location', /.+/)
         .expect(201)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          new_items.push(res.body._id);
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            new_items.push(res.body._id);
+            done();
+          }
         })
     })
   });
@@ -118,10 +121,13 @@ describe('--- Testing promotions crud ---', () => {
         .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_items[0]+'');
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body._id.should.be.equal(new_items[0]+'');
+            done();
+          }
         })
     });
   });
@@ -136,11 +142,14 @@ describe('--- Testing promotions crud ---', () => {
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body.description.should.be.equal(new_desc);
-          res.body.description.should.not.be.equal(test_items[0]);
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body.description.should.be.equal(new_desc);
+            res.body.description.should.not.be.equal(test_items[0]);
+            done();
+          }
         });
     });
   });
@@ -152,16 +161,19 @@ describe('--- Testing promotions crud ---', () => {
         .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("promos");
-          res.body.promos.should.be.instanceOf(Array);
-          res.body.promos.length.should.be.aboveOrEqual(2);
-          if(res.body.promos.length > 0) {
-            res.body.promos.forEach((item) => {
-              item.should.have.property("_id");
-            });
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("promos");
+            res.body.promos.should.be.instanceOf(Array);
+            res.body.promos.length.should.be.aboveOrEqual(2);
+            if(res.body.promos.length > 0) {
+              res.body.promos.forEach((item) => {
+                item.should.have.property("_id");
+              });
+            }  
+            done();
           }
-          done();
         });
     });
   });
@@ -173,10 +185,13 @@ describe('--- Testing promotions crud ---', () => {
         .delete(prefix + 'contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_items[1]+'');
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body._id.should.be.equal(new_items[1]+'');
+            done();
+          }
         })
     })
   })
@@ -185,7 +200,11 @@ describe('--- Testing promotions crud ---', () => {
     it('respond with 404 error', (done) => {
       request
         .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar) 
-        .expect(404, done);
+        .expect(404)
+        .end((err, res) => {
+          if(err) done(err);
+          else done();
+        });
     })
   });
 
@@ -196,10 +215,13 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("success");
-            res.body.success.should.be.equal(true);
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
           })
       });
 
@@ -207,7 +229,10 @@ describe('--- Testing promotions crud ---', () => {
         request
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
           .expect(409)
-          .end((req, res) => {done()});
+          .end((err, res) => {
+            if(err) done(err);
+            else done();
+          });
       });
 
       it('(likes) respond with 200 and {total: 1}', (done) => {
@@ -215,14 +240,17 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("promo");
-            res.body.promo.should.be.equal(new_items[0]+'');
-            res.body.should.have.property("total");
-            res.body.total.should.be.equal(1);
-            res.body.should.have.property("type");
-            res.body.type.should.be.equal("like");
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("promo");
+              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(1);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("like");
+              done()
+            }
           })
       });
     
@@ -231,10 +259,13 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("success");
-            res.body.success.should.be.equal(true);
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
           })
       });
 
@@ -243,14 +274,17 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("promo");
-            res.body.promo.should.be.equal(new_items[0]+'');
-            res.body.should.have.property("total");
-            res.body.total.should.be.equal(0);
-            res.body.should.have.property("type");
-            res.body.type.should.be.equal("like");
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("promo");
+              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(0);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("like");
+              done()
+            }
           })
       });
     });
@@ -261,10 +295,13 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("success");
-            res.body.success.should.be.equal(true);
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
           })
       });
 
@@ -272,7 +309,10 @@ describe('--- Testing promotions crud ---', () => {
         request
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
           .expect(409)
-          .end((req, res) => {done()});
+          .end((err, res) => {
+            if(err) done(err);
+            else done();
+          });
       });
 
       it('(participants) respond with 200 and {total: 1}', (done) => {
@@ -280,14 +320,17 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("promo");
-            res.body.promo.should.be.equal(new_items[0]+'');
-            res.body.should.have.property("total");
-            res.body.total.should.be.equal(1);
-            res.body.should.have.property("type");
-            res.body.type.should.be.equal("participation");
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("promo");
+              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(1);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("participation");
+              done()
+            }
           })
       });
     
@@ -296,10 +339,13 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("success");
-            res.body.success.should.be.equal(true);
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
           })
       });
 
@@ -308,14 +354,17 @@ describe('--- Testing promotions crud ---', () => {
           .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req, res) => {
-            res.body.should.have.property("promo");
-            res.body.promo.should.be.equal(new_items[0]+'');
-            res.body.should.have.property("total");
-            res.body.total.should.be.equal(0);
-            res.body.should.have.property("type");
-            res.body.type.should.be.equal("participation");
-            done()
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("promo");
+              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(0);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("participation");
+              done()
+            }
           })
       });
     });

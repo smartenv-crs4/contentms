@@ -60,13 +60,16 @@ describe('--- Testing contents crud ---', () => {
         .post(prefix + 'contents' + fakeuidpar)
         .send(test_item)
         .expect('Content-Type', /json/)
-        .expect('Location')
+        .expect('Location', /.+/)
         .expect(201)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body.should.have.property("owner");
-          res.body.should.have.property("admins");
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body.should.have.property("owner");
+            res.body.should.have.property("admins");
+            done();
+          }
         });
     });
   });
@@ -78,10 +81,13 @@ describe('--- Testing contents crud ---', () => {
         .get(prefix + 'contents/' + new_item + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item+'');
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body._id.should.be.equal(new_item+'');
+            done();
+          }
         });
     });
   });
@@ -95,10 +101,13 @@ describe('--- Testing contents crud ---', () => {
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body.description.should.be.equal(new_desc);
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body.description.should.be.equal(new_desc);
+            done();
+          }
         });
     });
   });
@@ -110,15 +119,18 @@ describe('--- Testing contents crud ---', () => {
         .get(prefix + 'contents' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("contents");
-          res.body.contents.should.be.instanceOf(Array);
-          if(res.body.contents.length > 0) {
-            res.body.contents.forEach((item) => {
-              item.should.have.property("_id");
-            });
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            if(res.body.contents.length > 0) {
+              res.body.contents.forEach((item) => {
+                item.should.have.property("_id");
+              });
+            }
+            done();
           }
-          done();
         });
     });
   });
@@ -130,10 +142,13 @@ describe('--- Testing contents crud ---', () => {
         .delete(prefix + 'contents/' + new_item + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
-        .end((req,res) => {
-          res.body.should.have.property("_id");
-          res.body._id.should.be.equal(new_item+'');
-          done();
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("_id");
+            res.body._id.should.be.equal(new_item+'');
+            done();
+          }
         });
     });
   });
@@ -143,7 +158,11 @@ describe('--- Testing contents crud ---', () => {
     it('respond with 404 error', (done) => {
       request
         .get(prefix + 'contents/' + new_item + fakeuidpar) 
-        .expect(404, done);
+        .expect(404)
+        .end((err, res) => {
+          if(err) done(err);
+          else done();
+        });
     })
   });
 
@@ -171,11 +190,14 @@ describe('--- Testing contents crud ---', () => {
           .send({"userId":newAdmin})
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req,res) => {
-            res.body.should.have.property("_id");
-            res.body.should.have.property("admins");
-            res.body.admins.should.containEql(newAdmin);
-            done();
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("_id");
+              res.body.should.have.property("admins");
+              res.body.admins.should.containEql(newAdmin);
+              done();
+            }
           });
       });
 
@@ -185,11 +207,14 @@ describe('--- Testing contents crud ---', () => {
           .send({"userId":newAdmin})
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req,res) => {
-            res.body.should.have.property("_id");
-            res.body.should.have.property("admins").with.lengthOf(0);
-            res.body.admins.should.not.containEql(newAdmin);
-            done();
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("_id");
+              res.body.should.have.property("admins").with.lengthOf(0);
+              res.body.admins.should.not.containEql(newAdmin);
+              done();
+            }
           });
       });
     });
@@ -202,11 +227,14 @@ describe('--- Testing contents crud ---', () => {
           .send({"categoryId":newCat})
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req,res) => {
-            res.body.should.have.property("_id");
-            res.body.should.have.property("category");
-            res.body.category.should.containEql(newCat);
-            done();
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("_id");
+              res.body.should.have.property("category");
+              res.body.category.should.containEql(newCat);
+              done();
+            }
           });
       });
 
@@ -216,11 +244,14 @@ describe('--- Testing contents crud ---', () => {
           .send({"categoryId":newCat})
           .expect('Content-Type', /json/)
           .expect(200)
-          .end((req,res) => {
-            res.body.should.have.property("_id");
-            res.body.should.have.property("category").with.lengthOf(1);
-            res.body.category.should.not.containEql(newCat);
-            done();
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("_id");
+              res.body.should.have.property("category").with.lengthOf(1);
+              res.body.category.should.not.containEql(newCat);
+              done();
+            }
           });
       });
     });
