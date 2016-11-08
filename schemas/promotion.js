@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var collectionName = require('propertiesmanager').conf.db.collections.promotion;
+var collectionName = require('propertiesmanager').conf.dbCollections.promotion;
 
 var PromotionSchema = new mongoose.Schema({
   name        : String,
