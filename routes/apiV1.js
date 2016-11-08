@@ -4,9 +4,12 @@ var router = express.Router();
 
 var security = require('../middleware/security');
 var auth = require('tokenmanager'); 
-var authField = config.security.decodedTokenFieldName;
+var authField = config.decodedTokenFieldName;
 
-auth.configure(config.security)
+auth.configure({
+  authoritationMicroserviceUrl:config.authHost,
+  decodedTokenFieldName:config.decodedTokenFieldName,
+  access_token:config.access_token});
 
 //authms middleware wrapper for dev environment (no authms required)
 function authWrap(req, res, next) {

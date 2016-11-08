@@ -1,4 +1,4 @@
-var authField = require('propertiesmanager').conf.security.decodedTokenFieldName;
+var authField = require('propertiesmanager').conf.decodedTokenFieldName;
 var content = require('../schemas/content.js').content;
 
 module.exports = {

@@ -1,4 +1,4 @@
-var authField     = require('propertiesmanager').conf.security.decodedTokenFieldName;
+var authField     = require('propertiesmanager').conf.decodedTokenFieldName;
 var involvements  = require('../../schemas/involvement').involvement;
 
 
