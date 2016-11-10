@@ -12,7 +12,7 @@ var ContentSchema = new mongoose.Schema({
   published   : Boolean,
   town        : String,
   address     : String,
-  position    : {type: [Number], index: '2d'}, //[lon, lat]
+  position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
 //  promotion   : [{type: mongoose.Schema.ObjectId, ref:'promotion'}]
 
 //      opens
@@ -54,7 +54,6 @@ ContentSchema.statics.findById = function(id) {
 }
 
 ContentSchema.statics.findFiltered = function(filter, limit, skip) {
-  const eradius = 6371;
   const qlimit = limit != undefined ? limit : 20;
   const qskip = skip != undefined ? skip : 0;
   var that = this;
@@ -65,9 +64,17 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
         if(key == "position") {
           let lon   = Number(filter[key][0]);
           let lat   = Number(filter[key][1]);
-          let dist  = Number(filter[key][2]) / eradius;
-          //WARNING $near non funziona con sharding
-          query[key] = {'$near':[lon, lat], '$maxDistance':dist};
+          let dist  = Number(filter[key][2]) * 1000;
+          //WARNING $nearSphere non funziona con sharding
+          query[key] = {
+            '$nearSphere': {
+              '$geometry': {
+                type:'Point',
+                coordinates: [lon, lat]
+              }, 
+              '$maxDistance':dist
+            }
+          }
         }
         else if(key == "text") {
           let re = new RegExp(filter[key].join('|'), 'i');

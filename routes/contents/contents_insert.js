@@ -1,5 +1,6 @@
 var content = require('../../schemas/content.js').content;
 var authField = require('propertiesmanager').conf.decodedTokenFieldName;
+var validator = require('validator');
 
 /**
  * @api {post} /contents/ Add one activity to the datastore
@@ -35,18 +36,22 @@ module.exports = function(req, res, next) {
       res.boom.forbidden('Invalid user');
     }
     else {
-      content.add(contentItem)
-      .then(newoffer => {
-        res.setHeader("Location", 
-          req.headers.host + "/api/v1/contents/" 
-          + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+      if(!contentItem.name || validator.isEmpty(contentItem.name))
+        res.boom.badRequest("missing name field");
+      else {
+        content.add(contentItem)
+        .then(newoffer => {
+          res.setHeader("Location", 
+            req.headers.host + "/api/v1/contents/" 
+            + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
 
-        res.status(201).json(newoffer)
-      })
-      .catch(e => {
-        console.log(e);
-        res.boom.badImplementation();
-      });
+          res.status(201).json(newoffer)
+        })
+        .catch(e => {
+          console.log(e);
+          res.boom.badImplementation();
+        });
+      }
     }
   }
 }
