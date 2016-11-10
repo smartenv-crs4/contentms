@@ -53,7 +53,7 @@ ContentSchema.statics.findById = function(id) {
   );
 }
 
-ContentSchema.statics.findFiltered = function(filter, limit, skip) {
+ContentSchema.statics.findFiltered_NOSHARD = function(filter, limit, skip) {
   const qlimit = limit != undefined ? limit : 20;
   const qskip = skip != undefined ? skip : 0;
   var that = this;
@@ -97,6 +97,68 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
           else resolve(result);
         })
       });
+    }
+  );
+} 
+
+
+
+ContentSchema.statics.findFiltered = function(filter, limit, skip) {
+  const qlimit = limit != undefined ? limit : 20;
+  const qskip = skip != undefined ? skip : 0;
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      let query = {};
+      let position = undefined;
+      Object.keys(filter).forEach((key) => {
+        if(key == "position") {
+          //if incomplete skip position
+          if(Array.isArray(filter[key]) && filter[key].length == 3) {
+            position = {};
+            position["lon"]   = Number(filter[key][0]);
+            position["lat"]   = Number(filter[key][1]);
+            position["dist"]  = Number(filter[key][2]);
+          }
+        }
+        else if(key == "text") {
+          let re = new RegExp(filter[key].join('|'), 'i');
+          query['$or'] = [{name: {'$regex': re}}, {description: {'$regex': re}}];
+        }
+        else {
+          query[key] = {'$in' : filter[key]}
+        }
+      });
+
+      if(position) {
+        mongoose.executeDbCommand({
+          geonear:collectionName,
+          near:{type:'Point', coordinates: [position.lon, position.lat]},
+          spherical:true,
+          query:query
+        })
+        .then((res) => {
+          res.json(res.results);
+        })
+        .catch((e) => {
+          console.log(e);
+          res.boom.badImplementation();
+        });
+      }
+      else {
+        that.model(collectionName).find(query).count()
+        .then((count) => { //TODO serve davvero il totalCount? 
+          let options = {skip:qskip, limit:qlimit, populate:'category'};
+          that.model(collectionName).find(query, null, options, function(e, cont) {
+            let result = {};
+            result.contents = cont;
+            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
+
+            if(e) reject(e);
+            else resolve(result);
+          })
+        })
+      }
     }
   );
 } 
