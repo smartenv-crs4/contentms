@@ -131,7 +131,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) {
-        mongoose.executeDbCommand({
+        mongoose.connection.db.executeDbCommand({
           geonear:collectionName,
           near:{type:'Point', coordinates: [position.lon, position.lat]},
           spherical:true,
