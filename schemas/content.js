@@ -53,6 +53,9 @@ ContentSchema.statics.findById = function(id) {
   );
 }
 
+/*
+// L'operatore spaziale $near usato in questa funzione non funziona su collection in sharding
+// ma si puo' usare all'interno di una find quindi con skip/limit e totalcount
 ContentSchema.statics.findFiltered_NOSHARD = function(filter, limit, skip) {
   const qlimit = limit != undefined ? limit : 20;
   const qskip = skip != undefined ? skip : 0;
@@ -84,7 +87,6 @@ ContentSchema.statics.findFiltered_NOSHARD = function(filter, limit, skip) {
           query[key] = {'$in' : filter[key]}
         }
       });
-//console.log(query);
       that.model(collectionName).find(query).count()
       .then((count) => { //TODO serve davvero il totalCount? 
         let options = {skip:qskip, limit:qlimit, populate:'category'};
@@ -100,7 +102,7 @@ ContentSchema.statics.findFiltered_NOSHARD = function(filter, limit, skip) {
     }
   );
 } 
-
+*/
 
 
 ContentSchema.statics.findFiltered = function(filter, limit, skip) {
@@ -130,19 +132,30 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
         }
       });
 
-      if(position) {
-        mongoose.connection.db.executeDbCommand({
-          geonear:collectionName,
-          near:{type:'Point', coordinates: [position.lon, position.lat]},
-          spherical:true,
-          query:query
-        })
-        .then((res) => {
-          res.json(res.results);
+      if(position) { 
+        //WARNING: geoNear non ha skip
+        //TODO implementare lo skip salvando l'ultima dist (sono ordinate) e usando minDistance = lastdistance + 0.1
+        //TODO limitare il raggio di ricerca a una dimensione massima sensata
+        that.model(collectionName).geoNear(
+          {type:'Point', coordinates: [position.lon, position.lat]},
+          {spherical:true, query:query, maxDistance:position.dist * 1000, limit:qlimit}
+        )
+        .then((res, err) => {
+          if(err) reject(err);
+          else {
+            let normalized_res = [];
+            for(rid in res) {
+              let distance = (res[rid].dis/1000) + "";
+              let obj = res[rid].obj._doc;
+              obj["distance"] = Number(distance.slice(0,distance.indexOf('.')+3));
+              normalized_res.push(obj);
+            }
+            resolve(normalized_res);
+          }
         })
         .catch((e) => {
           console.log(e);
-          res.boom.badImplementation();
+          reject(e);
         });
       }
       else {
