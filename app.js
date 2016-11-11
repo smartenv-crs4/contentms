@@ -5,8 +5,10 @@ var bodyParser = require('body-parser');
 var request = require('request-promise');
 var boom = require('express-boom');
 
+var cors = require('./middleware/cors');
 var routes = require('./routes/index');
 var apiV1 = require('./routes/apiV1');
+var config = require('propertiesmanager').conf;
 
 var app = express();
 
@@ -22,6 +24,11 @@ app.use(boom());
 if (app.get('env') === 'dev' || app.get('env') === 'test' ) {
   app.set('nocheck', true);
   console.log("INFO: Development/test mode, skipping token checks"); 
+}
+
+if(config.enableCors === true) {
+  console.log("INFO: Enabling cross origin");
+  app.use(cors);
 }
 
 //routes
