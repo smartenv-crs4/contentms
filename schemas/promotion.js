@@ -53,14 +53,16 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
   return new Promise(
     function(resolve, reject) {
       let query = {};
+      let position = undefined;
       Object.keys(filter).forEach((key) => {
         //distance search
         if(key == "position") {
-          let lon   = Number(filter[key][0]);
-          let lat   = Number(filter[key][1]);
-          let dist  = Number(filter[key][2]) / eradius;
-          //WARNING $near non funziona con sharding
-          query[key] = {'$near':[lon, lat], '$maxDistance':dist};
+          if(Array.isArray(filter[key]) && filter[key].length == 3) {
+            position = {};
+            position["lon"]   = Number(filter[key][0]);
+            position["lat"]   = Number(filter[key][1]);
+            position["dist"]  = Number(filter[key][2]);
+          }
         }
 
         //fulltext search
@@ -93,19 +95,44 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
           query[key] = {'$in' : filter[key]}
         }
       });
-//console.log(query);
-      that.model(collectionName).find(query).count()
-      .then((count) => { //TODO serve davvero il totalCount? 
-        let options = {skip:qskip, limit:qlimit};
-        that.model(collectionName).find(query, null, options, function(e, cont) {
-          let result = {};
-          result.promos = cont;
-          result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
 
-          if(e) reject(e);
-          else resolve(result);
+      if(position) {
+        that.model(collectionName).geoNear(
+          {type:'Point', coordinates: [position.lon, position.lat]},
+          {spherical:true, query:query, maxDistance:position.dist * 1000, limit:qlimit}
+        )
+        .then((res, err) => {
+          if(err) reject(err);
+          else {
+            let normalized_res = [];
+            for(rid in res) {
+              let distance = (res[rid].dis/1000) + "";
+              let obj = res[rid].obj._doc;
+              obj["distance"] = Number(distance.slice(0,distance.indexOf('.')+3));
+              normalized_res.push(obj);
+            }
+            resolve(normalized_res);
+          }
         })
-      });
+        .catch((e) => {
+          console.log(e);
+          reject(e);
+        });
+      }
+      else {
+        that.model(collectionName).find(query).count()
+        .then((count) => { //TODO serve davvero il totalCount? 
+          let options = {skip:qskip, limit:qlimit};
+          that.model(collectionName).find(query, null, options, function(e, cont) {
+            let result = {};
+            result.promos = cont;
+            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
+
+            if(e) reject(e);
+            else resolve(result);
+          })
+        });
+      }
     }
   );
 }
