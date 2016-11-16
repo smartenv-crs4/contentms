@@ -7,7 +7,7 @@ var auth = require('tokenmanager');
 var authField = config.decodedTokenFieldName;
 
 auth.configure({
-  authoritationMicroserviceUrl:config.authHost,
+  authoritationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort,
   decodedTokenFieldName:config.decodedTokenFieldName,
   access_token:config.access_token});
 
