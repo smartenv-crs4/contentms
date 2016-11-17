@@ -111,7 +111,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
               obj["distance"] = Number(distance.slice(0,distance.indexOf('.')+3));
               normalized_res.push(obj);
             }
-            resolve(normalized_res);
+            let result = {};
+            result.promos = normalized_res;
+            result.metadata = {limit:qlimit}; //TODO aggiungere lastdistance per skip???
+            resolve(result);
           }
         })
         .catch((e) => {

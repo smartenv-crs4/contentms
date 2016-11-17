@@ -14,30 +14,74 @@ process.env.NODE_ENV='test';
 
 var init = require('../lib/init');
 
+let search_items = [
+  {
+      "name" : "Il golgo",
+      "type" : "activity",
+      "description" : "Ristorante tipico",
+      "published" : true,
+      "town" : "baunei",
+      "address" : "localita' il golgo",
+      "position" : [ 
+          9.666168, 
+          40.080108
+      ],
+      "owner" : fakeuid,
+      "category" : [3],
+      "admins" : []
+  },
+
+  {
+      "name" : "hotel bue marino",
+      "type" : "activity",
+      "description" : "hotel con terrazza panoramica vista porto",
+      "published" : true,
+      "town" : "calagonone",
+      "position" : [ 
+          9.6378597, 
+          40.283566
+      ],
+      "owner" : fakeuid,
+      "category" : [3],
+      "admins" : []
+  }
+]
+
 let test_item = {
-  "name"        : "Il golgo",
-  "type"        : "activity",
-  "description" : "Ristorante tipico",
-  "published"   : "true",
-  "town"        : "baunei",
-  "address"     : "localita' il golgo",
-  "category"    : [3],
-  "position"    : [9.666168, 40.080108],
-  "admins"      : [],
-  "owner"       : fakeuid
+  "name" : "hotel la baia",
+  "type" : "activity",
+  "description" : "hotel con terrazza panoramica vista baia santa caterina",
+  "published" : true,
+  "town" : "santa caterina di pittinuri",
+  "position" : [ 
+      8.4884164, 
+      40.1054929
+   ],
+  "owner" : fakeuid,
+  "category" : [3],
+  "admins" : []
 }
 
 describe('--- Testing contents crud ---', () => {
+  let search_items = [];
   let new_item;
 
   before((done) => {
     init.start(() => {
-      (new contents.content(test_item))
-      .save()
-      .then((r) => {
-        new_item = r._id;
-        done();
+      let promise_arr = [];
+      search_items.forEach((item) => {
+        promise_arr.push(
+          (new contents.content(item))
+          .save()
+          .then((rr) => {
+            search_items.push(rr._id);
+          })
+          .catch(e => {throw(e)})
+        );
       })
+
+      Promise.all(promise_arr)
+      .then(() => { done(); })
       .catch((e) => {
         console.log(e);
         process.exit();
@@ -47,7 +91,12 @@ describe('--- Testing contents crud ---', () => {
 
 
   after((done) => {
-    contents.content.delete(new_item)
+    let parr = [];
+    search_items.forEach((item) => {
+      parr.push(contents.content.delete(item._id));
+    });
+
+    Promise.all(parr)
     .then(() => {
       init.stop(() => {done()});
     });
@@ -65,6 +114,7 @@ describe('--- Testing contents crud ---', () => {
         .end((err,res) => {
           if(err) done(err);
           else {
+            new_item = res.body._id;
             res.body.should.have.property("_id");
             res.body.should.have.property("owner");
             res.body.should.have.property("admins");
@@ -129,6 +179,38 @@ describe('--- Testing contents crud ---', () => {
                 item.should.have.property("_id");
               });
             }
+            done();
+          }
+        });
+    });
+    it('query by distance (1km) and respond with just one element array', (done) => {
+      let position_pars = [9.666168,40.080108,1];
+      request
+        .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(1);  
+            done();
+          }
+        });
+    });
+    it('query by distance (25km) and respond with two elements array', (done) => {
+      let position_pars = [9.666168,40.080108,25];
+      request
+        .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(2);  
             done();
           }
         });
