@@ -16,7 +16,7 @@ module.exports = exports = {
   * }
   *
   */
-  near: (collectionName, position, query, qlimit, cb) => {
+  near: (collectionName, position, query, qlimit, result_label, cb) => {
     let options = {
       spherical:true, 
       query:query, 
@@ -24,7 +24,6 @@ module.exports = exports = {
       limit:qlimit
     }
     if(position.min) options["minDistance"] = position.min;
-
     mongoose.model(collectionName).geoNear(
       { type:'Point', coordinates: [position.lon, position.lat] },
       options
@@ -40,10 +39,10 @@ module.exports = exports = {
           normalized_res.push(obj);
         }
         let result = {};
-        result.contents = normalized_res;
+        result[result_label] = normalized_res;
         result.metadata = {
           limit:qlimit,
-          farthest:normalized_res[normalized_res.length - 1]
+          farthest:normalized_res[normalized_res.length - 1].distance
         }
         cb(result);
       }

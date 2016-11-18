@@ -20,9 +20,9 @@ var father_id;
 var new_items = [];
 var test_items = [
     {
-      "name"        : "fregola night",
+      "name"        : "porcino night",
       "type"        : "offer",
-      "description" : "cena a base di fregola",
+      "description" : "cena a base di funghi porcini",
       "startDate"   : "2016-9-30",
       "endDate"     : "2016-9-30",
       "price"       : 25,
@@ -35,7 +35,7 @@ var test_items = [
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-16",
       "price"       : 25,
-      "position"    : [9.666168, 40.080108]
+      "position"    : [9.3534625, 40.203488]
     }];
 
 describe('--- Testing promotions crud ---', () => {
@@ -49,7 +49,7 @@ describe('--- Testing promotions crud ---', () => {
       "town"        : "Cagliari",
       "address"     : "localita' cala mosca",
       "category"    : 3,
-      "position"    : [9.666168, 40.080108],
+      "position"    : [9.153488, 39.186334],
       "admins"      : [],
       "owner"       : fakeuid
     };
@@ -172,6 +172,54 @@ describe('--- Testing promotions crud ---', () => {
                 item.should.have.property("_id");
               });
             }  
+            done();
+          }
+        });
+    });
+    it('run a geo query with 1km radius and respond with just one item', (done) => {
+      let position_pars = [9.3534625,40.203488,1];
+      request
+        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("promos");
+            res.body.promos.should.be.instanceOf(Array);
+            res.body.promos.length.should.be.equal(1);
+            done();
+          }
+        });
+    });
+    it('run a geo query with 50km radius and respond with two items', (done) => {
+      let position_pars = [9.3534625,40.203488,50];
+      request
+        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("promos");
+            res.body.promos.should.be.instanceOf(Array);
+            res.body.promos.length.should.be.equal(3); //3 perche' il primo test_item viene reinserito nel test del post
+            done();
+          }
+        });
+    });
+    it('run a geo query with 100km radius and a text filter, respond with one item', (done) => {
+      let position_pars = [9.3534625,40.203488,100];
+      request
+        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString() + '&text=porcino')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("promos");
+            res.body.promos.should.be.instanceOf(Array);
+            res.body.promos.length.should.be.aboveOrEqual(1);
             done();
           }
         });

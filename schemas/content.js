@@ -128,7 +128,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) { 
-        common.near(collectionName, position, query, qlimit, (result, err) => {
+        common.near(collectionName, position, query, qlimit, 'contents', (result, err) => {
           if(err) reject(err);
           else resolve(result);
         });

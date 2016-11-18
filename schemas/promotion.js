@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var collectionName = require('propertiesmanager').conf.dbCollections.promotion;
+var common = require('./common');
 
 var PromotionSchema = new mongoose.Schema({
   name        : String,
@@ -9,7 +10,7 @@ var PromotionSchema = new mongoose.Schema({
   endDate     : Date,
   price       : Number,
   idcontent   : {type: mongoose.Schema.ObjectId, ref:'content'},
-  position    : {type: [Number], index: '2d'} //[lon, lat]
+  position    : {type: [Number], index: '2dsphere'} //[lon, lat]
   //address
   //images
 },
@@ -92,7 +93,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) {
-        common.near(collectionName, position, query, qlimit, (result, err) => {
+        common.near(collectionName, position, query, qlimit, 'promos', (result, err) => {
           if(err) reject(err);
           else resolve(result);
         });
