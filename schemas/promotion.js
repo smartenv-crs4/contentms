@@ -57,12 +57,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
       Object.keys(filter).forEach((key) => {
         //distance search
         if(key == "position") {
-          if(Array.isArray(filter[key]) && filter[key].length == 3) {
-            position = {};
-            position["lon"]   = Number(filter[key][0]);
-            position["lat"]   = Number(filter[key][1]);
-            position["dist"]  = Number(filter[key][2]);
-          }
+          position = common.getPosition(filter[key]);
         }
 
         //fulltext search
@@ -97,29 +92,9 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) {
-        that.model(collectionName).geoNear(
-          {type:'Point', coordinates: [position.lon, position.lat]},
-          {spherical:true, query:query, maxDistance:position.dist * 1000, limit:qlimit}
-        )
-        .then((res, err) => {
+        common.near(collectionName, position, query, qlimit, (result, err) => {
           if(err) reject(err);
-          else {
-            let normalized_res = [];
-            for(rid in res) {
-              let distance = (res[rid].dis/1000) + "";
-              let obj = res[rid].obj._doc;
-              obj["distance"] = Number(distance.slice(0,distance.indexOf('.')+3));
-              normalized_res.push(obj);
-            }
-            let result = {};
-            result.promos = normalized_res;
-            result.metadata = {limit:qlimit}; //TODO aggiungere lastdistance per skip???
-            resolve(result);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          reject(e);
+          else resolve(result);
         });
       }
       else {

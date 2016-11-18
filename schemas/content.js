@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var category = require('./category.js');
 var collectionName = require('propertiesmanager').conf.dbCollections.content;
+var common = require('./common');
 
 var ContentSchema = new mongoose.Schema({
   name        : String,
@@ -115,13 +116,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
       let position = undefined;
       Object.keys(filter).forEach((key) => {
         if(key == "position") {
-          //if incomplete skip position
-          if(Array.isArray(filter[key]) && filter[key].length == 3) {
-            position = {};
-            position["lon"]   = Number(filter[key][0]);
-            position["lat"]   = Number(filter[key][1]);
-            position["dist"]  = Number(filter[key][2]);
-          }
+          position = common.getPosition(filter[key]);
         }
         else if(key == "text") {
           let re = new RegExp(filter[key].join('|'), 'i');
@@ -133,32 +128,9 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) { 
-        //WARNING: geoNear non ha skip
-        //TODO implementare lo skip salvando l'ultima dist (sono ordinate) e usando minDistance = lastdistance + 0.1
-        //TODO limitare il raggio di ricerca a una dimensione massima sensata
-        that.model(collectionName).geoNear(
-          {type:'Point', coordinates: [position.lon, position.lat]},
-          {spherical:true, query:query, maxDistance:position.dist * 1000, limit:qlimit}
-        )
-        .then((res, err) => {
+        common.near(collectionName, position, query, qlimit, (result, err) => {
           if(err) reject(err);
-          else {
-            let normalized_res = [];
-            for(rid in res) {
-              let distance = (res[rid].dis/1000) + "";
-              let obj = res[rid].obj._doc;
-              obj["distance"] = Number(distance.slice(0,distance.indexOf('.')+3));
-              normalized_res.push(obj);
-            }
-            let result = {};
-            result.contents = normalized_res;
-            result.metadata = {limit:qlimit} //TODO aggiungere lastdistance per skip???
-            resolve(result);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          reject(e);
+          else resolve(result);
         });
       }
       else {
