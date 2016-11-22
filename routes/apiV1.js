@@ -9,7 +9,9 @@ var authField = config.decodedTokenFieldName;
 auth.configure({
   authoritationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort,
   decodedTokenFieldName:config.decodedTokenFieldName,
-  access_token:config.access_token});
+  access_token:config.access_token
+});
+
 
 //authms middleware wrapper for dev environment (no authms required)
 function authWrap(req, res, next) {
@@ -28,6 +30,7 @@ router.get("/contents/:id",     authWrap, require('./contents/contents_get'));
 router.post("/contents/",       authWrap, require('./contents/contents_insert'));
 router.put("/contents/:id",     authWrap, security.isContentAdmin, require('./contents/contents_update'));
 router.delete("/contents/:id",  authWrap, security.isContentAdmin, require('./contents/contents_delete'));
+
 
 //content actions
 router.post("/contents/:id/actions/addAdmin",       authWrap, security.isContentAdmin, require('./contents/contents_actions').addAdmin);
@@ -51,6 +54,15 @@ router.post("/contents/:id/promotions/:pid/actions/likes",          authWrap, re
 router.post("/contents/:id/promotions/:pid/actions/participate",    authWrap, require('./promotions/promo_actions').participate);
 router.post("/contents/:id/promotions/:pid/actions/unparticipate",  authWrap, require('./promotions/promo_actions').unparticipate);
 router.post("/contents/:id/promotions/:pid/actions/participants",   authWrap, require('./promotions/promo_actions').participants);
+
+
+//categories crud
+//TODO deve essere system admin
+router.get("/categories/",        authWrap, require('./categories/cat_search'));
+router.get("/categories/:id",     authWrap, require('./categories/cat_get'));
+router.post("/categories/",       authWrap, require('./categories/cat_insert'));
+router.put("/categories/:id",     authWrap, require('./categories/cat_update'));
+router.delete("/categories/:id",  authWrap, require('./categories/cat_delete'));
 
 
 module.exports = router;

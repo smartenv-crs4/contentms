@@ -47,7 +47,6 @@ PromotionSchema.statics.findById = function(cid, pid) {
 }
 
 PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
-  const eradius = 6371;
   const qlimit = limit != undefined ? limit : 20;
   const qskip = skip != undefined ? skip : 0;
   var that = this;
