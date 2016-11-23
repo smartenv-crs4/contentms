@@ -136,7 +136,11 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
       else {
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
-          let options = {skip:qskip, limit:qlimit, populate:'category'};
+          let options = {
+            skip:qskip, 
+            limit:qlimit, 
+            populate:require('propertiesmanager').conf.dbCollections.category
+          };
           that.model(collectionName).find(query, null, options, function(e, cont) {
             let result = {};
             result.contents = cont;

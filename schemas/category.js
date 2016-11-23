@@ -5,12 +5,13 @@ var validator = require('validator');
 var CategorySchema = new mongoose.Schema({
     _id         : Number,
     name        : String,
-    type        : String,
     description : String
-});
+  }, 
+  {versionKey:false}
+);
 
 
-CategorySchema.statics.add = (newitem) => {
+CategorySchema.statics.add = function(newitem) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -28,20 +29,22 @@ CategorySchema.statics.add = (newitem) => {
 }
 
 
-CategorySchema.statics.search = (limit, skip, id) => {
-  const multi = (arguments.length == 1) ? false : true;
-  let options = undefined;
+//parameters: limit, skip || id
+CategorySchema.statics.search = function() {
+  const multi = arguments.length == 0 || arguments.length == 2;
+  let that = this;
+  let options = {};
   let query = {};
-  if(multi) { 
-    if(!(validator.isNumber(limit) && validator.isNumber(skip)))
+  if(arguments.length == 2){ 
+    if(!(validator.isNumeric(arguments[0]) && validator.isNumeric(arguments[1]))) {
       reject({status:400, error:'wrong parameters'});
+    }
     else {
       options = {skip:new Number(skip), limit: new Number(limit)};
     }
   }
-  else query = {_id:id};
+  else if(arguments.length == 1) query = {_id:arguments[0]};
 
-  var that = this;
   return new Promise(
     function(resolve, reject) {
       if(multi) {
@@ -50,7 +53,7 @@ CategorySchema.statics.search = (limit, skip, id) => {
           that.model(collectionName).find(query, null, options, function(e, cont) {
             let result = {};
             result.categories = cont;
-            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
+            result.metadata = {limit:options.limit||null, skip:options.skip||null, totalCount:count}
 
             if(e) reject(e);
             else resolve(result);
@@ -58,7 +61,7 @@ CategorySchema.statics.search = (limit, skip, id) => {
         });
       }
       else {
-        that.model(collectionName).findOne({_id:id}, (e, result) => {
+        that.model(collectionName).findOne(query, (e, result) => {
           if(e) reject(e);
           else resolve(result);
         });
@@ -68,7 +71,7 @@ CategorySchema.statics.search = (limit, skip, id) => {
 }
 
 
-CategorySchema.statics.update = (id, upd) => {
+CategorySchema.statics.update = function(id, upd) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -89,7 +92,7 @@ CategorySchema.statics.update = (id, upd) => {
   );
 }
 
-CategorySchema.statics.delete = (id) => {
+CategorySchema.statics.delete = function(id) {
   var that = this;
   return new Promise(
     function(resolve, reject) {

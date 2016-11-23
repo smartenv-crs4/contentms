@@ -12,12 +12,13 @@ var category = require('../../schemas/category').category;
 module.exports = function(req, res, next) {
   let limit = req.query.limit;
   let skip = req.query.skip;
-  category.search(limit, skip)
-  .then(result => {
-    res.send(result);
+  let f = (limit && skip) ? category.search(limit, skip) : category.search();
+  f.then((result) => {
+    res.json(result);
   })
-  .catch(e => { 
+  .catch((e) => { 
     console.log(e);
-    res.boom.badImplementation();
+    if(e.status) res.status(e.status).send(e.error);
+    else res.boom.badImplementation();
   });  
 }

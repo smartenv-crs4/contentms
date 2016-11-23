@@ -1,4 +1,5 @@
 var category = require('../../schemas/category').category;
+var counter = require('../../schemas/counters').counters;
 var validator = require('validator');
 
 /**
@@ -23,21 +24,25 @@ module.exports = function(req, res, next) {
   }
   else {
     let categoryItem = req.body;
-    if(!contegoryItem.name || validator.isEmpty(categoryItem.name))
-      res.boom.badRequest("missing name field");
-    else {
-      category.add(categoryItem)
-      .then(newcat => {
-        res.setHeader("Location", 
-          req.headers.host + "/api/v1/categories/" 
-          + newcat._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+    counter.getNextSequence('category', (sid) => { 
+      categoryItem['_id'] = sid;
+      console.log(categoryItem);
+      if(!categoryItem.name || validator.isEmpty(categoryItem.name))
+        res.boom.badRequest("missing name field");
+      else {
+        category.add(categoryItem)
+        .then(newcat => {
+          res.setHeader("Location", 
+            req.headers.host + "/api/v1/categories/" 
+            + newcat._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
 
-        res.status(201).json(newcat)
-      })
-      .catch(e => {
-        console.log(e);
-        res.boom.badImplementation();
-      });
-    } 
+          res.status(201).json(newcat)
+        })
+        .catch(e => {
+          console.log(e);
+          res.boom.badImplementation();
+        });
+      }
+    }) 
   }
 }

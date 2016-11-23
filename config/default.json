@@ -8,7 +8,7 @@
       "content"     : "content",
       "promotion"   : "promotion",
       "involvement" : "involvement",
-      "category"    : "category"
+      "category"    : "categories"
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
