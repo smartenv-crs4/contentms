@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var collectionName = require('propertiesmanager').conf.dbCollections.category;
+var counter = require('./counters').counters;
 var validator = require('validator');
 
 var CategorySchema = new mongoose.Schema({
@@ -15,14 +16,18 @@ CategorySchema.statics.add = function(newitem) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      let item = new that(newitem);
-      item.save()
-      .then((newcat) => {
-        resolve(newcat)
-      })
-      .catch(e => {
-        console.log(e);
-        reject({status:500, error:"server error"});
+      counter.getNextSequence('category', (sid) => { 
+        newitem['_id'] = sid; //override eventuale id passato da utente
+
+        (new that(newitem))
+        .save()
+        .then((newcat) => {
+          resolve(newcat)
+        })
+        .catch(e => {
+          console.log(e);
+          reject({status:500, error:"server error"});
+        });
       });
     }
   );

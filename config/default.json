@@ -15,5 +15,22 @@
     "authPort":"3000",
     "decodedTokenFieldName": "contentms",
     "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzkyMjM0MjYyOTAzfQ.tp79MBMuxZmiw7Tz5fyOVmfW91Pa3MsqoAww_0wF6FE"
+  },
+  "test": {
+    "dbHost":"localhost",
+    "dbPort":"27017",
+    "dbName":"contents_test",
+    "enableCors":true,
+    "dbCollections": {
+      "content"     : "content",
+      "promotion"   : "promotion",
+      "involvement" : "involvement",
+      "category"    : "categories"
+    },
+    "authProtocol":"http",
+    "authHost":"your_auth_service_host",
+    "authPort":"3000",
+    "decodedTokenFieldName": "contentms",
+    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzkyMjM0MjYyOTAzfQ.tp79MBMuxZmiw7Tz5fyOVmfW91Pa3MsqoAww_0wF6FE"
   }
 }

@@ -42,7 +42,7 @@ module.exports = exports = {
         result[result_label] = normalized_res;
         result.metadata = {
           limit:qlimit,
-          farthest:normalized_res[normalized_res.length - 1].distance
+          farthest:normalized_res.length > 0 ? normalized_res[normalized_res.length - 1].distance : null
         }
         cb(result);
       }

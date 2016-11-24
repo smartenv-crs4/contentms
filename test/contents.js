@@ -1,3 +1,6 @@
+//IMPORTANT! Must be defined before all!
+process.env.NODE_ENV='test';
+
 var supertest = require('supertest');
 var should = require('should');
 
@@ -10,7 +13,6 @@ var request = supertest.agent(baseUrl);
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
 var fakeuidpar = '?fakeuid=' + fakeuid
 
-process.env.NODE_ENV='test';
 
 var init = require('../lib/init');
 
@@ -63,7 +65,7 @@ let test_item = {
 }
 
 describe('--- Testing contents crud ---', () => {
-  let search_items = [];
+  let search_items_ids = [];
   let new_item;
 
   before((done) => {
@@ -74,7 +76,7 @@ describe('--- Testing contents crud ---', () => {
           (new contents.content(item))
           .save()
           .then((rr) => {
-            search_items.push(rr._id);
+            search_items_ids.push(rr._id);
           })
           .catch(e => {throw(e)})
         );
@@ -91,11 +93,11 @@ describe('--- Testing contents crud ---', () => {
 
 
   after((done) => {
-    let parr = [];
-    search_items.forEach((item) => {
-      parr.push(contents.content.delete(item._id));
+   let parr = [];
+    search_items_ids.forEach((item) => {
+      parr.push(contents.content.delete(item));
     });
-
+    parr.push(contents.content.delete(new_item));
     Promise.all(parr)
     .then(() => {
       init.stop(() => {done()});
@@ -174,6 +176,7 @@ describe('--- Testing contents crud ---', () => {
           else {
             res.body.should.have.property("contents");
             res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(3);
             if(res.body.contents.length > 0) {
               res.body.contents.forEach((item) => {
                 item.should.have.property("_id");
@@ -183,7 +186,7 @@ describe('--- Testing contents crud ---', () => {
           }
         });
     });
-    it('query by distance (1km) and respond with just one element array', (done) => {
+    it('run a geo query with 1km radius and respond with one element array', (done) => {
       let position_pars = [9.666168,40.080108,1];
       request
         .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
@@ -199,7 +202,7 @@ describe('--- Testing contents crud ---', () => {
           }
         });
     });
-    it('query by distance (25km) and respond with two elements array', (done) => {
+    it('run a geo query with 25km radius and respond with two elements array', (done) => {
       let position_pars = [9.666168,40.080108,25];
       request
         .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
@@ -233,11 +236,7 @@ describe('--- Testing contents crud ---', () => {
           }
         });
     });
-  });
-
-
-  describe('GET /contents/:id - 404', () => {
-    it('respond with 404 error', (done) => {
+    it('respond with 404 error to confirm previous deletion', (done) => {
       request
         .get(prefix + 'contents/' + new_item + fakeuidpar) 
         .expect(404)
@@ -247,6 +246,7 @@ describe('--- Testing contents crud ---', () => {
         });
     })
   });
+
 
   //actions
   //restore the previously deleted test element
@@ -262,6 +262,11 @@ describe('--- Testing contents crud ---', () => {
         console.log(e);
         process.exit();
       })
+    });
+
+    after((done) => {
+      contents.content.delete(new_item)
+      .then(done());
     });
 
     describe('POST /contents/:id/actions/{addAdmin,removeAdmin}', () => {

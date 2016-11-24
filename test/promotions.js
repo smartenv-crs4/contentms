@@ -1,3 +1,6 @@
+//IMPORTANT! Must be defined before all!
+process.env.NODE_ENV='test';
+
 var supertest = require('supertest');
 var mongoose = require('mongoose');
 var should = require('should');
@@ -9,8 +12,6 @@ var port = process.env.PORT || 3000;
 var baseUrl = 'http://localhost:' + port;
 var prefix = '/api/v1/';
 var request = supertest.agent(baseUrl);
-
-process.env.NODE_ENV='test';
 
 var init = require('../lib/init');
 
@@ -242,10 +243,7 @@ describe('--- Testing promotions crud ---', () => {
           }
         })
     })
-  })
-
-  describe('GET /contents/:id/promotions/:pid - 404', () => {
-    it('respond with 404 error', (done) => {
+    it('respond with 404 error to confirm previous deletion', (done) => {
       request
         .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar) 
         .expect(404)
@@ -254,7 +252,8 @@ describe('--- Testing promotions crud ---', () => {
           else done();
         });
     })
-  });
+  })
+
 
   describe('--- Testing Promotions Actions ---', () => {
     describe('POST /contents/:id/promotions/:pid/actions/{like,likes,unlike}', () => {
