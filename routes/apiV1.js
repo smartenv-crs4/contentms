@@ -9,7 +9,7 @@ var authField = config.decodedTokenFieldName;
 auth.configure({
   authoritationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort,
   decodedTokenFieldName:config.decodedTokenFieldName,
-  access_token:config.access_token
+  access_token:config.auth_token
 });
 
 
