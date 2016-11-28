@@ -16,7 +16,8 @@ var validator = require('validator');
  *    "town"        : "baunei",
  *    "address"     : "via cagliari, 1",
  *    "category"    : 3,
- *    "position"    : [9.666168, 40.080108]
+ *    "lat"         : 40.080108,
+ *    "lon"         : 9.666168
  *  }
  *
  * @apiSuccess (201 - CREATED) {Object} body The Json containing the new activity.

@@ -28,6 +28,8 @@ let search_items = [
           9.666168, 
           40.080108
       ],
+      "lat":40.080108,
+      "lon":9.666168,
       "owner" : fakeuid,
       "category" : [3],
       "admins" : []
@@ -43,6 +45,8 @@ let search_items = [
           9.6378597, 
           40.283566
       ],
+      "lat":40.283566,
+      "lon":9.6378597,
       "owner" : fakeuid,
       "category" : [3],
       "admins" : []
@@ -59,6 +63,8 @@ let test_item = {
       8.4884164, 
       40.1054929
    ],
+  "lat":40.1054929,
+  "lon":8.4884164,
   "owner" : fakeuid,
   "category" : [3],
   "admins" : []

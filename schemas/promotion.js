@@ -10,7 +10,9 @@ var PromotionSchema = new mongoose.Schema({
   endDate     : Date,
   price       : Number,
   idcontent   : {type: mongoose.Schema.ObjectId, ref:'content'},
-  position    : {type: [Number], index: '2dsphere'} //[lon, lat]
+  position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
+  lat         : {type: Number, index:true},
+  lon         : {type: Number, index:true}
   //address
   //images
 },
@@ -92,7 +94,8 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
       });
 
       if(position) {
-        common.near(collectionName, position, query, qlimit, 'promos', (result, err) => {
+//        common.near(collectionName, position, query, qlimit, qskip, 'promos', (result, err) => {
+        common.hpNear(collectionName, position, query, qlimit, qskip, 'promos', (result, err) => {
           if(err) reject(err);
           else resolve(result);
         });

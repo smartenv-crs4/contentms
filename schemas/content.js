@@ -8,13 +8,14 @@ var ContentSchema = new mongoose.Schema({
   owner       : {type: mongoose.Schema.ObjectId, required:true},
   admins      : [mongoose.Schema.ObjectId],
   type        : String,
-  description : String,
+  description : String, 
   category    : [{type: Number, ref:'category'}],
   published   : Boolean,
   town        : String,
   address     : String,
   position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
-//  promotion   : [{type: mongoose.Schema.ObjectId, ref:'promotion'}]
+  lat         : {type: Number, index: true},
+  lon         : {type: Number, index: true}
 
 //      opens
 //      avatar
@@ -22,6 +23,58 @@ var ContentSchema = new mongoose.Schema({
 //      contacts
 },
 {versionKey:false});
+
+ContentSchema.index({ name: 'text', description: 'text'}, {name: 'text_index', weights: {name: 10, description: 5}});
+
+ContentSchema.statics.findFiltered = function(filter, limit, skip) {
+  const qlimit = limit != undefined ? Number(limit) : 20;
+  const qskip = skip != undefined ? Number(skip) : 0;
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      let query = {};
+      let position = undefined;
+      Object.keys(filter).forEach((key) => {
+        if(key == "position") {
+          position = common.getPosition(filter[key]);
+        }
+        else if(key == "text") {
+          query["$text"] = {
+            "$search": filter[key].join(' '),
+          }
+        }
+        else {
+          query[key] = {'$in' : filter[key]}
+        }
+      });
+      if(position) { 
+        common.hpNear(collectionName, position, query, qlimit, qskip, 'contents', (result, err) => {
+//        common.near(collectionName, position, query, qlimit, qskip, 'contents', (result, err) => {
+          if(err) reject(err);
+          else resolve(result);
+        });
+      }
+      else {
+        that.model(collectionName).find(query).count()
+        .then((count) => { //TODO serve davvero il totalCount? 
+          let options = {
+            skip:qskip, 
+            limit:qlimit, 
+            populate:require('propertiesmanager').conf.dbCollections.category
+          };
+          that.model(collectionName).find(query, null, options, function(e, cont) {
+            let result = {};
+            result.contents = cont;
+            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
+
+            if(e) reject(e);
+            else resolve(result);
+          })
+        })
+      }
+    }
+  );
+} 
 
 
 ContentSchema.statics.add = function(newitem) {
@@ -53,107 +106,6 @@ ContentSchema.statics.findById = function(id) {
     }
   );
 }
-
-/*
-// L'operatore spaziale $near usato in questa funzione non funziona su collection in sharding
-// ma si puo' usare all'interno di una find quindi con skip/limit e totalcount
-ContentSchema.statics.findFiltered_NOSHARD = function(filter, limit, skip) {
-  const qlimit = limit != undefined ? limit : 20;
-  const qskip = skip != undefined ? skip : 0;
-  var that = this;
-  return new Promise(
-    function(resolve, reject) {
-      let query = {};
-      Object.keys(filter).forEach((key) => {
-        if(key == "position") {
-          let lon   = Number(filter[key][0]);
-          let lat   = Number(filter[key][1]);
-          let dist  = Number(filter[key][2]) * 1000;
-          //WARNING $nearSphere non funziona con sharding
-          query[key] = {
-            '$nearSphere': {
-              '$geometry': {
-                type:'Point',
-                coordinates: [lon, lat]
-              }, 
-              '$maxDistance':dist
-            }
-          }
-        }
-        else if(key == "text") {
-          let re = new RegExp(filter[key].join('|'), 'i');
-          query['$or'] = [{name: {'$regex': re}}, {description: {'$regex': re}}];
-        }
-        else {
-          query[key] = {'$in' : filter[key]}
-        }
-      });
-      that.model(collectionName).find(query).count()
-      .then((count) => { //TODO serve davvero il totalCount? 
-        let options = {skip:qskip, limit:qlimit, populate:'category'};
-        that.model(collectionName).find(query, null, options, function(e, cont) {
-          let result = {};
-          result.contents = cont;
-          result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
-
-          if(e) reject(e);
-          else resolve(result);
-        })
-      });
-    }
-  );
-} 
-*/
-
-
-ContentSchema.statics.findFiltered = function(filter, limit, skip) {
-  const qlimit = limit != undefined ? limit : 20;
-  const qskip = skip != undefined ? skip : 0;
-  var that = this;
-  return new Promise(
-    function(resolve, reject) {
-      let query = {};
-      let position = undefined;
-      Object.keys(filter).forEach((key) => {
-        if(key == "position") {
-          position = common.getPosition(filter[key]);
-        }
-        else if(key == "text") {
-          let re = new RegExp(filter[key].join('|'), 'i');
-          query['$or'] = [{name: {'$regex': re}}, {description: {'$regex': re}}];
-        }
-        else {
-          query[key] = {'$in' : filter[key]}
-        }
-      });
-
-      if(position) { 
-        common.near(collectionName, position, query, qlimit, 'contents', (result, err) => {
-          if(err) reject(err);
-          else resolve(result);
-        });
-      }
-      else {
-        that.model(collectionName).find(query).count()
-        .then((count) => { //TODO serve davvero il totalCount? 
-          let options = {
-            skip:qskip, 
-            limit:qlimit, 
-            populate:require('propertiesmanager').conf.dbCollections.category
-          };
-          that.model(collectionName).find(query, null, options, function(e, cont) {
-            let result = {};
-            result.contents = cont;
-            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
-
-            if(e) reject(e);
-            else resolve(result);
-          })
-        })
-      }
-    }
-  );
-} 
 
 
 ContentSchema.statics.update = function(id, upd) {
@@ -249,4 +201,5 @@ ContentSchema.statics.delete = function(id) {
     }
   );
 }
+
 exports.content = mongoose.model(collectionName, ContentSchema);

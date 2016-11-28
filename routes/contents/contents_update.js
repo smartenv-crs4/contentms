@@ -7,10 +7,9 @@ var content = require('../../schemas/content.js').content;
  * @apiDescription Updates activity information, only the fields present in the request json body are updated.
  * @apiParam {String} id The id of the activity.
  * @apiExample Example: 
- *  //Updates only description and position fields
+ *  //Updates only description field
  *  {
  *    "description" : "description update for this activity",
- *    "position"    : [9.666168, 40.080108]
  *  }
  *
  * @apiSuccess (200) {Object} body The Json representing the updated activity.

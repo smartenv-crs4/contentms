@@ -27,7 +27,9 @@ var test_items = [
       "startDate"   : "2016-9-30",
       "endDate"     : "2016-9-30",
       "price"       : 25,
-      "position"    : [9.666168, 40.080108]
+      "position"    : [9.666168, 40.080108],
+      "lat"         : 40.080108,
+      "lon"         : 9.666168
     },
     {
       "name"        : "Autunno in barbagia - orgosolo",
@@ -36,7 +38,9 @@ var test_items = [
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-16",
       "price"       : 25,
-      "position"    : [9.3534625, 40.203488]
+      "position"    : [9.3534625, 40.203488],
+      "lat"         : 40.203488,
+      "lon"         : 9.3534625
     }];
 
 describe('--- Testing promotions crud ---', () => {
@@ -51,6 +55,8 @@ describe('--- Testing promotions crud ---', () => {
       "address"     : "localita' cala mosca",
       "category"    : 3,
       "position"    : [9.153488, 39.186334],
+      "lat"         : 39.186334,
+      "lon"         : 9.153488,
       "admins"      : [],
       "owner"       : fakeuid
     };
