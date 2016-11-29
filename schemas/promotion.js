@@ -17,6 +17,8 @@ var PromotionSchema = new mongoose.Schema({
   //images
 },
 {versionKey:false});
+
+PromotionSchema.index({ name: 'text', description: 'text'}, {name: 'text_index', weights: {name: 10, description: 5}});
  
 
 PromotionSchema.statics.add = function(newitem) {
@@ -64,8 +66,9 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
 
         //fulltext search
         else if(key == "text") {
-          let re = new RegExp(filter[key].join('|'), 'i');
-          query['$or'] = [{name: {'$regex': re}}, {description: {'$regex': re}}];
+          query["$text"] = {
+            "$search": filter[key].join(' '),
+          }
         }
 
         //date range search
@@ -121,6 +124,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
   
 PromotionSchema.statics.update = function(cid, pid, upd) {
   var that = this;
+  if(upd._id) delete upd._id;
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {

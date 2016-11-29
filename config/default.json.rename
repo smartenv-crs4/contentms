@@ -25,7 +25,8 @@
       "content"     : "content",
       "promotion"   : "promotion",
       "involvement" : "involvement",
-      "category"    : "categories"
+      "category"    : "categories",
+      "ships"       : "ship"
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",

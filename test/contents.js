@@ -192,6 +192,24 @@ describe('--- Testing contents crud ---', () => {
           }
         });
     });
+    it('perform a text search and respond with a one element array', (done) => {
+      let text_search = "terrazza panoramica";
+      request
+        .get(prefix + 'contents' + fakeuidpar + '&text=' + text_search)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(1);
+            res.body.contents[0].should.have.property("description");
+            res.body.contents[0].description.should.containEql(text_search);
+            done();
+          }
+        });
+    });
     it('run a geo query with 1km radius and respond with one element array', (done) => {
       let position_pars = [9.666168,40.080108,1];
       request

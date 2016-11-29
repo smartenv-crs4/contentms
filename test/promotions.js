@@ -182,7 +182,25 @@ describe('--- Testing promotions crud ---', () => {
             done();
           }
         });
-    });
+      });
+    it('perform a text search and respond with an array of one item', (done) => {
+      let text_search = "funghi porcini";
+      request
+        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("promos");
+            res.body.promos.should.be.instanceOf(Array);
+            res.body.promos.length.should.be.aboveOrEqual(1);
+            res.body.promos[0].should.have.property('description');
+            res.body.promos[0].description.should.containEql(text_search);
+            done();
+          }
+        })
+      });
     it('run a geo query with 1km radius and respond with just one item', (done) => {
       let position_pars = [9.3534625,40.203488,1];
       request
