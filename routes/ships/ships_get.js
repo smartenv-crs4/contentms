@@ -13,7 +13,7 @@ var ships = require('../../schemas/ships').ship;
  */
 module.exports = function(req, res, next) {
   let id = req.params.id;
-  ships.search(id)
+  ships.get(id)
   .then(result => {
     if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
       res.boom.notFound();
