@@ -38,7 +38,7 @@ ShipSchema.statics.search = function(filter, limit, skip) {
       let query = {};
       Object.keys(filter).forEach((key) => {
         if(key == "ship") //by ship name 
-          query["ship"] = filter[key]; 
+          query["ship"] = new RegExp(filter[key], "i"); 
 
         //date range search
         else if(key == "adate" || key == "ddate") {
@@ -76,11 +76,10 @@ ShipSchema.statics.search = function(filter, limit, skip) {
   );
 }
 
-//parameters: limit, skip, name
 ShipSchema.statics.get = function(id) {
   let that = this;
+  if(!id) reject({status:400, error:"bad code"})
   let query = {_id:id};
-
   return new Promise(
     function(resolve, reject) {
         that.model(collectionName).findOne(query, (e, result) => {
