@@ -6,13 +6,10 @@ var request = require('request-promise');
 var boom = require('express-boom');
 
 var cors = require('./middleware/cors');
-var routes = require('./routes/index');
 var apiV1 = require('./routes/apiV1');
 var config = require('propertiesmanager').conf;
 
 var app = express();
-
-let prefix = '/api/v1'; //TODO gestire meglio
 
 if(app.get('env') != 'test') {
   app.use(logger('dev'));
@@ -32,9 +29,8 @@ if(config.enableCors === true) {
 }
 
 //routes
-app.use('/', routes);
-app.use(prefix + '/doc', express.static('doc',{root:'doc'}));
-app.use(prefix, apiV1);
+app.use('/doc', express.static('doc',{root:'doc'}));
+app.use('/', apiV1);
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {

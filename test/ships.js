@@ -8,8 +8,7 @@ var should = require('should');
 var db = require('../lib/db');
 var ships = require('../schemas/ships').ship;
 var port = process.env.PORT || 3000;
-var baseUrl = 'http://localhost:' + port;
-var prefix = '/api/v1/';
+var baseUrl = 'http://localhost:' + port + '/';
 var request = supertest.agent(baseUrl);
 
 
@@ -75,7 +74,7 @@ describe('--- Testing ship scheduling crud ---', () => {
   describe('POST /ships', () => {
     it('respond with json Object containing the new ship sheduling', (done) => { 
       request
-        .post(prefix + 'ships')
+        .post('ships')
         .send(test_item)
         .expect('Content-Type', /json/)
         .expect('Location', /.+/)
@@ -95,7 +94,7 @@ describe('--- Testing ship scheduling crud ---', () => {
   describe('GET /ships/', () => {
     it('respond with json array of three elements', (done) => {
       request
-        .get(prefix + 'ships/')  
+        .get('ships/')  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -109,7 +108,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     });
     it('perform a search by date range and respond with an array of two elements', (done) => {
       request
-        .get(prefix + 'ships/' + "?adate=2016-12-05&ddate=2016-12-11")  
+        .get('ships/' + "?adate=2016-12-05&ddate=2016-12-11")  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -123,7 +122,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     });
     it('perform a search by time range and respond with an array of two elements', (done) => {
       request
-        .get(prefix + 'ships/' + "?adate=2016-12-11 16:30&ddate=2016-12-11 17:00")  
+        .get('ships/' + "?adate=2016-12-11 16:30&ddate=2016-12-11 17:00")  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -137,7 +136,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     });
     it('perform a search by date and respond with an array of three elements', (done) => {
       request
-        .get(prefix + 'ships/' + "?ddate=2016-12-31")  
+        .get('ships/' + "?ddate=2016-12-31")  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -152,7 +151,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     it('perform a search by ship name and respond with one element', (done) => {
       let name = "Queen";
       request
-        .get(prefix + 'ships/' + "?ship=" + name)  
+        .get('ships/' + "?ship=" + name)  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -170,7 +169,7 @@ describe('--- Testing ship scheduling crud ---', () => {
   describe('GET /ships/:id', () => {
     it('respond with json Object containing the last inserted ship sheduling', (done) => {
       request
-        .put(prefix + 'ships/' + new_items[2])
+        .put('ships/' + new_items[2])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -189,7 +188,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     let new_name = "Queen Of The Seas";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put(prefix + 'ships/' + new_items[2])
+        .put('ships/' + new_items[2])
         .send({"ship":new_name})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -208,7 +207,7 @@ describe('--- Testing ship scheduling crud ---', () => {
   describe('DELETE /ships:id', () => {
     it('respond with json Object containing the deleted scheduling', (done) => {
       request
-        .delete(prefix + 'ships/' + new_items[2])
+        .delete('ships/' + new_items[2])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -222,7 +221,7 @@ describe('--- Testing ship scheduling crud ---', () => {
     });
     it('respond with 404 error to confirm previous deletion', (done) => {
       request
-        .get(prefix + 'ships/' + new_items[2]) 
+        .get('ships/' + new_items[2]) 
         .expect(404)
         .end((err, res) => {
           if(err) done(err);

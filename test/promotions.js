@@ -9,8 +9,7 @@ var db = require('../lib/db');
 var promotions = require('../schemas/promotion');
 var contents = require('../schemas/content');
 var port = process.env.PORT || 3000;
-var baseUrl = 'http://localhost:' + port;
-var prefix = '/api/v1/';
+var baseUrl = 'http://localhost:' + port + '/';
 var request = supertest.agent(baseUrl);
 
 var init = require('../lib/init');
@@ -105,7 +104,7 @@ describe('--- Testing promotions crud ---', () => {
       let item = test_items[0];
       item.idcontent = father_id;
       request
-        .post(prefix + 'contents/' + father_id + '/promotions' + fakeuidpar)
+        .post('contents/' + father_id + '/promotions' + fakeuidpar)
         .send(item)
         .expect('Content-Type', /json/)
         .expect('Location', /.+/)
@@ -125,7 +124,7 @@ describe('--- Testing promotions crud ---', () => {
   describe('GET /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] + fakeuidpar) 
+        .get('contents/' + father_id + '/promotions/' + new_items[0] + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -145,7 +144,7 @@ describe('--- Testing promotions crud ---', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put(prefix + 'contents/' + father_id + '/promotions/' + new_items[2] + fakeuidpar)
+        .put('contents/' + father_id + '/promotions/' + new_items[2] + fakeuidpar)
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -165,7 +164,7 @@ describe('--- Testing promotions crud ---', () => {
   describe('GET /contents/:id/promotions/', () => {
     it('respond with json Object containing promo array of at least 2 items', (done) => {
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar)
+        .get('contents/' + father_id + '/promotions/' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -186,7 +185,7 @@ describe('--- Testing promotions crud ---', () => {
     it('perform a text search and respond with an array of one item', (done) => {
       let text_search = "funghi porcini";
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search)
+        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -204,7 +203,7 @@ describe('--- Testing promotions crud ---', () => {
     it('run a geo query with 1km radius and respond with just one item', (done) => {
       let position_pars = [9.3534625,40.203488,1];
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -220,7 +219,7 @@ describe('--- Testing promotions crud ---', () => {
     it('run a geo query with 50km radius and respond with two items', (done) => {
       let position_pars = [9.3534625,40.203488,50];
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -236,7 +235,7 @@ describe('--- Testing promotions crud ---', () => {
     it('run a geo query with 100km radius and a text filter, respond with one item', (done) => {
       let position_pars = [9.3534625,40.203488,100];
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString() + '&text=porcino')
+        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString() + '&text=porcino')
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -255,7 +254,7 @@ describe('--- Testing promotions crud ---', () => {
   describe('DELETE /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete(prefix + 'contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar)
+        .delete('contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -269,7 +268,7 @@ describe('--- Testing promotions crud ---', () => {
     })
     it('respond with 404 error to confirm previous deletion', (done) => {
       request
-        .get(prefix + 'contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar) 
+        .get('contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar) 
         .expect(404)
         .end((err, res) => {
           if(err) done(err);
@@ -283,7 +282,7 @@ describe('--- Testing promotions crud ---', () => {
     describe('POST /contents/:id/promotions/:pid/actions/{like,likes,unlike}', () => {
       it('(like) respond with 200 and {success:true}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -298,7 +297,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(like) duplication avoidance check, respond with 409 error:', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/like' + fakeuidpar)
           .expect(409)
           .end((err, res) => {
             if(err) done(err);
@@ -308,7 +307,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(likes) respond with 200 and {total: 1}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -327,7 +326,7 @@ describe('--- Testing promotions crud ---', () => {
     
       it('(unlike) respond with 200 and {success: true}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlike' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -342,7 +341,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(likes) respond with {total : 0} to confirm previous deletion', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -363,7 +362,7 @@ describe('--- Testing promotions crud ---', () => {
     describe('POST /contents/:id/promotions/:pid/actions/{participate,participants,unparticipate}', () => {
       it('(participate) respond with 200 and {success:true}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -378,7 +377,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(participate) duplication avoidance check, respond with 409 error:', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participate' + fakeuidpar)
           .expect(409)
           .end((err, res) => {
             if(err) done(err);
@@ -388,7 +387,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(participants) respond with 200 and {total: 1}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -407,7 +406,7 @@ describe('--- Testing promotions crud ---', () => {
     
       it('(unparticipate) respond with 200 and {success: true}', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -422,7 +421,7 @@ describe('--- Testing promotions crud ---', () => {
 
       it('(participants) respond with {total : 0} to confirm previous deletion', (done) => {
         request
-          .post(prefix + 'contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/participants' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {

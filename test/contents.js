@@ -7,8 +7,7 @@ var should = require('should');
 var db = require('../lib/db');
 var contents = require('../schemas/content');
 var port = process.env.PORT || 3000;
-var baseUrl = "http://localhost:" + port;
-var prefix = '/api/v1/';
+var baseUrl = "http://localhost:" + port + "/";
 var request = supertest.agent(baseUrl);
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
 var fakeuidpar = '?fakeuid=' + fakeuid
@@ -70,7 +69,8 @@ let test_item = {
   "admins" : []
 }
 
-describe('--- Testing contents crud ---', () => {
+
+describe('--- Testing contents microservice ---', () => {
   let search_items_ids = [];
   let new_item;
 
@@ -111,10 +111,27 @@ describe('--- Testing contents crud ---', () => {
   });
 
 
+  describe('GET /', () => {
+    it('respond with json Object containing ms name and version ', (done) => {
+      request
+        .get('') 
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("ms");
+            res.body.should.have.property("version");
+            done();
+          }
+        });
+    });
+  });
+
+
   describe('POST /contents/', () => {
     it('respond with json Object containing the new test item', (done) => {
       request
-        .post(prefix + 'contents' + fakeuidpar)
+        .post('contents' + fakeuidpar)
         .send(test_item)
         .expect('Content-Type', /json/)
         .expect('Location', /.+/)
@@ -136,7 +153,7 @@ describe('--- Testing contents crud ---', () => {
   describe('GET /contents/:id', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get(prefix + 'contents/' + new_item + fakeuidpar) 
+        .get('contents/' + new_item + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -155,7 +172,7 @@ describe('--- Testing contents crud ---', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put(prefix + 'contents/' + new_item + fakeuidpar)
+        .put('contents/' + new_item + fakeuidpar)
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -174,7 +191,7 @@ describe('--- Testing contents crud ---', () => {
   describe('GET /contents/', () => {
     it('respond with json Object containing contents array', (done) => {
       request
-        .get(prefix + 'contents' + fakeuidpar)
+        .get('contents' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -195,7 +212,7 @@ describe('--- Testing contents crud ---', () => {
     it('perform a text search and respond with a one element array', (done) => {
       let text_search = "terrazza panoramica";
       request
-        .get(prefix + 'contents' + fakeuidpar + '&text=' + text_search)
+        .get('contents' + fakeuidpar + '&text=' + text_search)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -213,7 +230,7 @@ describe('--- Testing contents crud ---', () => {
     it('run a geo query with 1km radius and respond with one element array', (done) => {
       let position_pars = [9.666168,40.080108,1];
       request
-        .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('contents' + fakeuidpar + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -229,7 +246,7 @@ describe('--- Testing contents crud ---', () => {
     it('run a geo query with 25km radius and respond with two elements array', (done) => {
       let position_pars = [9.666168,40.080108,25];
       request
-        .get(prefix + 'contents' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('contents' + fakeuidpar + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -248,7 +265,7 @@ describe('--- Testing contents crud ---', () => {
   describe('DELETE /contents/:id', () => {
     it('respond with json Object containing the deleted test doc', (done) => {
       request
-        .delete(prefix + 'contents/' + new_item + fakeuidpar)
+        .delete('contents/' + new_item + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -262,7 +279,7 @@ describe('--- Testing contents crud ---', () => {
     });
     it('respond with 404 error to confirm previous deletion', (done) => {
       request
-        .get(prefix + 'contents/' + new_item + fakeuidpar) 
+        .get('contents/' + new_item + fakeuidpar) 
         .expect(404)
         .end((err, res) => {
           if(err) done(err);
@@ -297,7 +314,7 @@ describe('--- Testing contents crud ---', () => {
       let newAdmin = "bbbbbbbbbbbbbbbbbbbbbbbb";
       it('respond with json Object containing the list of admins', (done) => {
         request
-          .post(prefix + 'contents/' + new_item + '/actions/addAdmin' + fakeuidpar)
+          .post('contents/' + new_item + '/actions/addAdmin' + fakeuidpar)
           .send({"userId":newAdmin})
           .expect('Content-Type', /json/)
           .expect(200)
@@ -314,7 +331,7 @@ describe('--- Testing contents crud ---', () => {
 
       it('respond with the list of admins without the previously inserted user (length 0)', (done) => {
         request
-          .post(prefix + 'contents/' + new_item + '/actions/removeAdmin' + fakeuidpar)
+          .post('contents/' + new_item + '/actions/removeAdmin' + fakeuidpar)
           .send({"userId":newAdmin})
           .expect('Content-Type', /json/)
           .expect(200)
@@ -334,7 +351,7 @@ describe('--- Testing contents crud ---', () => {
       let newCat = 111; //fake cat
       it('respond with json list of categories for this content', (done) => {
         request
-          .post(prefix + 'contents/' + new_item + '/actions/addCategory' + fakeuidpar)
+          .post('contents/' + new_item + '/actions/addCategory' + fakeuidpar)
           .send({"categoryId":newCat})
           .expect('Content-Type', /json/)
           .expect(200)
@@ -351,7 +368,7 @@ describe('--- Testing contents crud ---', () => {
 
       it('respond with the list of categories without the previously inserted category (length 1)', (done) => {
         request
-          .post(prefix + 'contents/' + new_item + '/actions/removeCategory' + fakeuidpar)
+          .post('contents/' + new_item + '/actions/removeCategory' + fakeuidpar)
           .send({"categoryId":newCat})
           .expect('Content-Type', /json/)
           .expect(200)

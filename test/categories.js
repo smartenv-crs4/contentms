@@ -8,8 +8,7 @@ var should = require('should');
 var db = require('../lib/db');
 var category = require('../schemas/category').category;
 var port = process.env.PORT || 3000;
-var baseUrl = 'http://localhost:' + port;
-var prefix = '/api/v1/';
+var baseUrl = 'http://localhost:' + port + '/';
 var request = supertest.agent(baseUrl);
 
 
@@ -64,7 +63,7 @@ describe('--- Testing category crud ---', () => {
     it('respond with json Object containing the new category', (done) => { 
       let item = test_items[0];
       request
-        .post(prefix + 'categories')
+        .post('categories')
         .send(item)
         .expect('Content-Type', /json/)
         .expect('Location', /.+/)
@@ -84,7 +83,7 @@ describe('--- Testing category crud ---', () => {
   describe('GET /categories/', () => {
     it('respond with json array of three elements', (done) => {
       request
-        .get(prefix + 'categories/')  
+        .get('categories/')  
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -101,7 +100,7 @@ describe('--- Testing category crud ---', () => {
   describe('GET /categories/:id', () => {
     it('respond with json Object containing the last inserted category', (done) => {
       request
-        .put(prefix + 'categories/' + new_items[2])
+        .put('categories/' + new_items[2])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -120,7 +119,7 @@ describe('--- Testing category crud ---', () => {
     let new_desc = "nuova descrizione";
     it('respond with json Object containing the test doc updated', (done) => {
       request
-        .put(prefix + 'categories/' + new_items[2])
+        .put('categories/' + new_items[2])
         .send({"description":new_desc})
         .expect('Content-Type', /json/)
         .expect(200)
@@ -139,7 +138,7 @@ describe('--- Testing category crud ---', () => {
   describe('DELETE /categories/:id', () => {
     it('respond with json Object containing the deleted category', (done) => {
       request
-        .delete(prefix + 'categories/' + new_items[2])
+        .delete('categories/' + new_items[2])
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -153,7 +152,7 @@ describe('--- Testing category crud ---', () => {
     });
     it('respond with 404 error to confirm previous deletion', (done) => {
       request
-        .get(prefix + 'categories/' + new_items[2]) 
+        .get('categories/' + new_items[2]) 
         .expect(404)
         .end((err, res) => {
           if(err) done(err);
