@@ -24,7 +24,7 @@ function authWrap(req, res, next) {
 }
 
 
-router.get("/", authWrap, (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
+router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
 
 //contents
 router.get("/contents/",        authWrap, require('./contents/contents_search'));
