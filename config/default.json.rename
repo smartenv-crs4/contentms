@@ -1,6 +1,6 @@
 {
   "production": {
-    "dbHost":"localhost",
+    "dbHost":"your_db_host",
     "dbPort":"27017",
     "dbName":"contents",
     "enableCors":true,
@@ -13,12 +13,14 @@
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
-    "authPort":"3000",
+    "authPort":"80",
+    "apiGwAuthBaseUrl":"/api/auth",
+    "apiVersion":"v1",
     "decodedTokenFieldName": "contentms",
     "auth_token":"your_auth_service_token"
   },
   "test": {
-    "dbHost":"localhost",
+    "dbHost":"your_db_host",
     "dbPort":"27017",
     "dbName":"contents_test",
     "enableCors":true,
@@ -31,7 +33,9 @@
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
-    "authPort":"3000",
+    "authPort":"80",
+    "apiGwAuthBaseUrl":"/api/auth",
+    "apiVersion":"v1",
     "decodedTokenFieldName": "contentms",
     "auth_token":"your_auth_service_token"
   }
