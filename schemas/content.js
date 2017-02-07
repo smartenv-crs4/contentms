@@ -43,6 +43,9 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
             "$search": filter[key].join(' '),
           }
         }
+        else if(key == "by_uid") {
+          query["$or"] = [ {'admins': {'$in' : filter[key]}}, {'owner': filter[key][0]}]
+        }
         else {
           query[key] = {'$in' : filter[key]}
         }

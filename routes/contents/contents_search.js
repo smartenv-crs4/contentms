@@ -8,6 +8,7 @@ var content = require('../../schemas/content.js').content;
  * @apiParam {String} [text] Text to search for in the description and name fields.
  * @apiParam {String} [type] The type of activity.
  * @apiParam {String} [town] The town of the activity.
+ * @apiParam {String} [by_uid] The Admin user unique ID.
  * @apiParam {Number} [category] The category id, based on those present in categories.
  * @apiParam {Number[]} [position] Three element array: lon, lat, distance. Keep the order.
  *
