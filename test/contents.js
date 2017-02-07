@@ -10,6 +10,8 @@ var port = process.env.PORT || 3000;
 var baseUrl = "http://localhost:" + port + "/";
 var request = supertest.agent(baseUrl);
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
+var admin1 =   'bbbbbbbbbbbbbbbbbbbbbbbb';
+var admin2 =   'cccccccccccccccccccccccc';
 var fakeuidpar = '?fakeuid=' + fakeuid
 
 
@@ -31,7 +33,7 @@ let search_items = [
       "lon":9.666168,
       "owner" : fakeuid,
       "category" : [3],
-      "admins" : []
+      "admins" : [admin1]
   },
 
   {
@@ -48,7 +50,7 @@ let search_items = [
       "lon":9.6378597,
       "owner" : fakeuid,
       "category" : [3],
-      "admins" : []
+      "admins" : [admin2]
   }
 ]
 
@@ -223,6 +225,70 @@ describe('--- Testing contents microservice ---', () => {
             res.body.contents.length.should.be.equal(1);
             res.body.contents[0].should.have.property("description");
             res.body.contents[0].description.should.containEql(text_search);
+            done();
+          }
+        });
+    });
+    it('perform a search by admin id and responds with a three element array', (done) => {
+      let by_uid = fakeuid;
+      request
+        .get('contents' + fakeuidpar + '&by_uid=' + by_uid)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(3);
+            done();
+          }
+        });
+    });
+    it('perform a search by admin id and responds with one element', (done) => {
+      let by_uid = admin1;
+      request
+        .get('contents' + fakeuidpar + '&by_uid=' + by_uid)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(1);
+            res.body.contents[0].admins[0].should.be.equal(admin1);
+            done();
+          }
+        });
+    });
+    it('perform a search by multiple admin ids and responds with a two elements array', (done) => {
+      request
+        .get('contents' + fakeuidpar + '&by_uid=' + admin1 + '&by_uid=' + admin2)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(2);
+            done();
+          }
+        });
+    });
+    it('perform a mixed search by admin id and text, responds with one element', (done) => {
+      request
+        .get('contents' + fakeuidpar + '&by_uid=' + admin1 + '&by_uid=' + admin2 + '&text=terrazza')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err,res) => {
+          if(err) done(err);
+          else {
+            res.body.should.have.property("contents");
+            res.body.contents.should.be.instanceOf(Array);
+            res.body.contents.length.should.be.equal(1);
+            res.body.contents[0].admins[0].should.be.equal(admin2);
             done();
           }
         });
