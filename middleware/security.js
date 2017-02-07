@@ -10,8 +10,8 @@ module.exports = {
     .then(c => {
       if(!uid)
         res.boom.forbidden('User identifier missing')
-      else if(uid in c.admins || uid == c.owner)
-        next();
+      else if((c.admins.indexOf(uid) != -1) || uid == c.owner) 
+        next(); 
       else
         res.boom.forbidden('You are not administrator for this content');
     })
