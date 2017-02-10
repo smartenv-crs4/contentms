@@ -22,6 +22,7 @@
     "request": "^2.74.0",
     "request-promise": "^4.0.2",
     "tokenmanager": "^1.0.24",
+    "underscore": "^1.8.3",
     "validator": "^6.1.0"
   },
   "devDependencies": {

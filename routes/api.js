@@ -1,13 +1,17 @@
 var express = require('express');
 var config = require('propertiesmanager').conf;
 var router = express.Router();
+var _=require('underscore');
 
 var security = require('../middleware/security');
 var auth = require('tokenmanager'); 
 var authField = config.decodedTokenFieldName;
 
+var gwBase=_.isEmpty(config.apiGwAuthBaseUrl) ? "" : config.apiGwAuthBaseUrl;
+gwBase=_.isEmpty(config.apiVersion) ? gwBase : gwBase + "/" + config.apiVersion;
+
 auth.configure({
-  authoritationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort + config.apiGwAuthBaseUrl + "/" + config.apiVersion,
+  authoritationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort + gwBase,
   decodedTokenFieldName:config.decodedTokenFieldName,
   access_token:config.auth_token
 });
