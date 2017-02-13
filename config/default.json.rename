@@ -13,9 +13,9 @@
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
-    "authPort":"80",
-    "apiGwAuthBaseUrl":"/api/auth",
-    "apiVersion":"v1",
+    "authPort":"3000",
+    "apiGwAuthBaseUrl":"",
+    "apiVersion":"",
     "decodedTokenFieldName": "contentms",
     "auth_token":"your_auth_service_token"
   },
@@ -33,9 +33,9 @@
     },
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
-    "authPort":"80",
-    "apiGwAuthBaseUrl":"/api/auth",
-    "apiVersion":"v1",
+    "authPort":"3000",
+    "apiGwAuthBaseUrl":"",
+    "apiVersion":"",
     "decodedTokenFieldName": "contentms",
     "auth_token":"your_auth_service_token"
   }
