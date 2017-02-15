@@ -38,7 +38,7 @@ module.exports = function(req, res, next) {
 
   promotion.findFiltered(filter, limit, skip)
   .then(result => {
-    res.send(result);
+    res.json(result);
   })
   .catch(e => { 
     console.log(e);
