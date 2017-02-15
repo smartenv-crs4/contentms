@@ -1,4 +1,55 @@
-var content = require('../../schemas/content').content;
+const content = require('../../schemas/content').content;
+const involvements  = require('../../schemas/involvement').involvement;
+const authField = require('propertiesmanager').conf.decodedTokenFieldName;
+
+function involve(req, res, type) {
+  let uid = req[authField]._id
+  if(!uid) {res.boom.badRequest('Missing user id');}
+  else {
+    involvements.add(req.params.id, uid, type)
+    .then((r) => {res.json(r)})
+    .catch((e) => {
+      if(e.status === 409)
+        res.boom.conflict(e.error);
+      else {
+        console.log(e);
+        res.boom.badImplementation(e.error);
+      }
+    });
+  }
+}
+
+
+function uninvolve(req, res, type) {
+  let uid = req[authField]._id
+  if(!uid) {res.boom.badRequest('Missing user id');}
+  else {
+    involvements.delete(req.params.id, uid, type)
+    .then((r) => {res.json(r)})
+    .catch((e) => {
+      console.log(e)
+      switch(e.status) {
+        case 404: 
+          res.boom.notFound();
+          break;
+        default:
+          res.boom.badImplementation(e.error);
+          break;
+      }
+    });
+  }
+}
+
+
+function count(req, res, type) {
+  let id = req.params.id;
+  involvements.countByType(id, type)
+  .then((c) => {res.json({"id":id, "total":c, "type":type})})
+  .catch((e) => {
+    console.log(e)
+    res.boom.badImplementation();
+  })
+}
 
 //aggregate common operations in one place
 function actionWrap(f, res) {
@@ -12,6 +63,62 @@ function actionWrap(f, res) {
 
 
 module.exports = {
+/**
+ * @api {POST} /contents/:id/actions/like Add one like to the content
+ * @apiGroup Content
+ *
+ * @apiDescription Adds one user like to the content.
+ * @apiParam {String} id The id of the related content.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiError (409) {Object} 409_Conflict duplicated like for the user
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+  like : (req, res, next) => {
+    involve(req, res, 'like')
+  },
+
+/**
+ * @api {POST} /contents/:id/actions/unlike Remove a like from the content
+ * @apiGroup Content
+ *
+ * @apiDescription Removes the user like from the content
+ * @apiParam {String} id The id of the related content.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+  unlike : (req, res, next) => {
+    uninvolve(req, res, 'like');
+  },
+
+/**
+ * @api {POST} /contents/:id/actions/likes Count the number of likes
+ * @apiGroup Content
+ *
+ * @apiDescription Returns the total count of likes for the content
+ * @apiParam {String} id The id of the related content.
+ *
+ * @apiSuccess (200) {Object} body Count information:
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "id": "57d0396d5ea81b820f36e41b",
+ *       "total": "10",
+ *       "type": "like"
+ *     }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+  likes: (req, res, next) => {
+    count(req, res, 'like');
+  },
 
 /**
  * @api {POST} /contents/:id/actions/addAdmin Add a new admin to the content

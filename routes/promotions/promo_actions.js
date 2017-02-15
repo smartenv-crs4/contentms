@@ -44,7 +44,7 @@ function uninvolve(req, res, type) {
 function count(req, res, type) {
   let pid = req.params.pid;
   involvements.countByType(pid, type)
-  .then((c) => {res.json({"promo":pid, "total":c, "type":type})})
+  .then((c) => {res.json({"id":pid, "total":c, "type":type})})
   .catch((e) => {
     console.log(e)
     res.boom.badImplementation();
@@ -100,7 +100,7 @@ module.exports = {
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "promo": "57d0396d5ea81b820f36e41b",
+ *       "id": "57d0396d5ea81b820f36e41b",
  *       "total": "10",
  *       "type": "like"
  *     }
@@ -160,7 +160,7 @@ module.exports = {
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "promo": "57d0396d5ea81b820f36e41b",
+ *       "id": "57d0396d5ea81b820f36e41b",
  *       "total": "10",
  *       "type": "participation"
  *     }

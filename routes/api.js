@@ -43,6 +43,9 @@ router.post("/contents/:id/actions/addAdmin",       authWrap, security.isContent
 router.post("/contents/:id/actions/removeAdmin",    authWrap, security.isContentAdmin, require('./contents/contents_actions').removeAdmin);
 router.post("/contents/:id/actions/addCategory",    authWrap, security.isContentAdmin, require('./contents/contents_actions').addCategory);
 router.post("/contents/:id/actions/removeCategory", authWrap, security.isContentAdmin, require('./contents/contents_actions').removeCategory);
+router.post("/contents/:id/actions/like",           authWrap, require('./contents/contents_actions').like);
+router.post("/contents/:id/actions/unlike",         authWrap, require('./contents/contents_actions').unlike);
+router.post("/contents/:id/actions/likes",          authWrap, require('./contents/contents_actions').likes);
 
 
 //promotions

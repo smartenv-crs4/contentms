@@ -2,19 +2,19 @@ var mongoose = require('mongoose');
 var collectionName = require('propertiesmanager').conf.dbCollections.involvement;
 
 var InvolvementSchema = new mongoose.Schema({
-  idpromo   : mongoose.Schema.ObjectId,
-  iduser    : mongoose.Schema.ObjectId,
-  type      : String
+  id      : mongoose.Schema.ObjectId,
+  iduser  : mongoose.Schema.ObjectId,
+  type    : String
 },
 {versionKey:false});
 
-InvolvementSchema.index({idpromo:1, iduser:1, type:1},{unique:true});
+InvolvementSchema.index({id:1, iduser:1, type:1},{unique:true});
 
 InvolvementSchema.statics.add = function(pid, uid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      let like = new that({iduser:uid, idpromo:pid, type:type});
+      let like = new that({iduser:uid, id:pid, type:type});
       like.save()
       .then(() => {resolve({success:true})})
       .catch((e) => {
@@ -33,7 +33,7 @@ InvolvementSchema.statics.delete = function(pid, uid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).remove({idpromo:pid, iduser:uid}, function(e, removed) {
+      that.model(collectionName).remove({id:pid, iduser:uid}, function(e, removed) {
         if(e) {
           switch(e.name) { 
             case 'CastError':
@@ -55,7 +55,7 @@ InvolvementSchema.statics.countByType = function(pid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).count({idpromo:pid, type:type}, function(e, c) {
+      that.model(collectionName).count({id:pid, type:type}, function(e, c) {
         if(e) reject({status:500, error:"server error"});
         else resolve(c);
       });

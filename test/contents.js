@@ -378,7 +378,7 @@ describe('--- Testing contents microservice ---', () => {
 
     describe('POST /contents/:id/actions/{addAdmin,removeAdmin}', () => {
       let newAdmin = "bbbbbbbbbbbbbbbbbbbbbbbb";
-      it('respond with json Object containing the list of admins', (done) => {
+      it('(addAdmin) respond with json containing the list of admins', (done) => {
         request
           .post('contents/' + new_item + '/actions/addAdmin' + fakeuidpar)
           .send({"userId":newAdmin})
@@ -395,7 +395,7 @@ describe('--- Testing contents microservice ---', () => {
           });
       });
 
-      it('respond with the list of admins without the previously inserted user (length 0)', (done) => {
+      it('(removeAdmin) respond without the previously inserted user (length 0)', (done) => {
         request
           .post('contents/' + new_item + '/actions/removeAdmin' + fakeuidpar)
           .send({"userId":newAdmin})
@@ -412,10 +412,9 @@ describe('--- Testing contents microservice ---', () => {
           });
       });
     });
-
     describe('POST /contents/:id/actions/{addCategory,removeCategory}', () => {
       let newCat = 111; //fake cat
-      it('respond with json list of categories for this content', (done) => {
+      it('(addCategory) respond with json list of categories', (done) => {
         request
           .post('contents/' + new_item + '/actions/addCategory' + fakeuidpar)
           .send({"categoryId":newCat})
@@ -432,7 +431,7 @@ describe('--- Testing contents microservice ---', () => {
           });
       });
 
-      it('respond with the list of categories without the previously inserted category (length 1)', (done) => {
+      it('(removeCategory) respond with a list  without the previously inserted category (length 1)', (done) => {
         request
           .post('contents/' + new_item + '/actions/removeCategory' + fakeuidpar)
           .send({"categoryId":newCat})
@@ -447,6 +446,85 @@ describe('--- Testing contents microservice ---', () => {
               done();
             }
           });
+      });
+    });
+    describe('POST /contents/:id/actions/{like,unlike,likes}', () => {
+      it('(like) respond with 200 and {success:true}', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/like' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
+          })
+      });
+
+      it('(like) duplication avoidance check, respond with 409 error:', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/like' + fakeuidpar)
+          .expect(409)
+          .end((err, res) => {
+            if(err) done(err);
+            else done();
+          });
+      });
+
+      it('(likes) respond with 200 and {total: 1}', (done) => {
+        request
+          .post('contents/' + new_item +'/actions/likes' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_item+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(1);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("like");
+              done()
+            }
+          })
+      });
+    
+      it('(unlike) respond with 200 and {success: true}', (done) => {
+        request
+          .post('contents/' + new_item +'/actions/unlike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("success");
+              res.body.success.should.be.equal(true);
+              done()
+            }
+          })
+      });
+
+      it('(likes) respond with {total : 0} to confirm previous deletion', (done) => {
+        request
+          .post('contents/' + new_item +'/actions/likes' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_item+'');
+              res.body.should.have.property("total");
+              res.body.total.should.be.equal(0);
+              res.body.should.have.property("type");
+              res.body.type.should.be.equal("like");
+              done()
+            }
+          })
       });
     });
   });

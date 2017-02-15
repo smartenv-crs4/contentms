@@ -313,8 +313,8 @@ describe('--- Testing promotions crud ---', () => {
           .end((err, res) => {
             if(err) done(err);
             else {
-              res.body.should.have.property("promo");
-              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_items[0]+'');
               res.body.should.have.property("total");
               res.body.total.should.be.equal(1);
               res.body.should.have.property("type");
@@ -347,8 +347,8 @@ describe('--- Testing promotions crud ---', () => {
           .end((err, res) => {
             if(err) done(err);
             else {
-              res.body.should.have.property("promo");
-              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_items[0]+'');
               res.body.should.have.property("total");
               res.body.total.should.be.equal(0);
               res.body.should.have.property("type");
@@ -393,8 +393,8 @@ describe('--- Testing promotions crud ---', () => {
           .end((err, res) => {
             if(err) done(err);
             else {
-              res.body.should.have.property("promo");
-              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_items[0]+'');
               res.body.should.have.property("total");
               res.body.total.should.be.equal(1);
               res.body.should.have.property("type");
@@ -427,13 +427,13 @@ describe('--- Testing promotions crud ---', () => {
           .end((err, res) => {
             if(err) done(err);
             else {
-              res.body.should.have.property("promo");
-              res.body.promo.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_items[0]+'');
               res.body.should.have.property("total");
               res.body.total.should.be.equal(0);
               res.body.should.have.property("type");
               res.body.type.should.be.equal("participation");
-              done()
+              done();
             }
           })
       });
