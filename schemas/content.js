@@ -15,12 +15,12 @@ var ContentSchema = new mongoose.Schema({
   address     : String,
   position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat         : {type: Number, index: true},
-  lon         : {type: Number, index: true}
+  lon         : {type: Number, index: true},
+  images      : [String] //puo' contenere url o objectid TODO rifinire
 
+//      contacts //TODO dovrebbe essere un oggetto variabile (mail, fb, twitter, tel...)
 //      opens
 //      avatar
-//      images
-//      contacts
 },
 {versionKey:false});
 
@@ -65,7 +65,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
             limit:qlimit, 
             populate:require('propertiesmanager').conf.dbCollections.category
           };
-          that.model(collectionName).find(query, null, options, function(e, cont) {
+          that.model(collectionName).find(query, null, options).lean().exec(function(e, cont) {
             let result = {};
             result.contents = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
@@ -102,7 +102,7 @@ ContentSchema.statics.findById = function(id) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOne({_id:id}, function(e, cont) {
+      that.model(collectionName).findOne({_id:id}).lean().exec(function(e, cont) {
         if(e) reject(e);
         else resolve(cont);
       });

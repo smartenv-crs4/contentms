@@ -1,4 +1,5 @@
 var promotion = require('../../schemas/promotion.js').promotion;
+var common = require('../../lib/common.js');
 
 /**
  * @api {get} /contents/:id/promotions/:pid Get promotions by id 
@@ -19,8 +20,10 @@ module.exports = function(req, res, next) {
   .then(result => {
     if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
       res.boom.notFound();
-    else 
+    else { 
+      result.images = common.uniform(result.images);
       res.send(result);
+    }
   })
   .catch(e => {
     console.log(e);

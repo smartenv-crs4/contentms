@@ -12,9 +12,9 @@ var PromotionSchema = new mongoose.Schema({
   idcontent   : {type: mongoose.Schema.ObjectId, ref:'content'},
   position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat         : {type: Number, index:true},
-  lon         : {type: Number, index:true}
-  //address
-  //images
+  lon         : {type: Number, index:true},
+  address     : String,
+  images      : [String] //puo' contenere url o objectid TODO rifinire
 },
 {versionKey:false});
 
@@ -42,7 +42,7 @@ PromotionSchema.statics.findById = function(cid, pid) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOne({_id:pid, idcontent:cid}, function(e, cont) {
+      that.model(collectionName).findOne({_id:pid, idcontent:cid}).lean().exec(function(e, cont) {
         if(e) reject(e);
         else resolve(cont);
       });
@@ -107,7 +107,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {skip:qskip, limit:qlimit};
-          that.model(collectionName).find(query, null, options, function(e, cont) {
+          that.model(collectionName).find(query, null, options).lean().exec(function(e, cont) {
             let result = {};
             result.promos = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}

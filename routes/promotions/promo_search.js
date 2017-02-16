@@ -1,4 +1,5 @@
 var promotion = require('../../schemas/promotion.js').promotion;
+var common = require('../../lib/common.js');
 
 /**
  * @api {get} /contents/:id/promotions/ Search for promotions on the portal 
@@ -38,6 +39,7 @@ module.exports = function(req, res, next) {
 
   promotion.findFiltered(filter, limit, skip)
   .then(result => {
+    result.images = common.uniform(result.images);
     res.json(result);
   })
   .catch(e => { 

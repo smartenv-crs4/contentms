@@ -11,6 +11,7 @@
       "category"    : "categories",
       "ship"        : "ship"
     },
+    "uploadMsUrl":"the_images_upload_service_url",
     "authProtocol":"http",
     "authHost":"your_auth_service_host",
     "authPort":"3000",

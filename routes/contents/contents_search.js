@@ -1,4 +1,5 @@
 var content = require('../../schemas/content.js').content;
+var common = require('../../lib/common.js');
 
 /**
  * @api {get} /contents/ Search for activities on the portal 
@@ -39,6 +40,7 @@ module.exports = function(req, res, next) {
 
   content.findFiltered(filter, limit, skip)
   .then(result => {
+    result.images = common.uniform(result.images);
     res.json(result);
   })
   .catch(e => { 
