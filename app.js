@@ -28,6 +28,7 @@ if(config.enableCors === true) {
   app.use(cors);
 }
 
+
 //routes
 app.use('/doc', express.static('doc',{root:'doc'}));
 app.use('/', api);

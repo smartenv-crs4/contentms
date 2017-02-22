@@ -15,7 +15,7 @@ var validator = require('validator');
  *    "published"   : "true",
  *    "town"        : "baunei",
  *    "address"     : "via cagliari, 1",
- *    "category"    : 3,
+ *    "category"    : [3,6],
  *    "lat"         : 40.080108,
  *    "lon"         : 9.666168
  *  }
