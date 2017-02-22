@@ -18,7 +18,7 @@ module.exports = function(req, res, next) {
     if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
       res.boom.notFound();
     else 
-      res.send(result);
+      res.json(result);
   })
   .catch(e => {
     console.log(e);

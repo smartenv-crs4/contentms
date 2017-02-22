@@ -22,7 +22,7 @@ module.exports = function(req, res, next) {
       res.boom.notFound();
     else { 
       result.images = common.uniform(result.images);
-      res.send(result);
+      res.json(result);
     }
   })
   .catch(e => {
