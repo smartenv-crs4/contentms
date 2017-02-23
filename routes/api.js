@@ -46,6 +46,7 @@ router.post("/contents/:id/actions/removeCategory", authWrap, security.isContent
 router.post("/contents/:id/actions/like",           authWrap, require('./contents/contents_actions').like);
 router.post("/contents/:id/actions/unlike",         authWrap, require('./contents/contents_actions').unlike);
 router.post("/contents/:id/actions/likes",          authWrap, require('./contents/contents_actions').likes);
+router.post("/contents/:id/actions/rate",           authWrap, require('./contents/contents_actions').rate);
 
 
 //promotions
@@ -63,6 +64,7 @@ router.post("/contents/:id/promotions/:pid/actions/likes",          authWrap, re
 router.post("/contents/:id/promotions/:pid/actions/participate",    authWrap, require('./promotions/promo_actions').participate);
 router.post("/contents/:id/promotions/:pid/actions/unparticipate",  authWrap, require('./promotions/promo_actions').unparticipate);
 router.post("/contents/:id/promotions/:pid/actions/participants",   authWrap, require('./promotions/promo_actions').participants);
+router.post("/contents/:id/promotions/:pid/actions/rate",           authWrap, require('./promotions/promo_actions').rate);
 
 
 //categories crud

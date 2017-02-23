@@ -20,7 +20,8 @@ var promotion = require('../../schemas/promotion.js').promotion;
  *     ],
  *     "price" : 25,
  *     "startDate" : ISODate("2016-09-29T22:00:00.000Z"),
- *     "type" : "offer"
+ *     "type" : "offer",
+ *     "images" : ["0123456789abcdef","http://www.google.it/img.png"]
  *  }
  *
  * @apiSuccess (201 - CREATED) {Object} body The Json containing the new promotion.

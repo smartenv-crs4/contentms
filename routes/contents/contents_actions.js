@@ -1,6 +1,7 @@
 const content = require('../../schemas/content').content;
 const involvements  = require('../../schemas/involvement').involvement;
 const authField = require('propertiesmanager').conf.decodedTokenFieldName;
+const validator = require('validator');
 
 function involve(req, res, type) {
   let uid = req[authField]._id
@@ -118,6 +119,39 @@ module.exports = {
  */
   likes: (req, res, next) => {
     count(req, res, 'like');
+  },
+
+/**
+ * @api {POST} /contents/:id/actions/rate updates the user rate for the content
+ * @apiGroup Content
+ *
+ * @apiDescription Adds one user like to the content.
+ * @apiParam {String} id The id of the related content.
+ * @apiParam {Number} the rating value between 1 and 5.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+  rate : (req, res, next) => {
+    let uid = req[authField]._id
+    if(!uid) {res.boom.badRequest('Missing user id');}
+    else {
+      let rate = req.params.rate;
+      if(rate == undefined || !validator.isInt(rate, { min: 1, max: 5 })) {
+        res.boom.badRequest("invalid rating value (min 1 max 5)");
+        return;
+      }
+      else {
+        involvements.rate(req.params.id, uid, rate)
+        .then((r) => {res.json(r)})
+        .catch((e) => {
+          console.log(e);
+          res.boom.badImplementation(e.error);
+        });
+      }
+    }
   },
 
 /**
