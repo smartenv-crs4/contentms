@@ -16,7 +16,8 @@ var ContentSchema = new mongoose.Schema({
   position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat         : {type: Number, index: true},
   lon         : {type: Number, index: true},
-  images      : [String] //puo' contenere url o objectid TODO rifinire
+  images      : [String], //puo' contenere url o objectid TODO rifinire
+  avatar      : String
 
 //      contacts //TODO dovrebbe essere un oggetto variabile (mail, fb, twitter, tel...)
 //      opens
