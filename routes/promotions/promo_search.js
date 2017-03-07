@@ -24,23 +24,12 @@ module.exports = function(req, res, next) {
   let limit = req.query.limit;
   let skip = req.query.skip;
   filter['idcontent'] = req.params.id;
-  allowed_keys.forEach((key) => {
-    let value = req.query[key];
-    if(value != undefined) {
-      if(Array.isArray(value)) {
-        for(let el in value) {
-          let varr = value[el].split(",");
-          if(filter[key] == undefined) filter[key] = varr;
-          else if(one_instance_keys.indexOf(key) == -1) filter[key] = filter[key].concat(varr);
-        }
-      }
-      else filter[key] = value.split(",");
-    }
-  });
+
+  common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
   promotion.findFiltered(filter, limit, skip)
   .then(result => {
-    result.images = common.uniform(result.images);
+    result.images = common.uniformImages(result.images);
     res.json(result);
   })
   .catch(e => { 

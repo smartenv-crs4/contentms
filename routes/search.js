@@ -26,27 +26,15 @@ module.exports = function(req, res, next) {
   let limit = req.query.limit;
   let skip = req.query.skip;
   let type = req.query.t;
-  allowed_keys.forEach((key) => {
-    let value = req.query[key];
-    if(value != undefined) {
-      if(Array.isArray(value)) {
-        for(let el in value) {
-          let varr = value[el].split(",");
-          if(filter[key] == undefined) filter[key] = varr;
-          else if(one_instance_keys.indexOf(key) == -1) filter[key] = filter[key].concat(varr);
-        }
-      }
-      else filter[key] = value.split(",");
-    }
-  });
 
+  common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
 
     pexe.findFiltered(filter, limit, skip)
       .then(result => {
-        result.images = common.uniform(result.images);
+        result.images = common.uniformImages(result.images);
         res.json(result);
       })
       .catch(e => {
@@ -60,8 +48,8 @@ module.exports = function(req, res, next) {
       promo.findFiltered(filter, limit, skip)
     ])
     .then(result => {
-      result[0].images = common.uniform(result[0].images);
-      result[1].images = common.uniform(result[1].images);
+      result[0].images = common.uniformImages(result[0].images);
+      result[1].images = common.uniformImages(result[1].images);
       let wholeresult = {
         contents:result[0].contents,
         promos:result[1].promos,
