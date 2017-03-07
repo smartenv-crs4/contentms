@@ -25,6 +25,7 @@ module.exports = function(req, res, next) {
   let filter = {};
   let limit = req.query.limit;
   let skip = req.query.skip;
+  let type = req.query.t;
   allowed_keys.forEach((key) => {
     let value = req.query[key];
     if(value != undefined) {
@@ -40,22 +41,38 @@ module.exports = function(req, res, next) {
   });
 
 
-  Promise.all([
-    content.findFiltered(filter, limit, skip),
-    promo.findFiltered(filter,limit,skip)
-  ])
-  .then(result => {
-    result[0].images = common.uniform(result[0].images);
-    result[1].images = common.uniform(result[1].images);
-    let wholeresult = {
-      contents:result[0].contents,
-      promotions:result[1].promos,
-      metadata:result[0].metadata
-    }
-    res.json(wholeresult);
-  })
-  .catch(e => { 
-    console.log(e);
-    res.boom.badImplementation();
-  });  
+  if(type == "promo" || type == "content") {
+    let pexe = (type == "promo") ? promo : content;
+
+    pexe.findFiltered(filter, limit, skip)
+      .then(result => {
+        result.images = common.uniform(result.images);
+        res.json(result);
+      })
+      .catch(e => {
+        console.log(e);
+        res.boom.badImplementation();
+      });
+  }
+  else {
+    Promise.all([
+      content.findFiltered(filter, limit, skip),
+      promo.findFiltered(filter, limit, skip)
+    ])
+    .then(result => {
+      result[0].images = common.uniform(result[0].images);
+      result[1].images = common.uniform(result[1].images);
+      let wholeresult = {
+        contents:result[0].contents,
+        promos:result[1].promos,
+        metadata:result[0].metadata
+      }
+      res.json(wholeresult);
+    })
+    .catch(e => {
+      console.log(e);
+      res.boom.badImplementation();
+    });
+  }
+
 }
