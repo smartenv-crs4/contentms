@@ -30,6 +30,10 @@ function authWrap(req, res, next) {
 
 router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
 
+//search su contents e promotions
+router.get("/search", authWrap, require('./search'));
+
+
 //contents
 router.get("/contents/",        authWrap, require('./contents/contents_search'));
 router.get("/contents/:id",     authWrap, require('./contents/contents_get'));
@@ -74,14 +78,5 @@ router.get("/categories/:id",     authWrap, require('./categories/cat_get'));
 router.post("/categories/",       authWrap, require('./categories/cat_insert'));
 router.put("/categories/:id",     authWrap, require('./categories/cat_update'));
 router.delete("/categories/:id",  authWrap, require('./categories/cat_delete'));
-
-//ship schedule crud
-//TODO deve essere system admin
-//TODO spostare in ms indipendente????
-router.get("/ships/",        authWrap, require('./ships/ships_search'));
-router.get("/ships/:id",     authWrap, require('./ships/ships_get'));
-router.post("/ships/",       authWrap, require('./ships/ships_insert'));
-router.put("/ships/:id",     authWrap, require('./ships/ships_update'));
-router.delete("/ships/:id",  authWrap, require('./ships/ships_delete'));
 
 module.exports = router;

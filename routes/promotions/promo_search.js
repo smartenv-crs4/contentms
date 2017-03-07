@@ -18,11 +18,12 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "position", "sdate", "edate", "text", "idcontent"];
+  let allowed_keys = ["type", "position", "sdate", "edate", "text"];
   let one_instance_keys = ["sdate", "edate", "position"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
   let skip = req.query.skip;
+  filter['idcontent'] = req.params.id;
   allowed_keys.forEach((key) => {
     let value = req.query[key];
     if(value != undefined) {

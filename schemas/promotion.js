@@ -57,6 +57,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
   return new Promise(
     function(resolve, reject) {
       let query = {};
+
+      if(filter.idcontent) //search solo su promotion di un contenuto
+        query['$and'] = [{'idcontent':filter.idcontent}];
+
       let position = undefined;
       Object.keys(filter).forEach((key) => {
         //distance search
@@ -80,7 +84,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
             if(sdate) qEndDate = {'$gte': new Date(sdate)};
             if(edate) qStartDate = {'$lte':new Date(edate)};
 
-            if(edate && sdate) query['$and'] = [{'startDate':qStartDate}, {'endDate': qEndDate}];
+            if(edate && sdate) query['$and'].concat([{'startDate':qStartDate}, {'endDate': qEndDate}]);
             else if(sdate) query['endDate'] = qEndDate;
             else if(edate) query['startDate'] = qStartDate;
           }
