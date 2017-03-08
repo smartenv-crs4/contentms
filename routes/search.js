@@ -28,11 +28,11 @@ module.exports = function(req, res, next) {
   let type = req.query.t;
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
-
+  let requiredFields = ['name','description','category'];
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
 
-    pexe.findFiltered(filter, limit, skip)
+    pexe.findFiltered(filter, limit, skip, requiredFields)
       .then(result => {
         result.images = common.uniformImages(result.images);
         res.json(result);
@@ -44,8 +44,8 @@ module.exports = function(req, res, next) {
   }
   else {
     Promise.all([
-      content.findFiltered(filter, limit, skip),
-      promo.findFiltered(filter, limit, skip)
+      content.findFiltered(filter, limit, skip, requiredFields),
+      promo.findFiltered(filter, limit, skip, requiredFields)
     ])
     .then(result => {
       result[0].images = common.uniformImages(result[0].images);

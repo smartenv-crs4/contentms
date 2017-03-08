@@ -27,7 +27,7 @@ var ContentSchema = new mongoose.Schema({
 
 ContentSchema.index({ name: 'text', description: 'text'}, {name: 'text_index', weights: {name: 10, description: 5}});
 
-ContentSchema.statics.findFiltered = function(filter, limit, skip) {
+ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? Number(limit) : 20;
   const qskip = skip != undefined ? Number(skip) : 0;
   var that = this;
@@ -66,7 +66,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip) {
             limit:qlimit, 
             populate:require('propertiesmanager').conf.dbCollections.category
           };
-          that.model(collectionName).find(query, null, options).lean().exec(function(e, cont) {
+          that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
             let result = {};
             result.contents = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}

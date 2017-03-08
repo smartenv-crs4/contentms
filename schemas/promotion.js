@@ -50,7 +50,7 @@ PromotionSchema.statics.findById = function(cid, pid) {
   );
 }
 
-PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
+PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? limit : 20;
   const qskip = skip != undefined ? skip : 0;
   var that = this;
@@ -111,7 +111,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip) {
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {skip:qskip, limit:qlimit};
-          that.model(collectionName).find(query, null, options).lean().exec(function(e, cont) {
+          that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
             let result = {};
             result.promos = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}

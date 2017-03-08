@@ -21,7 +21,7 @@ module.exports = function(req, res, next) {
     if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
       res.boom.notFound();
     else { 
-      result.images = common.uniform(result.images);
+      result.images = common.uniformImages(result.images);
       res.json(result);
     }
   })
