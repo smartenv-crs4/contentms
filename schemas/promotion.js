@@ -81,12 +81,15 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
             let sdate = filter["sdate"];
             let edate = filter["edate"];
 
-            if(sdate) qFromStart = {'$gte': new Date(sdate)};
-            if(edate) qBeforeEnd = {'$lte':new Date(edate)};
+            if(sdate) qEnd = {'$gte': new Date(sdate)};
+            if(edate) qStart = {'$lte':new Date(edate)};
 
-            if(edate && sdate) query['$and'].concat([{'startDate':qFromStart}, {'endDate': qBeforeEnd}]);
-            else if(sdate) query['endDate'] = qFromStart;
-            else if(edate) query['startDate'] = qBeforeEnd;
+            // promo che intersecano il periodo sdate-edate
+            if(edate && sdate) query['$and'].concat([{'startDate':qStart}, {'endDate': qEnd}]);
+
+            //promo attive da sdate in poi (che finiscono dopo sdate)
+            else if(sdate) query['endDate'] = qEnd;
+            //else if(edate) query['startDate'] = qBeforeEnd;
           }
           catch(e) {
             console.log(e);
