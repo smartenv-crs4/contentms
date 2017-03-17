@@ -81,12 +81,12 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
             let sdate = filter["sdate"];
             let edate = filter["edate"];
 
-            if(sdate) qEndDate = {'$gte': new Date(sdate)};
-            if(edate) qStartDate = {'$lte':new Date(edate)};
+            if(sdate) qFromStart = {'$gte': new Date(sdate)};
+            if(edate) qBeforeEnd = {'$lte':new Date(edate)};
 
-            if(edate && sdate) query['$and'].concat([{'startDate':qStartDate}, {'endDate': qEndDate}]);
-            else if(sdate) query['endDate'] = qEndDate;
-            else if(edate) query['startDate'] = qStartDate;
+            if(edate && sdate) query['$and'].concat([{'startDate':qFromStart}, {'endDate': qBeforeEnd}]);
+            else if(sdate) query['endDate'] = qFromStart;
+            else if(edate) query['startDate'] = qBeforeEnd;
           }
           catch(e) {
             console.log(e);
