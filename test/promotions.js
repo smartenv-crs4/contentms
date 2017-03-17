@@ -200,6 +200,42 @@ describe('--- Testing promotions crud ---', () => {
           }
         })
       });
+    it('perform a text and daterange search and respond with an empty array', (done) => {
+        let text_search = "funghi porcini";
+        let date_search = "2016-10-15"
+        request
+            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search + '&sdate=' + date_search)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err,res) => {
+                if(err) done(err);
+                else {
+                    res.body.should.have.property("promos");
+                    res.body.promos.should.be.instanceOf(Array);
+                    res.body.promos.length.should.be.equal(0);
+                    done();
+                }
+            })
+        });
+    it('perform a text and daterange search and respond with an array of one element', (done) => {
+        let text_search = "artigianato";
+        let date_search = "2016-10-15"
+        request
+            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search + '&sdate=' + date_search)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err,res) => {
+                if(err) done(err);
+                else {
+                    res.body.should.have.property("promos");
+                    res.body.promos.should.be.instanceOf(Array);
+                    res.body.promos.length.should.be.equal(1);
+                    res.body.promos[0].should.have.property('description');
+                    res.body.promos[0].description.should.containEql(text_search);
+                    done();
+                }
+            })
+        });
     it('run a geo query with 1km radius and respond with just one item', (done) => {
       let position_pars = [9.3534625,40.203488,1];
       request

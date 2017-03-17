@@ -29,7 +29,9 @@ module.exports = function(req, res, next) {
 
   promotion.findFiltered(filter, limit, skip)
   .then(result => {
-    result.images = common.uniformImages(result.images);
+    for(let rid in result.promos) {
+      result.promos[rid].images = common.uniformImages(result.promos[rid].images);
+    }
     res.json(result);
   })
   .catch(e => { 

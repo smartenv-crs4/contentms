@@ -62,6 +62,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         query['$and'] = [{'idcontent':filter.idcontent}];
 
       let position = undefined;
+      let skipTime = false;
       Object.keys(filter).forEach((key) => {
         //distance search
         if(key == "position") {
@@ -76,7 +77,8 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         }
 
         //date range search
-        else if(key == "sdate" || key == "edate") {
+        else if(!skipTime && (key == "sdate" || key == "edate")) {
+          skipTime = true;
           try {
             let sdate = filter["sdate"];
             let edate = filter["edate"];
