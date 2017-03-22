@@ -51,8 +51,8 @@ PromotionSchema.statics.findById = function(cid, pid) {
 }
 
 PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
-  const qlimit = limit != undefined ? limit : 20;
-  const qskip = skip != undefined ? skip : 0;
+  const qlimit = limit ? Number(limit) : 20;
+  const qskip = skip ? Number(skip) : 0;
   var that = this;
   return new Promise(
     function(resolve, reject) {
