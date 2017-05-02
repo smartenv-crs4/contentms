@@ -25,7 +25,7 @@ var ContentSchema = new mongoose.Schema({
 },
 {versionKey:false});
 
-ContentSchema.index({ name: 'text', description: 'text'}, {name: 'text_index', weights: {name: 10, description: 5}});
+ContentSchema.index({ name: 'text', description: 'text', town: 'text'}, {name: 'text_index', weights: {name: 10, town: 8, description: 5}});
 
 ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? Number(limit) : 20;
