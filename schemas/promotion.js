@@ -14,11 +14,12 @@ var PromotionSchema = new mongoose.Schema({
   lat         : {type: Number, index:true},
   lon         : {type: Number, index:true},
   address     : String,
+  town        : String,
   images      : [String] //puo' contenere url o objectid TODO rifinire
 },
 {versionKey:false});
 
-PromotionSchema.index({ name: 'text', description: 'text'}, {name: 'text_index', weights: {name: 10, description: 5}});
+PromotionSchema.index({ name: 'text', description: 'text', town: 'text'}, {name: 'text_index', weights: {name: 10, town: 8, description: 5}});
  
 
 PromotionSchema.statics.add = function(newitem) {
