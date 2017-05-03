@@ -10,6 +10,7 @@ var PromotionSchema = new mongoose.Schema({
   endDate     : Date,
   price       : Number,
   idcontent   : {type: mongoose.Schema.ObjectId, ref:'content'},
+  category    : [{type: Number, ref:'category'}],
   position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat         : {type: Number, index:true},
   lon         : {type: Number, index:true},
@@ -116,7 +117,11 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
       else {
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
-          let options = {skip:qskip, limit:qlimit};
+          let options = {
+            skip:qskip, 
+            limit:qlimit,
+            populate:require('propertiesmanager').conf.dbCollections.category
+          };
           that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
             let result = {};
             result.promos = cont;

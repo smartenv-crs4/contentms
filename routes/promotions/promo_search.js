@@ -18,7 +18,7 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "position", "sdate", "edate", "text"];
+  let allowed_keys = ["type", "position", "sdate", "edate", "text", "category"];
   let one_instance_keys = ["sdate", "edate", "position"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
