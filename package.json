@@ -18,7 +18,7 @@
     "express-boom": "^1.0.0",
     "mongoose": "^4.5.7",
     "morgan": "~1.7.0",
-    "propertiesmanager": "^1.0.4",
+    "propertiesmanager": "^2.0.1",
     "request": "^2.74.0",
     "request-promise": "^4.0.2",
     "tokenmanager": "^1.0.24",
