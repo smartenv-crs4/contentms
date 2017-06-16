@@ -67,4 +67,16 @@ router.post("/categories/",       security.authWrap, require('./categories/cat_i
 router.put("/categories/:id",     security.authWrap, require('./categories/cat_update'));
 router.delete("/categories/:id",  security.authWrap, require('./categories/cat_delete'));
 
+
+/* GET environment info page. */
+router.get('/env', function(req, res) {
+    var env;
+    if (process.env['NODE_ENV'] === 'dev')
+        env='dev';
+    else
+        env='production';
+
+    res.status(200).send({env:env});
+});
+
 module.exports = router;
