@@ -7,11 +7,9 @@ var security = require('../middleware/security');
 var auth = require('tokenmanager'); 
 var authField = config.decodedTokenFieldName;
 
-var gwBase=_.isEmpty(config.apiGwAuthBaseUrl) ? "" : config.apiGwAuthBaseUrl;
-gwBase=_.isEmpty(config.apiVersion) ? gwBase : gwBase + "/" + config.apiVersion;
 
 auth.configure({
-  authorizationMicroserviceUrl:config.authProtocol + "://" + config.authHost + ":" + config.authPort + gwBase + '/tokenactions/checkiftokenisauth',
+  authorizationMicroserviceUrl:config.authUrl + '/tokenactions/checkiftokenisauth',
   decodedTokenFieldName:config.decodedTokenFieldName,
   authorizationMicroserviceToken:config.auth_token
 });

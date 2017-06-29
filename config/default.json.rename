@@ -11,14 +11,10 @@
       "category"    : "categories",
       "ship"        : "ship"
     },
-    "uploadMsUrl":"the_images_upload_service_url",
-    "authProtocol":"http",
-    "authHost":"your_auth_service_host",
-    "authPort":"3000",
-    "apiGwAuthBaseUrl":"",
-    "apiVersion":"",
-    "decodedTokenFieldName": "contentms",
-    "auth_token":"your_auth_service_token"
+    "authUrl":"your_auth_service_url",
+    "uploadUrl":"your_upload_service_url",
+    "auth_token":"your_auth_service_token",
+    "decodedTokenFieldName": "contentms"
   },
   "test": {
     "dbHost":"your_db_host",
@@ -32,12 +28,9 @@
       "category"    : "categories",
       "ship"        : "ship"
     },
-    "authProtocol":"http",
-    "authHost":"your_auth_service_host",
-    "authPort":"3000",
-    "apiGwAuthBaseUrl":"",
-    "apiVersion":"",
-    "decodedTokenFieldName": "contentms",
-    "auth_token":"your_auth_service_token"
+    "authUrl":"your_auth_service_url",
+    "uploadUrl":"your_upload_service_url",
+    "auth_token":"your_auth_service_token",
+    "decodedTokenFieldName": "contentms"
   }
 }
