@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var collectionName = require('propertiesmanager').conf.dbCollections.promotion;
 var common = require('./common');
+var moment = require('moment');
 
 var PromotionSchema = new mongoose.Schema({
   name        : String,
@@ -53,8 +54,8 @@ PromotionSchema.statics.findById = function(cid, pid) {
 }
 
 PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
-  const qlimit = limit ? Number(limit) : 20;
-  const qskip = skip ? Number(skip) : 0;
+  const qlimit = limit != undefined ? Number(limit) : 20;
+  const qskip = skip != undefined ? Number(skip) : 0;
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -84,15 +85,19 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
           try {
             let sdate = filter["sdate"];
             let edate = filter["edate"];
-
-            if(sdate) qEnd = {'$gte': new Date(sdate)};
-            if(edate) qStart = {'$lte':new Date(edate)};
+            let qStart  = sdate ? new Date(sdate) : undefined;
+            let qEnd    = edate ? new Date(edate) : undefined;
 
             // promo che intersecano il periodo sdate-edate
-            if(edate && sdate) query['$and'].concat([{'startDate':qStart}, {'endDate': qEnd}]);
+            if(edate && sdate) {               
+                if(!query['$and']) query['$and'] = [];
+                query['$and'].push({'startDate': {'$lte': qEnd}}); //iniziano prima della fine del periodo
+                query['$and'].push({'endDate': {'$gte': qStart}}); //finiscono dopo l'inizio del periodo
+            }
 
             //promo attive da sdate in poi (che finiscono dopo sdate)
-            else if(sdate) query['endDate'] = qEnd;
+            else if(sdate) query['endDate'] = {'$gte': qStart};
+
             //else if(edate) query['startDate'] = qBeforeEnd;
           }
           catch(e) {
@@ -102,7 +107,8 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         }
 
         //other search params, multiple instances allowed
-        else {
+        else if(key != 'sdate' && key != 'text' & key != 'edate') {
+            console.log()
           query[key] = {'$in' : filter[key]}
         }
       });
@@ -115,13 +121,15 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
+        console.log(query)
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
-            skip:qskip, 
+            skip:qskip,
             limit:qlimit,
             populate:require('propertiesmanager').conf.dbCollections.category
           };
+
           that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
             let result = {};
             result.promos = cont;

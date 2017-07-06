@@ -28,9 +28,15 @@ module.exports = function(req, res, next) {
   let type = req.query.t;
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
+
   let requiredFields = ['name','description','category'];
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
+    if(type=='promo') {
+      requiredFields.push('idcontent');
+      requiredFields.push('startDate');
+      requiredFields.push('endDate');
+    }
 
     pexe.findFiltered(filter, limit, skip, requiredFields)
       .then(result => {
