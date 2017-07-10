@@ -75,7 +75,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         //fulltext search
         else if(key == "text") {
           query["$text"] = {
-            "$search": filter[key].join(' '),
+            "$search": filter[key].join(' ')
           }
         }
 
@@ -107,7 +107,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         }
 
         //other search params, multiple instances allowed
-        else if(key != 'sdate' && key != 'text' & key != 'edate') {
+        else if(key != 'sdate' && key != 'text' & key != 'edate'){
             console.log()
           query[key] = {'$in' : filter[key]}
         }
@@ -121,7 +121,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
-        console.log(query)
+console.log(query);              
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {

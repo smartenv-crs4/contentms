@@ -34,6 +34,7 @@ module.exports = function(req, res, next) {
     let pexe = (type == "promo") ? promo : content;
     if(type=='promo') {
       requiredFields.push('idcontent');
+      requiredFields.push('town');
       requiredFields.push('startDate');
       requiredFields.push('endDate');
     }
