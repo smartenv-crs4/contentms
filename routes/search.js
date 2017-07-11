@@ -37,6 +37,7 @@ module.exports = function(req, res, next) {
       requiredFields.push('town');
       requiredFields.push('startDate');
       requiredFields.push('endDate');
+      requiredFields.push('images');
     }
 
     pexe.findFiltered(filter, limit, skip, requiredFields)
