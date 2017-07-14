@@ -117,7 +117,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
 //        common.near(collectionName, position, query, qlimit, qskip, 'promos', (result, err) => {
         common.hpNear(collectionName, position, query, qlimit, qskip, 'promos', (result, err) => {
           if(err) reject(err);
-          else resolve(result);
+          else {
+            result.metadata = {limit: qlimit, skip: qskip, totalCount: result.promos.length};
+            resolve(result);
+          }
         });
       }
       else {
@@ -133,8 +136,7 @@ console.log(query);
           that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
             let result = {};
             result.promos = cont;
-            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}
-
+            result.metadata = {limit:qlimit, skip:qskip, totalCount:count}            
             if(e) reject(e);
             else resolve(result);
           })
