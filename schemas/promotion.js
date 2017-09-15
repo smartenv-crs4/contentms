@@ -144,6 +144,9 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
 PromotionSchema.statics.update = function(cid, pid, upd) {
   var that = this;
   if(upd._id) delete upd._id;
+  if(upd.creationDate) delete upd.creationDate;
+  if(upd.lastUpdate) delete upd.lastUpdate;
+  
   upd.lastUpdate = new Date();
   return new Promise(
     function(resolve, reject) {
