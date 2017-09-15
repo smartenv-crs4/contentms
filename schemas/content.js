@@ -4,21 +4,22 @@ var collectionName = require('propertiesmanager').conf.dbCollections.content;
 var common = require('./common');
 
 var ContentSchema = new mongoose.Schema({
-  name        : String,
-  lastUpdate  : Date,
-  owner       : {type: mongoose.Schema.ObjectId, required:true},
-  admins      : [mongoose.Schema.ObjectId],
-  type        : String,
-  description : String, 
-  category    : [{type: Number, ref:'category'}],
-  published   : Boolean,
-  town        : String,
-  address     : String,
-  position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
-  lat         : {type: Number, index: true},
-  lon         : {type: Number, index: true},
-  images      : [String], //puo' contenere url o objectid TODO rifinire
-  avatar      : String
+  name          : String,
+  lastUpdate    : Date,
+  creationDate  : {type: Date, default: Date.now},
+  owner         : {type: mongoose.Schema.ObjectId, required:true},
+  admins        : [mongoose.Schema.ObjectId],
+  type          : String,
+  description   : String, 
+  category      : [{type: Number, ref:'category'}],
+  published     : Boolean,
+  town          : String,
+  address       : String,
+  position      : {type: [Number], index: '2dsphere'}, //[lon, lat]
+  lat           : {type: Number, index: true},
+  lon           : {type: Number, index: true},
+  images        : [String], //puo' contenere url o objectid TODO rifinire
+  avatar        : String
 
 //      contacts //TODO dovrebbe essere un oggetto variabile (mail, fb, twitter, tel...)
 //      opens

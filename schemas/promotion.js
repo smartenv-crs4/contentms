@@ -4,21 +4,22 @@ var common = require('./common');
 var moment = require('moment');
 
 var PromotionSchema = new mongoose.Schema({
-  name        : String,
-  type        : String,
-  description : String,
-  lastUpdate  : Date,
-  startDate   : Date,
-  endDate     : Date,
-  price       : Number,
-  idcontent   : {type: mongoose.Schema.ObjectId, ref:'content'},
-  category    : [{type: Number, ref:'category'}],
-  position    : {type: [Number], index: '2dsphere'}, //[lon, lat]
-  lat         : {type: Number, index:true},
-  lon         : {type: Number, index:true},
-  address     : String,
-  town        : String,
-  images      : [String] //puo' contenere url o objectid TODO rifinire
+  name          : String,
+  type          : String,
+  description   : String,
+  creationDate  : {type:Date, default: Date.now},
+  lastUpdate    : Date,
+  startDate     : Date,
+  endDate       : Date,
+  price         : Number,
+  idcontent     : {type: mongoose.Schema.ObjectId, ref:'content'},
+  category      : [{type: Number, ref:'category'}],
+  position      : {type: [Number], index: '2dsphere'}, //[lon, lat]
+  lat           : {type: Number, index:true},
+  lon           : {type: Number, index:true},
+  address       : String,
+  town          : String,
+  images        : [String] //puo' contenere url o objectid TODO rifinire
 },
 {versionKey:false});
 
@@ -57,6 +58,7 @@ PromotionSchema.statics.findById = function(cid, pid) {
 PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? Number(limit) : 20;
   const qskip = skip != undefined ? Number(skip) : 0;
+  let skipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde']
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -67,6 +69,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
 
       let position = undefined;
       let skipTime = false;
+      let skipUpdateTime = false;
       Object.keys(filter).forEach((key) => {
         //distance search
         if(key == "position") {
@@ -83,41 +86,23 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
           }
         }
 
+        //last update & insert
+        else if(!skipUpdateTime && (key == "mds" || key == "mde")) {
+            skipUpdateTime = true;
+            setDateRange(filter["mds"], filter["mde"], "lastUpdate", "lastUpdate", query);
+            //setDateRange(filter["mds"], filter["mde"], "creationDate", "creationDate", query);
+        }
 
         //date range search
         else if(!skipTime && (key == "sdate" || key == "edate")) { //skiptime serve a saltare sdate o edate nei cicli successivi
-          skipTime = true;
-          setDateRange(filter["sdate"], filter["edate"], "startDate", "endDate", query);
-/*
-          try {
-            let sdate = filter["sdate"];
-            let edate = filter["edate"];
-            let qStart  = sdate ? new Date(sdate) : undefined;
-            let qEnd    = edate ? new Date(edate) : undefined;
-
-            // promo che intersecano il periodo sdate-edate
-            if(edate && sdate) {
-                if(!query['$and']) query['$and'] = [];
-                query['$and'].push({'startDate': {'$lte': qEnd}}); //iniziano prima della fine del periodo
-                query['$and'].push({'endDate': {'$gte': qStart}}); //finiscono dopo l'inizio del periodo
-            }
-
-            //promo attive da sdate in poi (che finiscono dopo sdate)
-            else if(sdate) query['endDate'] = {'$gte': qStart};
-
-            //else if(edate) query['startDate'] = qBeforeEnd;
-          }
-          catch(e) {
-            console.log(e);
-            reject({status:400, error:'wrong date syntax'})
-          }
-*/
+            skipTime = true;
+            setDateRange(filter["sdate"], filter["edate"], "startDate", "endDate", query);
         }
 
-        //other search params, multiple instances allowed
-        else if(key != 'sdate' && key != 'text' & key != 'edate'){
-            console.log()
-          query[key] = {'$in' : filter[key]}
+        //other search params, multiple instances allowed        
+        else if(skipKeys.indexOf(key) == -1) {
+        //else if(key != 'sdate' && key != 'text' & key != 'edate' & key ){            
+            query[key] = {'$in' : filter[key]}
         }
       });
 
@@ -132,7 +117,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
-//console.log(query);              
+console.log(JSON.stringify(query));
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
@@ -154,38 +139,11 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   );
 }
 
-function setDateRange (sdate, edate, pnameStart, pnameStop, query) {
-    try {
-        let qobjstart = {};
-        let qobjend = {};
-        let qStart  = sdate ? new Date(sdate) : undefined; //TODO usare moment con locale???
-        let qEnd    = edate ? new Date(edate) : undefined;
-
-        // promo che intersecano il periodo sdate-edate
-        if(edate && sdate) {
-            if(!query['$and']) query['$and'] = [];
-            qobjstart[pnameStart] = {'$lte':qEnd};
-            qobjend[pnameStop] = {'$gte':qStart};
-            query['$and'].push(qobjstart); //iniziano prima della fine del periodo
-            query['$and'].push(qobjend); //finiscono dopo l'inizio del periodo
-        }
-
-        //da sdate in poi (che finiscono dopo sdate)
-        else if(sdate) query[pnameStop] = {'$gte': qStart};
-
-        else if(edate) query[pnameStart] = {'$lte': qEnd};
-    }
-    catch(e) {
-        console.log(e);
-        reject({status:400, error:'wrong date syntax'})
-    }
-
-}
-
   
 PromotionSchema.statics.update = function(cid, pid, upd) {
   var that = this;
   if(upd._id) delete upd._id;
+  upd.lastUpdate = new Date();
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {
@@ -228,3 +186,31 @@ PromotionSchema.statics.delete = function(cid, pid) {
 }
 
 exports.promotion = mongoose.model(collectionName, PromotionSchema);
+
+//methods - TODO spostare
+function setDateRange (sdate, edate, pnameStart, pnameStop, query) {
+    try {
+        let qobjstart = {};
+        let qobjend = {};
+        let qStart  = sdate ? new Date(sdate) : undefined; //TODO usare moment con locale???
+        let qEnd    = edate ? new Date(edate) : undefined;
+
+        // promo che intersecano il periodo sdate-edate
+        if(edate && sdate) {
+            if(!query['$and']) query['$and'] = [];
+            qobjstart[pnameStart] = {'$lte':qEnd};
+            qobjend[pnameStop] = {'$gte':qStart};
+            query['$and'].push(qobjstart); //iniziano prima della fine del periodo
+            query['$and'].push(qobjend); //finiscono dopo l'inizio del periodo
+        }
+
+        //da sdate in poi (che finiscono dopo sdate)
+        else if(sdate) query[pnameStop] = {'$gte': qStart};
+
+        else if(edate) query[pnameStart] = {'$lte': qEnd};
+    }
+    catch(e) {
+        console.log(e);
+        reject({status:400, error:'wrong date syntax'})
+    }
+}

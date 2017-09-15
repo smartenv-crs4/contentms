@@ -20,16 +20,16 @@ var common = require('../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "category", "town", "position", "text", "sdate", "edate"];
-  let one_instance_keys = ["position", "edate", "sdate"]; //viene considerata solo la prima occorrenza nel url
+  let allowed_keys = ["type", "category", "town", "position", "text", "sdate", "edate", "mds", "mde"];
+  let one_instance_keys = ["position", "edate", "sdate", "mds", "mde"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
-  let skip = req.query.skip;
+  let skip  = req.query.skip;
   let type = req.query.t;
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  let requiredFields = ['name','description','category'];
+  let requiredFields = ['name','description','category', 'lastUpdate', 'creationDate']; //field richiesti in output dalla query
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
     if(type=='promo') {
