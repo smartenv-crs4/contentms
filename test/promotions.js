@@ -30,6 +30,17 @@ var test_items = [
       "lat"         : 40.080108,
       "lon"         : 9.666168
     },
+     {
+      "name"        : "Redentore - nuoro",
+      "type"        : "offer",
+      "description" : "Manifestazione folkloristica locale",
+      "startDate"   : "2016-10-14",
+      "endDate"     : "2016-10-20",
+      "price"       : 0,
+      "position"    : [9.368859, 40.203488],
+      "lat"         : 40.203488,
+      "lon"         : 9.368859
+    },
     {
       "name"        : "Autunno in barbagia - orgosolo",
       "type"        : "offer",
@@ -40,68 +51,85 @@ var test_items = [
       "position"    : [9.3534625, 40.203488],
       "lat"         : 40.203488,
       "lon"         : 9.3534625
-    }];
+    }
+];
 
 describe('--- Testing promotions crud ---', () => {
 
-  before((done) => {
-    let content_father = {
-      "name"        : "Da Gianni",
-      "type"        : "activity",
-      "description" : "Ristorante tipico inserimento di test",
-      "published"   : "true",
-      "town"        : "Cagliari",
-      "address"     : "localita' cala mosca",
-      "category"    : 3,
-      "position"    : [9.153488, 39.186334],
-      "lat"         : 39.186334,
-      "lon"         : 9.153488,
-      "admins"      : [],
-      "owner"       : fakeuid
-    };
+    before((done) => {
+        let content_father = {
+          "name"        : "Da Gianni",
+          "type"        : "activity",
+          "description" : "Ristorante tipico inserimento di test",
+          "published"   : "true",
+          "town"        : "Cagliari",
+          "address"     : "localita' cala mosca",
+          "category"    : 3,
+          "position"    : [9.153488, 39.186334],
+          "lat"         : 39.186334,
+          "lon"         : 9.153488,
+          "admins"      : [],
+          "owner"       : fakeuid
+        };
 
-    init.start(() => { 
-      (new contents.content(content_father))
-      .save()
-      .then((r) => {
-        father_id = r._id;
-        let promise_arr = [];
-        test_items.forEach((item) => {
-          item.idcontent = father_id;
-          promise_arr.push(
-            (new promotions.promotion(item))
+        init.start(() => { 
+            (new contents.content(content_father))
             .save()
-            .then((rr) => {
-              new_items.push(rr._id);
+            .then((r) => {
+                father_id = r._id;
+                let promise_arr = [];
+                test_items.forEach((item) => {
+                    item.idcontent = father_id;
+                    promise_arr.push(
+                        new Promise((resolve, reject) => {
+                            (new promotions.promotion(item))
+                            .save()
+                            .then((rr) => {
+                                new_items.push(rr._id);
+                                resolve(rr._id);
+                            })
+                            .catch(e => {throw(e),reject();})
+                        })
+                    )                                     
+                })               
+                Promise.all(promise_arr)
+                .then((v) => {
+                    done();
+                })
             })
-            .catch(e => {throw(e)})
-          );
+            .catch((e) => {
+                console.log(e);
+                process.exit();         
+            });
+        });
+    });
+
+    after((done) => {
+        let promise_arr = [];
+        new_items.forEach((item) => {
+            promise_arr.push(promotions.promotion.delete(father_id, item));
         })
-
-        Promise.all(promise_arr).then(() => { done(); });
-      })
-      .catch((e) => {
-        console.log(e);
-        process.exit();
-      });
+        promise_arr.push(contents.content.delete(father_id));
+        Promise.all(promise_arr).then(() => {
+            init.stop(() => {done()});
+        });
     });
-  });
-
-  after((done) => {
-    let promise_arr = [];
-    new_items.forEach((item) => {
-      promise_arr.push(promotions.promotion.delete(father_id, item));
-    })
-    promise_arr.push(contents.content.delete(father_id));
-    Promise.all(promise_arr).then(() => {
-      init.stop(() => {done()});
-    });
-  });
 
 
   describe('POST /contents/:id/promotions', () => {
     it('respond with json Object containing the new test item', (done) => { 
-      let item = test_items[0];
+      let item =  {
+        "name"        : "Festa dei Candelieri",
+        "type"        : "offer",
+        "description" : "Manifestazione folkloristica tradizionale",
+        "startDate"   : "2017-8-14",
+        "endDate"     : "2017-8-16",
+        "price"       : 0,
+        "position"    : [8.559355, 40.727209],
+        "lat"         : 40.727209,
+        "lon"         : 8.559355
+      }
+
       item.idcontent = father_id;
       request
         .post('contents/' + father_id + '/promotions' + fakeuidpar)
@@ -162,7 +190,7 @@ describe('--- Testing promotions crud ---', () => {
 
 
   describe('GET /contents/:id/promotions/', () => {
-    it('respond with json Object containing promo array of at least 2 items', (done) => {
+    it("respond with json Object containing promo array of at least 2 items", (done) => {
       request
         .get('contents/' + father_id + '/promotions/' + fakeuidpar)
         .expect('Content-Type', /json/)
@@ -182,8 +210,8 @@ describe('--- Testing promotions crud ---', () => {
           }
         });
       });
-    it('perform a text search and respond with an array of one item', (done) => {
-      let text_search = "funghi porcini";
+    it('perform a text search and respond with an array of at least one item', (done) => {
+      let text_search = "porcino";
       request
         .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search)
         .expect('Content-Type', /json/)
@@ -194,8 +222,8 @@ describe('--- Testing promotions crud ---', () => {
             res.body.should.have.property("promos");
             res.body.promos.should.be.instanceOf(Array);
             res.body.promos.length.should.be.aboveOrEqual(1);
-            res.body.promos[0].should.have.property('description');
-            res.body.promos[0].description.should.containEql(text_search);
+            res.body.promos[0].should.have.property('name');
+            res.body.promos[0].name.should.containEql(text_search);
             done();
           }
         })
@@ -217,11 +245,32 @@ describe('--- Testing promotions crud ---', () => {
                 }
             })
         });
-    it('perform a text and daterange search and respond with an array of one element', (done) => {
-        let text_search = "artigianato";
-        let date_search = "2016-10-15"
+    it('perform a daterange search and respond with an array of one element', (done) => {
+        let sdate = "2016-10-19"
+        let edate = "2016-10-20"
         request
-            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search + '&sdate=' + date_search)
+            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&sdate=' + sdate + '&edate=' + edate)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err,res) => {
+                if(err) done(err);
+                else {
+                    res.body.should.have.property("promos");
+                    res.body.promos.should.be.instanceOf(Array);                    
+                    res.body.promos.length.should.be.equal(1);
+                    res.body.promos[0].should.have.property('description');                    
+                    done();
+                }
+            })
+        });
+
+
+
+
+    it('perform a date search (start before) and respond with an array of 1 element', (done) => {
+        let date_search = "2016-09-30"
+        request
+            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&edate=' + date_search)
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err,res) => {
@@ -230,12 +279,33 @@ describe('--- Testing promotions crud ---', () => {
                     res.body.should.have.property("promos");
                     res.body.promos.should.be.instanceOf(Array);
                     res.body.promos.length.should.be.equal(1);
-                    res.body.promos[0].should.have.property('description');
-                    res.body.promos[0].description.should.containEql(text_search);
+                    res.body.promos[0].should.have.property('name');
+                    res.body.promos[0].name.should.containEql("porcino");
                     done();
                 }
             })
         });
+
+
+    it('perform a date search (ends after) and respond with an array of 3 elements', (done) => {
+        let date_search = "2016-10-1"
+        request
+            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&sdate=' + date_search)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err,res) => {
+                if(err) done(err);
+                else {
+                    res.body.should.have.property("promos");
+                    res.body.promos.should.be.instanceOf(Array);
+                    res.body.promos.length.should.be.equal(3);
+                    res.body.promos[0].should.have.property('description');                    
+                    done();
+                }
+            })
+        });
+
+
     it('run a geo query with 1km radius and respond with just one item', (done) => {
       let position_pars = [9.3534625,40.203488,1];
       request
@@ -252,7 +322,7 @@ describe('--- Testing promotions crud ---', () => {
           }
         });
     });
-    it('run a geo query with 50km radius and respond with two items', (done) => {
+    it('run a geo query with 50km radius and respond with 3 items', (done) => {
       let position_pars = [9.3534625,40.203488,50];
       request
         .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
@@ -263,7 +333,7 @@ describe('--- Testing promotions crud ---', () => {
           else {
             res.body.should.have.property("promos");
             res.body.promos.should.be.instanceOf(Array);
-            res.body.promos.length.should.be.equal(3); //3 perche' il primo test_item viene reinserito nel test del post
+            res.body.promos.length.should.be.equal(3);
             done();
           }
         });

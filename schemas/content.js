@@ -5,6 +5,7 @@ var common = require('./common');
 
 var ContentSchema = new mongoose.Schema({
   name        : String,
+  lastUpdate  : Date,
   owner       : {type: mongoose.Schema.ObjectId, required:true},
   admins      : [mongoose.Schema.ObjectId],
   type        : String,

@@ -7,6 +7,7 @@ var PromotionSchema = new mongoose.Schema({
   name        : String,
   type        : String,
   description : String,
+  lastUpdate  : Date,
   startDate   : Date,
   endDate     : Date,
   price       : Number,
@@ -74,14 +75,20 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
 
         //fulltext search
         else if(key == "text") {
-          query["$text"] = {
-            "$search": filter[key].join(' ')
+          let txt = filter[key].join(' ');
+          if(txt.trim().length > 0) {
+            query["$text"] = {
+              "$search": txt
+            }
           }
         }
 
+
         //date range search
-        else if(!skipTime && (key == "sdate" || key == "edate")) {
+        else if(!skipTime && (key == "sdate" || key == "edate")) { //skiptime serve a saltare sdate o edate nei cicli successivi
           skipTime = true;
+          setDateRange(filter["sdate"], filter["edate"], "startDate", "endDate", query);
+/*
           try {
             let sdate = filter["sdate"];
             let edate = filter["edate"];
@@ -89,7 +96,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
             let qEnd    = edate ? new Date(edate) : undefined;
 
             // promo che intersecano il periodo sdate-edate
-            if(edate && sdate) {               
+            if(edate && sdate) {
                 if(!query['$and']) query['$and'] = [];
                 query['$and'].push({'startDate': {'$lte': qEnd}}); //iniziano prima della fine del periodo
                 query['$and'].push({'endDate': {'$gte': qStart}}); //finiscono dopo l'inizio del periodo
@@ -104,6 +111,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
             console.log(e);
             reject({status:400, error:'wrong date syntax'})
           }
+*/
         }
 
         //other search params, multiple instances allowed
@@ -124,7 +132,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
-console.log(query);              
+//console.log(query);              
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
@@ -144,6 +152,34 @@ console.log(query);
       }
     }
   );
+}
+
+function setDateRange (sdate, edate, pnameStart, pnameStop, query) {
+    try {
+        let qobjstart = {};
+        let qobjend = {};
+        let qStart  = sdate ? new Date(sdate) : undefined; //TODO usare moment con locale???
+        let qEnd    = edate ? new Date(edate) : undefined;
+
+        // promo che intersecano il periodo sdate-edate
+        if(edate && sdate) {
+            if(!query['$and']) query['$and'] = [];
+            qobjstart[pnameStart] = {'$lte':qEnd};
+            qobjend[pnameStop] = {'$gte':qStart};
+            query['$and'].push(qobjstart); //iniziano prima della fine del periodo
+            query['$and'].push(qobjend); //finiscono dopo l'inizio del periodo
+        }
+
+        //da sdate in poi (che finiscono dopo sdate)
+        else if(sdate) query[pnameStop] = {'$gte': qStart};
+
+        else if(edate) query[pnameStart] = {'$lte': qEnd};
+    }
+    catch(e) {
+        console.log(e);
+        reject({status:400, error:'wrong date syntax'})
+    }
+
 }
 
   
