@@ -88,9 +88,11 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
 
         //last update & insert
         else if(!skipUpdateTime && (key == "mds" || key == "mde")) {
+            if(!query["$and"]) query["$and"] = [];
             skipUpdateTime = true;
             let q1 = setDateRange(filter["mds"], filter["mde"], "lastUpdate", "lastUpdate");
             let q2 = setDateRange(filter["mds"], filter["mde"], "creationDate", "creationDate");
+            if(!query["$and"]) query["$and"] = [];
             query["$and"].push({"$or":[q1, q2]})
         }
 
@@ -98,6 +100,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         else if(!skipTime && (key == "sdate" || key == "edate")) { //skiptime serve a saltare sdate o edate nei cicli successivi
             skipTime = true;
             let q = setDateRange(filter["sdate"], filter["edate"], "startDate", "endDate");
+            if(!query["$and"]) query["$and"] = [];
             query["$and"].push(q);
         }
 
@@ -118,7 +121,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
-//console.log(JSON.stringify(query));
+console.log(JSON.stringify(query));
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
@@ -201,16 +204,8 @@ function setDateRange (sdate, edate, pnameStart, pnameStop) {
         // promo che intersecano il periodo sdate-edate
         if(edate && sdate) {
             if(!query["$and"]) query['$and'] = [];
-
-            let qor = [];            
-            qor.push({[pnameStart]:{'$lte':qEnd}});
-            qor.push({[pnameStart]:{'$exists':false}});
-            query['$and'].push({"$or":qor});
-
-            qor = [];
-            qor.push({[pnameStop]:{'$gte':qStart}});
-            qor.push({[pnameStop]:{'$exists':false}});
-            query['$and'].push({"$or":qor}); 
+            query['$and'].push({[pnameStart]:{'$lte':qEnd}});            
+            query['$and'].push({[pnameStop]:{'$gte':qStart}}); 
         }
 
         //da sdate in poi (che finiscono dopo sdate)
