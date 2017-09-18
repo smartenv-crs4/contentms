@@ -2,9 +2,9 @@ var promotion = require('../../schemas/promotion.js').promotion;
 var common = require('../../lib/common.js');
 
 /**
- * @api {get} /contents/:id/promotions/ Search for promotions on the portal 
+ * @api {get} /contents/:id/promotions/ Search for promotions for a parent id
  * @apiGroup Promotion
- * @apiDescription Parametric search over promotions, including date range, distance and full text
+ * @apiDescription Parametric search over promotions of a single parent content, including date range, distance and full text
  *
  * @apiParam {String} [text] Text to search for in the description and name fields.
  * @apiParam {String} [type] The type of the promotion (offer, event).
@@ -18,8 +18,8 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "position", "sdate", "edate", "text", "category"];
-  let one_instance_keys = ["sdate", "edate", "position"]; //viene considerata solo la prima occorrenza nel url
+  let allowed_keys = ["type", "position", "sdate", "edate", "text", "category", "mds", "mde"];
+  let one_instance_keys = ["sdate", "edate", "position", "mds", "mde"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
   let skip = req.query.skip;

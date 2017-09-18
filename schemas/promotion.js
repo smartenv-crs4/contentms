@@ -27,20 +27,22 @@ PromotionSchema.index({ name: 'text', description: 'text', town: 'text'}, {name:
  
 
 PromotionSchema.statics.add = function(newitem) {
-  var that = this;
-  return new Promise(
-    function(resolve, reject) {
-      let item = new that(newitem);
-      item.save()
-      .then((newoffer) => {
-        resolve(newoffer)
-      })
-      .catch(e => {
-        console.log(e);
-        reject({status:500, error:"server error"});
-      });
-    }
-  );
+    var that = this;
+    if(newitem.creationDate) delete newitem.creationDate;
+    if(newitem.lastUpdate) delete newitem.lastUpdate;
+    return new Promise(
+        function(resolve, reject) {
+            let item = new that(newitem);
+            item.save()
+            .then((newoffer) => {
+                resolve(newoffer)
+            })
+            .catch(e => {
+                console.log(e);
+                reject({status:500, error:"server error"});
+            });
+        }
+    );
 }
  
 PromotionSchema.statics.findById = function(cid, pid) {
@@ -121,7 +123,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         });
       }
       else {
-console.log(JSON.stringify(query));
+//console.log(JSON.stringify(query));
         that.model(collectionName).find(query).count()
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {

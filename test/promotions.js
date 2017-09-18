@@ -14,6 +14,7 @@ var request = supertest.agent(baseUrl);
 
 var init = require('../lib/init');
 
+var lastUpdate = undefined;
 var fakeuid = 'aaaaaaaaaaaaaaaaaaaaaaaa';
 var fakeuidpar = '?fakeuid=' + fakeuid;
 var father_id;
@@ -152,14 +153,14 @@ describe('--- Testing promotions crud ---', () => {
   describe('GET /contents/:id/promotions/:pid', () => {
     it('respond with json Object containing the test doc', (done) => {
       request
-        .get('contents/' + father_id + '/promotions/' + new_items[0] + fakeuidpar) 
+        .get('contents/' + father_id + '/promotions/' + new_items[new_items.length - 1] + fakeuidpar) 
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
           if(err) done(err);
           else {
             res.body.should.have.property("_id");
-            res.body._id.should.be.equal(new_items[0]+'');
+            res.body.name.should.be.containEql("Candelieri");
             done();
           }
         })
@@ -170,29 +171,33 @@ describe('--- Testing promotions crud ---', () => {
 
   describe('PUT /contents/:id/promotions/:pid', () => {
     let new_desc = "Ristorante tipico nel supramonte di baunei";
+
     it('respond with json Object containing the test doc updated', (done) => {
-      request
-        .put('contents/' + father_id + '/promotions/' + new_items[2] + fakeuidpar)
-        .send({"description":new_desc})
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((err,res) => {
-          if(err) done(err);
-          else {
-            res.body.should.have.property("_id");
-            res.body.description.should.be.equal(new_desc);
-            res.body.description.should.not.be.equal(test_items[0]);
-            done();
-          }
-        });
+      setTimeout(() => {
+        request
+          .put('contents/' + father_id + '/promotions/' + new_items[2] + fakeuidpar)
+          .send({"description":new_desc})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("lastUpdate");
+              lastUpdate = res.body.lastUpdate;
+              res.body.description.should.be.equal(new_desc);
+              res.body.description.should.not.be.equal(test_items[0]);
+              done();
+            }
+          });
+        }, 1000)
     });
   });
 
 
-  describe('GET /contents/:id/promotions/', () => {
+  describe('GET /search/?t=promo', () => {
     it("respond with json Object containing promo array of at least 2 items", (done) => {
       request
-        .get('contents/' + father_id + '/promotions/' + fakeuidpar)
+        .get('search' + fakeuidpar + '&t=promo')
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -213,7 +218,7 @@ describe('--- Testing promotions crud ---', () => {
     it('perform a text search and respond with an array of at least one item', (done) => {
       let text_search = "porcino";
       request
-        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search)
+        .get('search' + fakeuidpar + '&t=promo' + '&text=' + text_search)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -232,7 +237,7 @@ describe('--- Testing promotions crud ---', () => {
         let text_search = "funghi porcini";
         let date_search = "2016-10-15"
         request
-            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&text=' + text_search + '&sdate=' + date_search)
+            .get('search' + fakeuidpar + '&t=promo' + '&text=' + text_search + '&sdate=' + date_search)
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err,res) => {
@@ -249,7 +254,7 @@ describe('--- Testing promotions crud ---', () => {
         let sdate = "2016-10-19"
         let edate = "2016-10-20"
         request
-            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&sdate=' + sdate + '&edate=' + edate)
+            .get('search' + fakeuidpar + '&t=promo' + '&sdate=' + sdate + '&edate=' + edate)
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err,res) => {
@@ -263,14 +268,10 @@ describe('--- Testing promotions crud ---', () => {
                 }
             })
         });
-
-
-
-
     it('perform a date search (start before) and respond with an array of 1 element', (done) => {
         let date_search = "2016-09-30"
         request
-            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&edate=' + date_search)
+            .get('search' + fakeuidpar + '&t=promo' + '&edate=' + date_search)
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err,res) => {
@@ -290,7 +291,7 @@ describe('--- Testing promotions crud ---', () => {
     it('perform a date search (ends after) and respond with an array of 3 elements', (done) => {
         let date_search = "2016-10-1"
         request
-            .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&sdate=' + date_search)
+            .get('search' + fakeuidpar + '&t=promo' + '&sdate=' + date_search)
             .expect('Content-Type', /json/)
             .expect(200)
             .end((err,res) => {
@@ -306,10 +307,29 @@ describe('--- Testing promotions crud ---', () => {
         });
 
 
+      it('perform a date search (lastUpdate) and respond with an array of 1 element', (done) => {        
+        request
+            .get('search' + fakeuidpar + '&t=promo' + '&mds=' + lastUpdate)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err,res) => {
+                if(err) done(err);
+                else {
+                    res.body.should.have.property("promos");
+                    res.body.promos.should.be.instanceOf(Array);
+                    res.body.promos.length.should.be.equal(1);
+                    res.body.promos[0].should.have.property('lastUpdate');
+                    res.body.promos[0].lastUpdate.should.be.equal(lastUpdate);
+                    done();
+                }
+            })
+        });
+
+
     it('run a geo query with 1km radius and respond with just one item', (done) => {
       let position_pars = [9.3534625,40.203488,1];
       request
-        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('search' + fakeuidpar + '&t=promo' + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -325,7 +345,7 @@ describe('--- Testing promotions crud ---', () => {
     it('run a geo query with 50km radius and respond with 3 items', (done) => {
       let position_pars = [9.3534625,40.203488,50];
       request
-        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString())
+        .get('search' + fakeuidpar + '&t=promo' + '&position=' + position_pars.toString())
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -341,7 +361,7 @@ describe('--- Testing promotions crud ---', () => {
     it('run a geo query with 100km radius and a text filter, respond with one item', (done) => {
       let position_pars = [9.3534625,40.203488,100];
       request
-        .get('contents/' + father_id + '/promotions/' + fakeuidpar + '&position=' + position_pars.toString() + '&text=porcino')
+        .get('search' + fakeuidpar + '&t=promo' + '&position=' + position_pars.toString() + '&text=porcino')
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -374,7 +394,7 @@ describe('--- Testing promotions crud ---', () => {
     })
     it('respond with 404 error to confirm previous deletion', (done) => {
       request
-        .get('contents/' + father_id + '/promotions/' + new_items[1] + fakeuidpar) 
+        .get('search' + new_items[1] + fakeuidpar) 
         .expect(404)
         .end((err, res) => {
           if(err) done(err);
