@@ -20,7 +20,7 @@ var common = require('../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "category", "town", "position", "text", "sdate", "edate", "mds", "mde"];
+  let allowed_keys = ["type", "category", "town", "position", "text", "sdate", "edate", "mds", "mde", "by_uid"];
   let one_instance_keys = ["position", "edate", "sdate", "mds", "mde"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
@@ -40,9 +40,9 @@ module.exports = function(req, res, next) {
       requiredFields.push('images');
     }
 
+
     pexe.findFiltered(filter, limit, skip, requiredFields)
-      .then(result => {
-        result.images = common.uniformImages(result.images);
+      .then(result => {        
         res.json(result);
       })
       .catch(e => {
@@ -55,9 +55,7 @@ module.exports = function(req, res, next) {
       content.findFiltered(filter, limit, skip, requiredFields),
       promo.findFiltered(filter, limit, skip, requiredFields)
     ])
-    .then(result => {
-      result[0].images = common.uniformImages(result[0].images);
-      result[1].images = common.uniformImages(result[1].images);
+    .then(result => {      
       let wholeresult = {
         contents:result[0].contents,
         promos:result[1].promos,
