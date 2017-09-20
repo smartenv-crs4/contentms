@@ -19,6 +19,9 @@ router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microserv
 //search su contents e promotions
 router.get("/search", security.authWrap, require('./search'));
 
+//opendata api
+router.get("/od", require('./od'));
+
 
 //contents
 router.get("/contents/",        security.authWrap, require('./contents/contents_search'));
