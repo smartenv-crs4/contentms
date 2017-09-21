@@ -5,15 +5,15 @@ var moment = require('moment');
 
 var PromotionSchema = new mongoose.Schema({
   name          : String,
-  type          : String,
+  type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype},
   description   : String,
   creationDate  : {type:Date, default: Date.now},
   lastUpdate    : Date,
   startDate     : Date,
   endDate       : Date,
   price         : Number,
-  idcontent     : {type: mongoose.Schema.ObjectId, ref:'content'},
-  category      : [{type: Number, ref:'category'}],
+  idcontent     : {type: mongoose.Schema.ObjectId, ref:require('propertiesmanager').conf.dbCollections.content},
+  category      : [{type: Number, ref:require('propertiesmanager').conf.dbCollections.category}],
   position      : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat           : {type: Number, index:true},
   lon           : {type: Number, index:true},
@@ -23,7 +23,19 @@ var PromotionSchema = new mongoose.Schema({
 },
 {versionKey:false});
 
-PromotionSchema.index({ name: 'text', description: 'text', town: 'text'}, {name: 'text_index', weights: {name: 10, town: 8, description: 5}});
+PromotionSchema.index({ 
+    name: 'text', 
+    description: 'text', 
+    town: 'text'
+}, 
+{
+    name: 'text_index', 
+    weights: {
+        name: 10, 
+        town: 8, 
+        description: 5
+    }
+});
  
 
 PromotionSchema.statics.add = function(newitem) {
@@ -128,11 +140,13 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
             skip:qskip,
-            limit:qlimit,
-            populate:require('propertiesmanager').conf.dbCollections.category
+            limit:qlimit
+            //populate:require('propertiesmanager').conf.dbCollections.promotype + ' ' + require('propertiesmanager').conf.dbCollections.content + ' ' + require('propertiesmanager').conf.dbCollections.category
           };
-
-          that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
+          that.model(collectionName).find(query, fields, options)
+          .populate('type category')
+          .lean()
+          .exec(function(e, cont) {
             let result = {};
             result.promos = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}            

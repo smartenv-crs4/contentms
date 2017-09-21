@@ -1,11 +1,11 @@
-//TODO generalizzare con promotype
+//TODO generalizzare con category
 
 var mongoose = require('mongoose');
-var collectionName = require('propertiesmanager').conf.dbCollections.category;
+var collectionName = require('propertiesmanager').conf.dbCollections.promotype;
 var counter = require('./counters').counters;
 var validator = require('validator');
 
-var CategorySchema = new mongoose.Schema({
+var PromotypeSchema = new mongoose.Schema({
     _id         : Number,
     name        : String,
     description : String
@@ -14,17 +14,17 @@ var CategorySchema = new mongoose.Schema({
 );
 
 
-CategorySchema.statics.add = function(newitem) {
+PromotypeSchema.statics.add = function(newitem) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      counter.getNextSequence('category', (sid) => { 
+      counter.getNextSequence('promotype', (sid) => { 
         newitem['_id'] = sid; //override eventuale id passato da utente
 
         (new that(newitem))
         .save()
-        .then((newcat) => {
-          resolve(newcat)
+        .then((newpt) => {
+          resolve(newpt)
         })
         .catch(e => {
           console.log(e);
@@ -37,7 +37,7 @@ CategorySchema.statics.add = function(newitem) {
 
 
 //parameters: limit, skip || id
-CategorySchema.statics.search = function() {
+PromotypeSchema.statics.search = function() {
   const multi = arguments.length == 0 || arguments.length == 2;
   let that = this;
   let options = {};
@@ -59,7 +59,7 @@ CategorySchema.statics.search = function() {
         .then((count) => {
           that.model(collectionName).find(query, null, options, function(e, cont) {
             let result = {};
-            result.categories = cont;
+            result.promotype = cont;
             result.metadata = {limit:options.limit||null, skip:options.skip||null, totalCount:count}
 
             if(e) reject(e);
@@ -78,7 +78,7 @@ CategorySchema.statics.search = function() {
 }
 
 
-CategorySchema.statics.update = function(id, upd) {
+PromotypeSchema.statics.update = function(id, upd) {
   var that = this;
   if(upd._id) delete upd._id;
   return new Promise(
@@ -100,7 +100,7 @@ CategorySchema.statics.update = function(id, upd) {
   );
 }
 
-CategorySchema.statics.delete = function(id) {
+PromotypeSchema.statics.delete = function(id) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -121,4 +121,4 @@ CategorySchema.statics.delete = function(id) {
   )
 }
 
-exports.category = mongoose.model(collectionName, CategorySchema);
+exports.promotype = mongoose.model(collectionName, PromotypeSchema);

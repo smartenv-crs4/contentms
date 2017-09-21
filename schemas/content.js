@@ -11,7 +11,7 @@ var ContentSchema = new mongoose.Schema({
   admins        : [mongoose.Schema.ObjectId],
   type          : String,
   description   : String, 
-  category      : [{type: Number, ref:'category'}],
+  category      : [{type: Number, ref:require('propertiesmanager').conf.dbCollections.category}],
   published     : Boolean,
   town          : String,
   address       : String,
@@ -65,10 +65,12 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         .then((count) => { //TODO serve davvero il totalCount? 
           let options = {
             skip:qskip, 
-            limit:qlimit, 
-            populate:require('propertiesmanager').conf.dbCollections.category
+            limit:qlimit            
           };
-          that.model(collectionName).find(query, fields, options).lean().exec(function(e, cont) {
+          that.model(collectionName).find(query, fields, options)
+          .populate('category')
+          .lean()
+          .exec(function(e, cont) {
             let result = {};
             result.contents = cont;
             result.metadata = {limit:qlimit, skip:qskip, totalCount:count}

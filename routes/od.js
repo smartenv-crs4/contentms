@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  let requiredFields = ['name','description', 'lastUpdate', 'creationDate', 'lat', 'lon']; //field richiesti in output dalla query
+  let requiredFields = ['name','description', 'category', 'lastUpdate', 'creationDate', 'lat', 'lon']; //field richiesti in output dalla query
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
     if(type=='promo') {
@@ -22,6 +22,7 @@ module.exports = function(req, res, next) {
       requiredFields.push('startDate');
       requiredFields.push('endDate');
       requiredFields.push('images');
+      requiredFields.push('type');
     }
 
     pexe.findFiltered(filter, limit, skip, requiredFields)
@@ -38,7 +39,9 @@ module.exports = function(req, res, next) {
                     for(let j=0; j<contents.length; j++) {
                         
                         if(""+result.promos[i].idcontent == contents[j]._id) {                        
-                            delete result.promos[i].idcontent;
+                            delete result.promos[i].idcontent;                            
+                            result.promos[i].type = result.promos[i].type.name;
+                            result.promos[i].category = result.promos[i].category.name;
                             result.promos[i].images = result.promos[i].images[0] || null;
                             result.promos[i].owner = contents[j].name;
                             if(!(result.promos[i].lat && result.promos[i].lon)) {

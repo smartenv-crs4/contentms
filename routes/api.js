@@ -68,6 +68,13 @@ router.post("/categories/",       security.authWrap, require('./categories/cat_i
 router.put("/categories/:id",     security.authWrap, require('./categories/cat_update'));
 router.delete("/categories/:id",  security.authWrap, require('./categories/cat_delete'));
 
+//promotype crud
+router.get("/promotype/",        security.authWrap, require('./promotype/promotype').search);
+router.get("/promotype/:id",     security.authWrap, require('./promotype/promotype').get);
+router.post("/promotype/",       security.authWrap, require('./promotype/promotype').insert);
+router.put("/promotype/:id",     security.authWrap, require('./promotype/promotype').update);
+router.delete("/promotype/:id",  security.authWrap, require('./promotype/promotype').delete);
+
 
 /* GET environment info page. */
 router.get('/env', function(req, res) {

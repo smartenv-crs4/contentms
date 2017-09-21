@@ -38,6 +38,7 @@ module.exports = function(req, res, next) {
       requiredFields.push('startDate');
       requiredFields.push('endDate');
       requiredFields.push('images');
+      requiredFields.push('type');
     }
 
 

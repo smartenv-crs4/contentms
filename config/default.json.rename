@@ -9,6 +9,7 @@
       "promotion"   : "promotion",
       "involvement" : "involvement",
       "category"    : "categories",
+      "promotype"   : "promotypes",
       "ship"        : "ship"
     },
     "authUrl":"your_auth_service_url",
@@ -26,6 +27,7 @@
       "promotion"   : "promotion",
       "involvement" : "involvement",
       "category"    : "categories",
+      "promotype"   : "promotypes",
       "ship"        : "ship"
     },
     "authUrl":"your_auth_service_url",
