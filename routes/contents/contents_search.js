@@ -19,7 +19,7 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "category", "town", "position", "by_uid", "text"];
+  let allowed_keys = ["type", "category", "town", "position", "by_uid", "text", "lat", "lon"];
   let one_instance_keys = ["position"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
