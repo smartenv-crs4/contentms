@@ -4,15 +4,15 @@ var common = require('./common');
 var moment = require('moment');
 
 var PromotionSchema = new mongoose.Schema({
-  name          : String,
+  name          : {type:String, required:true},
   type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype},
-  description   : String,
+  description   : {type:String, required:true},
   creationDate  : {type:Date, default: Date.now},
   lastUpdate    : Date,
-  startDate     : Date,
+  startDate     : {type: Date, required:true},
   endDate       : Date,
   price         : Number,
-  idcontent     : {type: mongoose.Schema.ObjectId, ref:require('propertiesmanager').conf.dbCollections.content},
+  idcontent     : {type: mongoose.Schema.ObjectId, ref:require('propertiesmanager').conf.dbCollections.content, required:true},
   category      : [{type: Number, ref:require('propertiesmanager').conf.dbCollections.category}],
   position      : {type: [Number], index: '2dsphere'}, //[lon, lat]
   lat           : {type: Number, index:true},
@@ -50,8 +50,12 @@ PromotionSchema.statics.add = function(newitem) {
                 resolve(newoffer)
             })
             .catch(e => {
+                console.log("AAA")
                 console.log(e);
-                reject({status:500, error:"server error"});
+                if(e.name == "ValidationError")
+                  reject({status:400, error:"invalid content"})
+                else
+                  reject({status:500, error:"server error"});
             });
         }
     );

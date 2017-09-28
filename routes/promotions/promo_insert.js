@@ -50,7 +50,10 @@ module.exports = function(req, res, next) {
     })
     .catch(e => {
       console.log(e);
-      res.boom.badImplementation();
+      if(e.status && e.status == 400)
+        res.boom.badRequest();
+      else
+        res.boom.badImplementation();
     });
   }
 }
