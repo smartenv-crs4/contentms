@@ -10,7 +10,7 @@ var PromotionSchema = new mongoose.Schema({
   creationDate  : {type:Date, default: Date.now},
   lastUpdate    : Date,
   startDate     : {type: Date, required:true},
-  endDate       : Date,
+  endDate       : {type: Date, required:true},
   price         : Number,
   idcontent     : {type: mongoose.Schema.ObjectId, ref:require('propertiesmanager').conf.dbCollections.content, required:true},
   category      : [{type: Number, ref:require('propertiesmanager').conf.dbCollections.category}],
