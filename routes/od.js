@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  let requiredFields = ['name','description', 'category', 'lastUpdate', 'creationDate', 'lat', 'lon']; //field richiesti in output dalla query
+  let requiredFields = ['name','description', 'category', 'lastUpdate', 'creationDate', 'lat', 'lon', "address"]; //field richiesti in output dalla query
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
     if(type=='promo') {
@@ -32,14 +32,15 @@ module.exports = function(req, res, next) {
             let promise_arr = [];
             for(let i = 0; i<result.promos.length; i++) {
                 promise_arr.push(content.findById(result.promos[i].idcontent));
-            }
+            }            
             Promise.all(promise_arr)
             .then(contents => {
+                //console.log(result.promos)
                 for(let i=0; i<result.promos.length; i++) {
                     for(let j=0; j<contents.length; j++) {
                         
                         if(""+result.promos[i].idcontent == contents[j]._id) {                        
-                            delete result.promos[i].idcontent;                            
+                            delete result.promos[i].idcontent;
                             result.promos[i].type = result.promos[i].type.name;
                             result.promos[i].category = result.promos[i].category.name;
                             result.promos[i].images = result.promos[i].images[0] || null;

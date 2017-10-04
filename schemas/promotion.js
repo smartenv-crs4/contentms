@@ -147,9 +147,9 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
             limit:qlimit
             //populate:require('propertiesmanager').conf.dbCollections.promotype + ' ' + require('propertiesmanager').conf.dbCollections.content + ' ' + require('propertiesmanager').conf.dbCollections.category
           };
-          that.model(collectionName).find(query, fields, options)
-          .sort({"creationDate":-1}) //ATTENTIION!! ordered by creation date (last first)!
+          that.model(collectionName).find(query, fields, options)          
           .populate('type category')
+          .sort({"creationDate":-1}) //ATTENTIION!! ordered by creation date (last first)!
           .lean()
           .exec(function(e, cont) {
             let result = {};
