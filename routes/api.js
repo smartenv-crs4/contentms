@@ -46,7 +46,9 @@ router.post("/contents/:id/actions/rate",           security.authWrap, require('
 //ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
 router.get("/contents/:id/promotions/",         require('./promotions/promo_search'));
 router.get("/contents/:id/promotions/:pid",     security.authWrap, require('./promotions/promo_get'));
-router.post("/contents/:id/promotions/",        security.authWrap, security.isContentAdmin, require('./promotions/promo_insert'));
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
+//router.post("/contents/:id/promotions/",        security.authWrap, security.isContentAdmin, require('./promotions/promo_insert'));
+router.post("/contents/:id/promotions/",        require('./promotions/promo_insert'));
 router.put("/contents/:id/promotions/:pid",     security.authWrap, security.isContentAdmin, require('./promotions/promo_update'));
 
 //ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
