@@ -17,7 +17,7 @@ auth.configure({
 router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
 
 //search su contents e promotions
-router.get("/search", security.authWrap, require('./search'));
+router.get("/search", require('./search'));
 
 //opendata api
 router.get("/od", require('./od'));
