@@ -41,8 +41,8 @@ module.exports = function(req, res, next) {
                         
                         if(""+result.promos[i].idcontent == contents[j]._id) {                        
                             delete result.promos[i].idcontent;
-                            result.promos[i].type = result.promos[i].type.name;
-                            result.promos[i].category = result.promos[i].category.name;
+                            result.promos[i].type = result.promos[i].type ? result.promos[i].type.name : undefined;
+                            result.promos[i].category = result.promos[i].category ? result.promos[i].category.name : undefined;
                             result.promos[i].images = result.promos[i].images[0] || null;
                             result.promos[i].owner = contents[j].name;
                             if(!(result.promos[i].lat && result.promos[i].lon)) {

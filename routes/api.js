@@ -62,14 +62,14 @@ router.post("/contents/:id/promotions/:pid/actions/rate",           security.aut
 
 //categories crud
 //TODO deve essere system admin
-router.get("/categories/",        security.authWrap, require('./categories/cat_search'));
+router.get("/categories/",        require('./categories/cat_search'));
 router.get("/categories/:id",     security.authWrap, require('./categories/cat_get'));
 router.post("/categories/",       security.authWrap, require('./categories/cat_insert'));
 router.put("/categories/:id",     security.authWrap, require('./categories/cat_update'));
 router.delete("/categories/:id",  security.authWrap, require('./categories/cat_delete'));
 
 //promotype crud
-router.get("/promotype/",        security.authWrap, require('./promotype/promotype').search);
+router.get("/promotype/",        require('./promotype/promotype').search);
 router.get("/promotype/:id",     security.authWrap, require('./promotype/promotype').get);
 router.post("/promotype/",       security.authWrap, require('./promotype/promotype').insert);
 router.put("/promotype/:id",     security.authWrap, require('./promotype/promotype').update);
