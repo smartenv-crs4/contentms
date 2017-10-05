@@ -16,10 +16,10 @@ auth.configure({
 
 router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
 
-//search su contents e promotions
+//search su contents e promotions (auth??????)
 router.get("/search", require('./search'));
 
-//opendata api
+//opendata api (auth??????)
 router.get("/od", require('./od'));
 
 
@@ -43,17 +43,20 @@ router.post("/contents/:id/actions/rate",           security.authWrap, require('
 
 
 //promotions
-//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//router.get("/contents/:id/promotions/",       security.authWrap, require('./promotions/promo_search'));
 router.get("/contents/:id/promotions/",         require('./promotions/promo_search'));
+
 router.get("/contents/:id/promotions/:pid",     security.authWrap, require('./promotions/promo_get'));
-//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //router.post("/contents/:id/promotions/",        security.authWrap, security.isContentAdmin, require('./promotions/promo_insert'));
 router.post("/contents/:id/promotions/",        require('./promotions/promo_insert'));
+
 router.put("/contents/:id/promotions/:pid",     security.authWrap, security.isContentAdmin, require('./promotions/promo_update'));
 
-//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
-router.delete("/contents/:id/promotions/:pid",  security.isContentAdmin, require('./promotions/promo_delete')); 
-
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//router.delete("/contents/:id/promotions/:pid",  security.authWrap, security.isContentAdmin, require('./promotions/promo_delete')); 
+router.delete("/contents/:id/promotions/:pid", require('./promotions/promo_delete')); 
 
 //promotion actions
 router.post("/contents/:id/promotions/:pid/actions/like",           security.authWrap, require('./promotions/promo_actions').like);
@@ -66,15 +69,21 @@ router.post("/contents/:id/promotions/:pid/actions/rate",           security.aut
 
 
 //categories crud
-//TODO deve essere system admin
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//router.get("/categories/",        security.authWrap, require('./categories/cat_search'));
 router.get("/categories/",        require('./categories/cat_search'));
+
 router.get("/categories/:id",     security.authWrap, require('./categories/cat_get'));
+//TODO deve essere system admin
 router.post("/categories/",       security.authWrap, require('./categories/cat_insert'));
 router.put("/categories/:id",     security.authWrap, require('./categories/cat_update'));
 router.delete("/categories/:id",  security.authWrap, require('./categories/cat_delete'));
 
 //promotype crud
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//router.get("/promotype/",        security.authWrap, require('./promotype/promotype').search);
 router.get("/promotype/",        require('./promotype/promotype').search);
+
 router.get("/promotype/:id",     security.authWrap, require('./promotype/promotype').get);
 router.post("/promotype/",       security.authWrap, require('./promotype/promotype').insert);
 router.put("/promotype/:id",     security.authWrap, require('./promotype/promotype').update);
