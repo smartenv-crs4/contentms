@@ -43,11 +43,13 @@ router.post("/contents/:id/actions/rate",           security.authWrap, require('
 
 
 //promotions
-router.get("/contents/:id/promotions/",         security.authWrap, require('./promotions/promo_search'));
+router.get("/contents/:id/promotions/",         require('./promotions/promo_search'));
 router.get("/contents/:id/promotions/:pid",     security.authWrap, require('./promotions/promo_get'));
 router.post("/contents/:id/promotions/",        security.authWrap, security.isContentAdmin, require('./promotions/promo_insert'));
 router.put("/contents/:id/promotions/:pid",     security.authWrap, security.isContentAdmin, require('./promotions/promo_update'));
-router.delete("/contents/:id/promotions/:pid",  security.authWrap, security.isContentAdmin, require('./promotions/promo_delete'));
+
+//ATTENZIONE RIMETTERE CONTROLLO AUTH TOLTO PER LA DEMO
+router.delete("/contents/:id/promotions/:pid",  security.isContentAdmin, require('./promotions/promo_delete')); 
 
 
 //promotion actions
