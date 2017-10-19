@@ -4,9 +4,8 @@ var content = require('../schemas/content.js').content;
 
 module.exports = {
   isContentAdmin: (req, res, next) => {
-    let uid = req[authField]._id;
+    let uid = req[authField].token._id;
     let content_id = req.params.id;
-
     content.findById(content_id)
     .then(c => {
       if(!uid)
