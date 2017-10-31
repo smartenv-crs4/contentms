@@ -23,7 +23,7 @@ module.exports = {
 
   authWrap : (req, res, next) => {
     if(req.app.get("nocheck")) { //In dev mode non richiede il ms authms, usa utente fake passato da url TODO rimuovere?
-        req[authField] = {};
+        req[authField] = {token:{}};
         req[authField].token._id = req.query.fakeuid;
         next();
     }

@@ -1,4 +1,5 @@
 var promotion = require('../../schemas/promotion.js').promotion;
+var common = require('../../lib/common.js');
 
 /**
  * @api {post} /contents/:id/promotions/ Add one promotion to an activity
@@ -45,7 +46,7 @@ module.exports = function(req, res, next) {
         req.headers.host + '/api/v1/contents/' //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
         + newpromo.idcontent
         + "/promotions/" + newpromo._id);
-
+      newpromo.images = common.uniformImages(newpromo.images);
       res.status(201).json(newpromo)
     })
     .catch(e => {
