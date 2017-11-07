@@ -24,8 +24,8 @@ router.get("/od", require('./od'));
 
 
 //contents
-router.get("/contents/",        security.authWrap, require('./contents/contents_search'));
-router.get("/contents/:id",     security.authWrap, require('./contents/contents_get'));
+router.get("/contents/",        require('./contents/contents_search'));
+router.get("/contents/:id",     require('./contents/contents_get'));
 router.post("/contents/",       security.authWrap, require('./contents/contents_insert'));
 router.put("/contents/:id",     security.authWrap, security.isContentAdmin, require('./contents/contents_update'));
 router.delete("/contents/:id",  security.authWrap, security.isContentAdmin, require('./contents/contents_delete'));
@@ -43,8 +43,8 @@ router.post("/contents/:id/actions/rate",           security.authWrap, require('
 
 
 //promotions
-router.get("/contents/:id/promotions/",         security.authWrap, require('./promotions/promo_search'));
-router.get("/contents/:id/promotions/:pid",     security.authWrap, require('./promotions/promo_get'));
+router.get("/contents/:id/promotions/",         require('./promotions/promo_search'));
+router.get("/contents/:id/promotions/:pid",     require('./promotions/promo_get'));
 router.post("/contents/:id/promotions/",        security.authWrap, security.isContentAdmin, require('./promotions/promo_insert'));
 router.put("/contents/:id/promotions/:pid",     security.authWrap, security.isContentAdmin, require('./promotions/promo_update'));
 router.delete("/contents/:id/promotions/:pid",  security.authWrap, security.isContentAdmin, require('./promotions/promo_delete')); 
@@ -60,8 +60,8 @@ router.post("/contents/:id/promotions/:pid/actions/rate",           security.aut
 
 
 //categories crud
-router.get("/categories/",        security.authWrap, require('./categories/cat_search'));
-router.get("/categories/:id",     security.authWrap, require('./categories/cat_get'));
+router.get("/categories/",        require('./categories/cat_search'));
+router.get("/categories/:id",     require('./categories/cat_get'));
 
 //TODO deve essere system admin
 router.post("/categories/",       security.authWrap, require('./categories/cat_insert'));
@@ -69,8 +69,8 @@ router.put("/categories/:id",     security.authWrap, require('./categories/cat_u
 router.delete("/categories/:id",  security.authWrap, require('./categories/cat_delete'));
 
 //promotype crud
-router.get("/promotype/",        security.authWrap, require('./promotype/promotype').search);
-router.get("/promotype/:id",     security.authWrap, require('./promotype/promotype').get);
+router.get("/promotype/",        require('./promotype/promotype').search);
+router.get("/promotype/:id",     require('./promotype/promotype').get);
 router.post("/promotype/",       security.authWrap, require('./promotype/promotype').insert);
 router.put("/promotype/:id",     security.authWrap, require('./promotype/promotype').update);
 router.delete("/promotype/:id",  security.authWrap, require('./promotype/promotype').delete);
