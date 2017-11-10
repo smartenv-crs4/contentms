@@ -50,7 +50,6 @@ PromotionSchema.statics.add = function(newitem) {
                 resolve(newoffer)
             })
             .catch(e => {
-                console.log("AAA")
                 console.log(e);
                 if(e.name == "ValidationError")
                   reject({status:400, error:"invalid content"})

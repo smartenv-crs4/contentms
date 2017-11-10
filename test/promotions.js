@@ -22,7 +22,7 @@ var new_items = [];
 var test_items = [
     {
       "name"        : "porcino night",
-      "type"        : "offer",
+      "type"        : 1,
       "description" : "cena a base di funghi porcini",
       "startDate"   : "2016-9-30",
       "endDate"     : "2016-9-30",
@@ -33,18 +33,18 @@ var test_items = [
     },
      {
       "name"        : "Redentore - nuoro",
-      "type"        : "offer",
+      "type"        : 1,
       "description" : "Manifestazione folkloristica locale",
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-20",
       "price"       : 0,
       "position"    : [9.368859, 40.203488],
       "lat"         : 40.203488,
-      "lon"         : 9.368859
+      "lon"         : 9.368859,
     },
     {
       "name"        : "Autunno in barbagia - orgosolo",
-      "type"        : "offer",
+      "type"        : 1,
       "description" : "Manifestazione promozionale di artigianato e prodotti locali",
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-16",
@@ -89,10 +89,10 @@ describe('--- Testing promotions crud ---', () => {
                                 new_items.push(rr._id);
                                 resolve(rr._id);
                             })
-                            .catch(e => {throw(e),reject();})
+                            .catch(e => {throw(e);reject();})
                         })
-                    )                                     
-                })               
+                    )
+                })
                 Promise.all(promise_arr)
                 .then((v) => {
                     done();
@@ -121,7 +121,7 @@ describe('--- Testing promotions crud ---', () => {
     it('respond with json Object containing the new test item', (done) => { 
       let item =  {
         "name"        : "Festa dei Candelieri",
-        "type"        : "offer",
+        "type"        : 1,
         "description" : "Manifestazione folkloristica tradizionale",
         "startDate"   : "2017-8-14",
         "endDate"     : "2017-8-16",

@@ -31,7 +31,7 @@ module.exports = function(req, res, next) {
   }
   else {
     let contentItem = req.body;
-    contentItem.owner = req[authField]._id;
+    contentItem.owner = req[authField].token._id;
     contentItem.admins = []; //admin gestibile solo tramite actions
     if(!contentItem.owner) {
       res.boom.forbidden('Invalid user');

@@ -139,7 +139,10 @@ describe('--- Testing contents microservice ---', () => {
         .expect('Location', /.+/)
         .expect(201)
         .end((err,res) => {
-          if(err) done(err);
+          if(err) {
+            console.log(err)
+            done(err);
+          }
           else {
             new_item = res.body._id;
             res.body.should.have.property("_id");

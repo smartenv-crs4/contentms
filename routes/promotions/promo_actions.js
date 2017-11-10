@@ -3,7 +3,7 @@ var involvements  = require('../../schemas/involvement').involvement;
 
 
 function involve(req, res, type) {
-  let uid = req[authField]._id
+  let uid = req[authField].token._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.add(req.params.pid, uid, type)
@@ -21,7 +21,7 @@ function involve(req, res, type) {
 
 
 function uninvolve(req, res, type) {
-  let uid = req[authField]._id
+  let uid = req[authField].token._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.delete(req.params.pid, uid, type)
@@ -129,7 +129,7 @@ module.exports = {
  * @apiUse ServerError
  */
   rate : (req, res, next) => {
-    let uid = req[authField]._id
+    let uid = req[authField].token._id
     if(!uid) {res.boom.badRequest('Missing user id');}
     else {
       let rate = req.params.rate;
