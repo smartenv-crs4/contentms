@@ -109,7 +109,7 @@ module.exports = {
  * @apiUse ServerError
  */
 doilike : (req, res, next) => {
-  involve(req, res, 'like')
+  involved(req, res, 'like')
 },
 
 /**
