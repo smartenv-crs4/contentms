@@ -20,6 +20,21 @@ function involve(req, res, type) {
   }
 }
 
+function involved(req, res, type) {
+  let uid = req[authField].token._id;
+  if(!uid) {res.boom.badRequest('Missing user id');}
+  else {
+    involvements.exists(req.params.id, uid, type)
+    .then(isInvolved => {
+      let r = {};
+      r[type] = isInvolved;
+      res.json(r)
+    })
+    .catch(e => {
+      res.boom.badImplementation();
+    })
+  }
+}
 
 function uninvolve(req, res, type) {
   let uid = req[authField].token._id
@@ -80,6 +95,22 @@ module.exports = {
   like : (req, res, next) => {
     involve(req, res, 'like')
   },
+
+/**
+ * @api {POST} /contents/:id/actions/doilike Check if the user likes the content
+ * @apiGroup Content
+ *
+ * @apiDescription Check if the user likes the content.
+ * @apiParam {String} id The id of the content.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+doilike : (req, res, next) => {
+  involve(req, res, 'like')
+},
 
 /**
  * @api {POST} /contents/:id/actions/unlike Remove a like from the content

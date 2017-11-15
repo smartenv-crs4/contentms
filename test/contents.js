@@ -451,6 +451,7 @@ describe('--- Testing contents microservice ---', () => {
           });
       });
     });
+
     describe('POST /contents/:id/actions/{like,unlike,likes}', () => {
       it('(like) respond with 200 and {success:true}', (done) => {
         request
@@ -462,6 +463,21 @@ describe('--- Testing contents microservice ---', () => {
             else {
               res.body.should.have.property("success");
               res.body.success.should.be.equal(true);
+              done()
+            }
+          })
+      });
+
+      it('(doilike) respond with 200 and TRUE', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/doilike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("like");
+              res.body.like.should.be.equal(true);
               done()
             }
           })
@@ -506,6 +522,21 @@ describe('--- Testing contents microservice ---', () => {
             else {
               res.body.should.have.property("success");
               res.body.success.should.be.equal(true);
+              done()
+            }
+          })
+      });
+
+      it('(doilike) respond with 200 and FALSE', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/doilike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("like");
+              res.body.like.should.be.equal(false);
               done()
             }
           })

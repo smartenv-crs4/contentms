@@ -19,6 +19,21 @@ function involve(req, res, type) {
   }
 }
 
+function involved(req, res, type) {
+  let uid = req[authField].token._id;
+  if(!uid) {res.boom.badRequest('Missing user id');}
+  else {
+    involvements.exists(req.params.pid, uid, type)
+    .then(isInvolved => {
+      let r = {};
+      r[type] = isInvolved;
+      res.json(r)
+    })
+    .catch(e => {
+      res.boom.badImplementation();
+    })
+  }
+}
 
 function uninvolve(req, res, type) {
   let uid = req[authField].token._id
@@ -70,6 +85,23 @@ module.exports = {
   like : (req, res, next) => {
     involve(req, res, 'like')
   },
+
+/**
+ * @api {POST} /contents/:id/promotions/:pid/actions/doilike Check if the user set like for the promotion
+ * @apiGroup Promotion
+ *
+ * @apiDescription Check if the user set like for the promotion.
+ * @apiParam {String} id The id of the related content.
+ * @apiParam {String} pid The id of the promotion.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+doilike : (req, res, next) => {
+  involved(req, res, 'like')
+},
 
 /**
  * @api {POST} /contents/:id/promotions/:pid/actions/unlike Remove a like from promotion
@@ -148,7 +180,6 @@ module.exports = {
     }
   },
 
-
  
 /**
  * @api {POST} /contents/:id/promotions/:pid/actions/participate User partecipation
@@ -167,6 +198,24 @@ module.exports = {
   participate: (req, res, next) => {
     involve(req, res, 'participation');
   },
+
+/**
+ * @api {POST} /contents/:id/promotions/:pid/actions/doiparticipate Check if the user set participate for the promotion
+ * @apiGroup Promotion
+ *
+ * @apiDescription Check if the user will participate the promotion.
+ * @apiParam {String} id The id of the related content.
+ * @apiParam {String} pid The id of the promotion.
+ *
+ * @apiSuccess (200) {Object} body A success json message.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+doiparticipate : (req, res, next) => {
+  involved(req, res, 'participation')
+},
+
 
 /**
  * @api {POST} /contents/:id/promotions/:pid/actions/unparticipate Remove the user participation from a promotion

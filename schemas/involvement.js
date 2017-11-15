@@ -30,6 +30,26 @@ InvolvementSchema.statics.add = function(pid, uid, type) {
 }
 
 
+InvolvementSchema.statics.exists = function(pid, uid, type) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      that.model(collectionName).findOne({id:pid, iduser:uid, type:type}, function(e, res) {
+        if(e) {
+          console.log(e);
+          reject({status:500, error:"server error"});
+        }
+        else {          
+          if(res == null) resolve(false)
+          else resolve(true)
+        }
+      });
+    }
+  );
+}
+
+
+
 InvolvementSchema.statics.rate = function(pid, uid, rate) {
   var that = this;
   return new Promise(

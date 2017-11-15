@@ -431,6 +431,21 @@ describe('--- Testing promotions crud ---', () => {
           });
       });
 
+      it('(doilike) respond with TRUE', (done) => {
+        request
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/doilike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("like");
+              res.body.like.should.be.equal(true);              
+              done()
+            }
+          })
+      });
+
       it('(likes) respond with 200 and {total: 1}', (done) => {
         request
           .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/likes' + fakeuidpar)
@@ -460,6 +475,21 @@ describe('--- Testing promotions crud ---', () => {
             else {
               res.body.should.have.property("success");
               res.body.success.should.be.equal(true);
+              done()
+            }
+          })
+      });
+
+      it('(doilike) respond with FALSE', (done) => {
+        request
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/doilike' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("like");
+              res.body.like.should.be.equal(false);              
               done()
             }
           })
@@ -509,6 +539,21 @@ describe('--- Testing promotions crud ---', () => {
             if(err) done(err);
             else done();
           });
+      });
+
+      it('(doiparticipate) respond with true', (done) => {
+        request
+          .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/doiparticipate' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("participation");
+              res.body.participation.should.be.equal(true);              
+              done()
+            }
+          })
       });
 
       it('(participants) respond with 200 and {total: 1}', (done) => {
