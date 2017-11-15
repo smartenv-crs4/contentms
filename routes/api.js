@@ -38,7 +38,7 @@ router.post("/contents/:id/actions/addCategory",    security.authWrap, security.
 router.post("/contents/:id/actions/removeCategory", security.authWrap, security.isContentAdmin, require('./contents/contents_actions').removeCategory);
 router.post("/contents/:id/actions/like",           security.authWrap, require('./contents/contents_actions').like);
 router.post("/contents/:id/actions/unlike",         security.authWrap, require('./contents/contents_actions').unlike);
-router.post("/contents/:id/actions/likes",          security.authWrap, require('./contents/contents_actions').likes);
+router.post("/contents/:id/actions/likes",          require('./contents/contents_actions').likes);
 router.post("/contents/:id/actions/rate",           security.authWrap, require('./contents/contents_actions').rate);
 
 
@@ -52,10 +52,10 @@ router.delete("/contents/:id/promotions/:pid",  security.authWrap, security.isCo
 //promotion actions
 router.post("/contents/:id/promotions/:pid/actions/like",           security.authWrap, require('./promotions/promo_actions').like);
 router.post("/contents/:id/promotions/:pid/actions/unlike",         security.authWrap, require('./promotions/promo_actions').unlike);
-router.post("/contents/:id/promotions/:pid/actions/likes",          security.authWrap, require('./promotions/promo_actions').likes);
+router.post("/contents/:id/promotions/:pid/actions/likes",          require('./promotions/promo_actions').likes);
 router.post("/contents/:id/promotions/:pid/actions/participate",    security.authWrap, require('./promotions/promo_actions').participate);
 router.post("/contents/:id/promotions/:pid/actions/unparticipate",  security.authWrap, require('./promotions/promo_actions').unparticipate);
-router.post("/contents/:id/promotions/:pid/actions/participants",   security.authWrap, require('./promotions/promo_actions').participants);
+router.post("/contents/:id/promotions/:pid/actions/participants",   require('./promotions/promo_actions').participants);
 router.post("/contents/:id/promotions/:pid/actions/rate",           security.authWrap, require('./promotions/promo_actions').rate);
 
 
