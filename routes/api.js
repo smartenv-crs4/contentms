@@ -26,7 +26,7 @@ router.get("/od", require('./od'));
 //contents
 router.get("/contents/",        require('./contents/contents_search'));
 router.get("/contents/:id",     require('./contents/contents_get'));
-router.post("/contents/",       security.authWrap, require('./contents/contents_insert'));
+router.post("/contents/",       security.authWrap, security.canWrite,       require('./contents/contents_insert'));
 router.put("/contents/:id",     security.authWrap, security.isContentAdmin, require('./contents/contents_update'));
 router.delete("/contents/:id",  security.authWrap, security.isContentAdmin, require('./contents/contents_delete'));
 

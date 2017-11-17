@@ -12,6 +12,7 @@
       "promotype"   : "promotypes",
       "ship"        : "ship"
     },
+    "contentAdminTokenType": ["contentAdmin"],
     "authUrl":"your_auth_service_url",
     "uploadUrl":"your_upload_service_url",
     "auth_token":"your_auth_service_token",
@@ -30,6 +31,7 @@
       "promotype"   : "promotypes",
       "ship"        : "ship"
     },
+    "contentAdminTokenType": ["contentAdmin"],
     "authUrl":"your_auth_service_url",
     "uploadUrl":"your_upload_service_url",
     "auth_token":"your_auth_service_token",
