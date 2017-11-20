@@ -29,10 +29,11 @@ module.exports = function(req, res, next) {
   if(Object.keys(req.body).length === 0) {
     res.boom.badRequest('empty object');
   }
-  else {
+  else {    
     let contentItem = req.body;
     contentItem.owner = req[authField].token._id;
     contentItem.admins = []; //admin gestibile solo tramite actions
+    
     if(!contentItem.owner) {
       res.boom.forbidden('Invalid user');
     }

@@ -1,4 +1,5 @@
-const authField = require('propertiesmanager').conf.decodedTokenFieldName;
+const config = require('propertiesmanager').conf;
+const authField = config.decodedTokenFieldName;
 const auth = require('tokenmanager');
 const rp = require('request-promise');
 var content = require('../schemas/content.js').content;
@@ -33,15 +34,24 @@ module.exports = {
 
   //check if the user can write a new content
   canWrite: (req, res, next) => {
+    
     if(req.app.get("nocheck")) next();
-    else { 
-      rp(config.authUrl + (config.authUrl.endsWIth('/') ? '' : '/') + 'tokenactions/getsupeusertokenlist')
+    else {            
+      rp({
+        uri: config.authUrl + (config.authUrl.endsWith('/') ? '' : '/') + 'tokenactions/getsupeusertokenlist',
+        method:"GET",
+        headers: {
+          Authorization: "Bearer " + config.auth_token
+        }
+      })
       .then(tokenarray => {
-        let ttype = req[authField].token.type;
+        console.log(tokenarray);
+        let ttype = req[authField].token.type;        
         let isGlobalAdmin = tokenarray.indexOf(ttype) != -1;
         let canWrite = config.contentAdminTokenType.indexOf(ttype) != -1;
-        if(canWrite || isGlobalAdmin)
+        if(canWrite || isGlobalAdmin) {          
           next();
+        }
         else
           res.boom.forbidden('You are not allowed to write a new content');
       })
