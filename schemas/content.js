@@ -171,7 +171,10 @@ function updateList(id, newItems, list, op) {
               break;
           }
         }
-        else resolve(cont);
+        else {
+          //console.log(cont);
+          resolve(cont);
+        }
       });
     }
   );

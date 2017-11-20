@@ -212,7 +212,7 @@ doilike : (req, res, next) => {
  * @apiParam {String} id The id of the related content.
  * @apiParam {String} body.userId The id of the user.
  *
- * @apiSuccess (200) {Object} body Json object with the updated admin list for the content.
+ * @apiSuccess (200) {Object} body Json object: { admins: [updated admin list for the content], _id:"ObjectId of the removed admin" }.
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
