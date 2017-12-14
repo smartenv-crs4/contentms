@@ -33,7 +33,7 @@ module.exports = function(req, res, next) {
     let contentItem = req.body;
     contentItem.owner = req[authField].token._id;
     contentItem.admins = []; //admin gestibile solo tramite actions
-    
+    contentItem.published = true; //tutti i contenuti visibili di default lock solo con action
     if(!contentItem.owner) {
       res.boom.forbidden('Invalid user');
     }

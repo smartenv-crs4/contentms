@@ -561,5 +561,38 @@ describe('--- Testing contents microservice ---', () => {
           })
       });
     });
+
+    describe('POST /contents/:id/actions/{lock,unlock}', () => {
+      it('(lock) respond with 200 and {published:false}', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/lock' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("published");
+              res.body.published.should.be.equal(false);
+              done()
+            }
+          })
+      });
+
+      it('(unlock) respond with 200 and {published:true}', (done) => {
+        request
+          .post('contents/' + new_item + '/actions/unlock' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("published");
+              res.body.published.should.be.equal(true);
+              done()
+            }
+          })
+      });
+    
+    });
   });
 });

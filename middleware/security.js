@@ -31,13 +31,28 @@ module.exports = {
         });
     },
 
+    isSuperuser: (req, res, next) => {
+        if(req.app.get("nocheck")) next();
+        else {
+            getSuperusers()
+            .then(tokenarray => {            
+                let ttype = req[authField].token.type;        
+                if(tokenarray.indexOf(ttype) != -1) next();
+                else res.boom.forbidden('Only superuser can access this resource');
+            })
+            .catch(e => {
+                console.log(e);
+                res.boom.forbidden();
+            })
+        }
+    },
+
     //check if the user can write a new content
     canWrite: (req, res, next) => {
         if(req.app.get("nocheck")) next();
         else {            
             getSuperusers()
-            .then(tokenarray => {
-                console.log(tokenarray);
+            .then(tokenarray => {                
                 let ttype = req[authField].token.type;        
                 let isGlobalAdmin = tokenarray.indexOf(ttype) != -1;
                 let canWrite = config.contentAdminTokenType.indexOf(ttype) != -1;

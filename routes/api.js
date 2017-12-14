@@ -9,9 +9,9 @@ var authField = config.decodedTokenFieldName;
 
 
 auth.configure({
-  authorizationMicroserviceUrl:config.authUrl + '/tokenactions/checkiftokenisauth',
-  decodedTokenFieldName:config.decodedTokenFieldName,
-  authorizationMicroserviceToken:config.auth_token
+    authorizationMicroserviceUrl:config.authUrl + '/tokenactions/checkiftokenisauth',
+    decodedTokenFieldName:config.decodedTokenFieldName,
+    authorizationMicroserviceToken:config.auth_token
 });
 
 router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
@@ -41,6 +41,8 @@ router.post("/contents/:id/actions/doilike",        security.authWrap, require('
 router.post("/contents/:id/actions/unlike",         security.authWrap, require('./contents/contents_actions').unlike);
 router.post("/contents/:id/actions/likes",          require('./contents/contents_actions').likes);
 router.post("/contents/:id/actions/rate",           security.authWrap, require('./contents/contents_actions').rate);
+router.post("/contents/:id/actions/lock",           security.authWrap, security.isSuperuser, require('./contents/contents_actions').lock);
+router.post("/contents/:id/actions/unlock",         security.authWrap, security.isSuperuser, require('./contents/contents_actions').unlock);
 
 
 //promotions
@@ -60,6 +62,8 @@ router.post("/contents/:id/promotions/:pid/actions/doiparticipate", security.aut
 router.post("/contents/:id/promotions/:pid/actions/unparticipate",  security.authWrap, require('./promotions/promo_actions').unparticipate);
 router.post("/contents/:id/promotions/:pid/actions/participants",   require('./promotions/promo_actions').participants);
 router.post("/contents/:id/promotions/:pid/actions/rate",           security.authWrap, require('./promotions/promo_actions').rate);
+//router.post("/contents/:id/promotions/:pid/actions/lock",           security.authWrap, security.isSuperuser, require('./promotions/promo_actions').lock);
+//router.post("/contents/:id/promotions/:pid/actions/unlock",         security.authWrap, security.isSuperuser, require('./promotions/promo_actions').unlock);
 
 
 //categories crud

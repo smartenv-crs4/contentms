@@ -22,6 +22,7 @@ module.exports = function(req, res, next) {
   let upItem = req.body;
   delete upItem.owner; //owner settato da token solo in inserimento
   delete upItem.admins; //admin gestiti solo tramite actions
+  delete upItem.published //stato published gestito solo tramite action
   content.update(id, upItem)
   .then(up => {
     res.setHeader("Location", req.header.host + "/api/v1/contents/"+up._id); //WARNING, alcuni browser potrebbero non mettere la porta in req.headers.host

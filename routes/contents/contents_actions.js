@@ -77,6 +77,18 @@ function actionWrap(f, res) {
     });
 }
 
+//for actions lock/unlock
+//close is boolean, means published or not
+function locker(cid, res, close) {
+    content.update(cid, {published:close})
+    .then(r => {
+        res.json({published: r.published});
+    })
+    .catch(e => {
+        console.log(e)
+        res.boom.badImplementation();
+    })
+}
 
 module.exports = {
 /**
@@ -264,5 +276,41 @@ doilike : (req, res, next) => {
       actionWrap(content.removeCategory(req.params.id, [catId]), res);
     }
     else res.boom.badRequest('Invalid category format');
-  }
+  },
+
+
+/**
+ * @api {POST} /contents/:id/actions/lock lock the requested content
+ * @apiGroup Content
+ *
+ * @apiDescription Make the selected content invisible.
+ * @apiParam {String} id The id of the related content.
+ *
+ * @apiSuccess (200) {Object} body Json object with the updated published status for the content.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+    lock: (req, res, next) => {
+        var cid = req.params.id;
+        locker(cid, res, false);
+    },
+
+/**
+ * @api {POST} /contents/:id/actions/unlock unlock the requested content
+ * @apiGroup Content
+ *
+ * @apiDescription Make the selected content visible again.
+ * @apiParam {String} id The id of the related content.
+ *
+ * @apiSuccess (200) {Object} body Json object with the updated published status for the content.
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+    unlock: (req, res, next) => {
+        var cid = req.params.id;
+        locker(cid, res, true);
+    }
 }
+
