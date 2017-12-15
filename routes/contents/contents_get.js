@@ -25,16 +25,12 @@ module.exports = function(req, res, next) {
             let isLocked = !result.published;
             if(isLocked) {
                 console.log(req[authField])
-                console.log("XXXXXX 1")
                 if(!req[authField].valid) {//utente non loggato
-                    console.log("XXXXXX 2")
                     res.boom.locked();
                 }
                 else {
-                    console.log("XXXXXX 3")
                     common.isContentAdmin(result, req)
                     .then(isAdm => {
-                        console.log("XXXXXX 4 " + isAdm)
                         if(isAdm) res.json(result); //utente loggato e admin
                         else res.boom.locked(); //utente loggato ma non admin
                     })
