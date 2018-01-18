@@ -19,11 +19,14 @@ var ContentSchema = new mongoose.Schema({
   lat           : {type: Number, index: true},
   lon           : {type: Number, index: true},
   images        : [String], //puo' contenere url o objectid TODO rifinire
-  avatar        : String
+  avatar        : String,
+  email         : String,
+  facebook      : String,
+  twitter       : String,
+  tripadvisor   : String
 
 //      contacts //TODO dovrebbe essere un oggetto variabile (mail, fb, twitter, tel...)
-//      opens
-//      avatar
+
 },
 {versionKey:false});
 
@@ -107,7 +110,10 @@ ContentSchema.statics.findById = function(id) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOne({_id:id}).lean().exec(function(e, cont) {
+      that.model(collectionName).findOne({_id:id})
+      .populate('category')
+      .lean()
+      .exec(function(e, cont) {
         if(e) reject(e);
         else resolve(cont);
       });
