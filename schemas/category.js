@@ -1,4 +1,4 @@
-//TODO generalizzare con promotype
+//TODO generalizzabile con promotype
 
 var mongoose = require('mongoose');
 var collectionName = require('propertiesmanager').conf.dbCollections.category;
@@ -8,7 +8,8 @@ var validator = require('validator');
 var CategorySchema = new mongoose.Schema({
     _id         : Number,
     name        : String,
-    description : String
+    description : String,
+    icon        : String //used for css incon class
   }, 
   {versionKey:false}
 );
