@@ -148,7 +148,8 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
           };
           that.model(collectionName).find(query, fields, options)          
           .populate('type category')
-          .sort({"creationDate":-1}) //ATTENTIION!! ordered by creation date (last first)!
+          //.sort({"creationDate":-1}) //ATTENTIION!! ordered by creation date (last first) PER TOURPLANNER CARLO!!!!
+          .sort({"endDate":1}) //ordinati per data di "scadenza"
           .lean()
           .exec(function(e, cont) {
             let result = {};
