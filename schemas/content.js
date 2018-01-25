@@ -20,13 +20,12 @@ var ContentSchema = new mongoose.Schema({
   lon           : {type: Number, index: true},
   images        : [String], //puo' contenere url o objectid TODO rifinire
   avatar        : String,
+  phone         : Number,
   email         : String,
   facebook      : String,
   twitter       : String,
+  instagram     : String,
   tripadvisor   : String
-
-//      contacts //TODO dovrebbe essere un oggetto variabile (mail, fb, twitter, tel...)
-
 },
 {versionKey:false});
 
