@@ -23,6 +23,7 @@ var test_items = [
     {
       "name"        : "porcino night",
       "type"        : 1,
+      "published"   : true,
       "description" : "cena a base di funghi porcini",
       "startDate"   : "2016-9-30",
       "endDate"     : "2016-9-30",
@@ -34,6 +35,7 @@ var test_items = [
      {
       "name"        : "Redentore - nuoro",
       "type"        : 1,
+      "published"   : true,
       "description" : "Manifestazione folkloristica locale",
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-20",
@@ -45,6 +47,7 @@ var test_items = [
     {
       "name"        : "Autunno in barbagia - orgosolo",
       "type"        : 1,
+      "published"   : true,
       "description" : "Manifestazione promozionale di artigianato e prodotti locali",
       "startDate"   : "2016-10-14",
       "endDate"     : "2016-10-16",
@@ -609,5 +612,37 @@ describe('--- Testing promotions crud ---', () => {
           })
       });
     });
+
+    describe('POST /contents/:id/promotions/:pid/actions/{lock,unlock}', () => {
+      it('(lock) respond with 200 and {published:false}', (done) => {
+        request
+        .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/lock' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("published");
+              res.body.published.should.be.equal(false);
+              done()
+            }
+          })
+      });
+
+      it('(unlock) respond with 200 and {published:true}', (done) => {
+        request
+        .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unlock' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("published");
+              res.body.published.should.be.equal(true);
+              done()
+            }
+          })
+      });
+    })
   });
 });

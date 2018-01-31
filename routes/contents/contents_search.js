@@ -19,23 +19,27 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "category", "town", "position", "by_uid", "text", "lat", "lon"];
-  let one_instance_keys = ["position"]; //viene considerata solo la prima occorrenza nel url
-  let filter = {};
-  let limit = req.query.limit;
-  let skip = req.query.skip;
+    let allowed_keys = ["type", "category", "town", "position", "by_uid", "text", "lat", "lon"];
+    let one_instance_keys = ["position"]; //viene considerata solo la prima occorrenza nel url
+    let filter = {};
+    let limit = req.query.limit;
+    let skip = req.query.skip;
 
-  common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
+    common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  content.findFiltered(filter, limit, skip)
-  .then(result => {
-    for(let rid in result.contents) {
-        result.contents[rid].images = common.uniformImages(result.contents[rid].images);
-    }
-    res.json(result);
-  })
-  .catch(e => { 
-    console.log(e);
-    res.boom.badImplementation();
-  });  
+    content.findFiltered(filter, limit, skip)
+    .then(result => {
+        let out = [];
+        for(let rid in result.contents) {
+            if(result.contents[rid].published) { //locked contents hidden in search!!!!
+                result.contents[rid].images = common.uniformImages(result.contents[rid].images);
+                out.push(result.contents[rid]);
+            }
+        }
+        res.json({"contents":out});
+    })
+    .catch(e => { 
+        console.log(e);
+        res.boom.badImplementation();
+    });  
 }

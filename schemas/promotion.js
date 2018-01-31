@@ -8,6 +8,7 @@ var PromotionSchema = new mongoose.Schema({
   type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype},
   description   : {type:String, required:true},
   creationDate  : {type:Date, default: Date.now},
+  published     : Boolean,
   lastUpdate    : Date,
   startDate     : {type: Date, required:true},
   endDate       : {type: Date, required:true},
@@ -65,7 +66,12 @@ PromotionSchema.statics.findById = function(cid, pid) {
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOne({_id:pid, idcontent:cid}).lean().exec(function(e, cont) {
-        if(e) reject(e);
+        if(e) {
+          if(e.name == "CastError")
+            reject({status:404})
+          else
+            reject(e);
+        }
         else resolve(cont);
       });
     }
@@ -80,9 +86,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   return new Promise(
     function(resolve, reject) {
       let query = {};
+      query['$and'] = [{'published':true}]; //not published results hidden in search, use get!
 
       if(filter.idcontent) //search solo su promotion di un contenuto
-        query['$and'] = [{'idcontent':filter.idcontent}];
+        query['$and'].push({'idcontent':filter.idcontent});
 
       let position = undefined;
       let skipTime = false;
@@ -170,7 +177,6 @@ PromotionSchema.statics.update = function(cid, pid, upd) {
   if(upd._id) delete upd._id;
   if(upd.creationDate) delete upd.creationDate;
   if(upd.lastUpdate) delete upd.lastUpdate;
-  
   upd.lastUpdate = new Date();
   return new Promise(
     function(resolve, reject) {

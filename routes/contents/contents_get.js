@@ -44,7 +44,11 @@ module.exports = function(req, res, next) {
         }
     })
     .catch(e => {
-        console.log(e);
-        res.boom.badImplementation();
+        if(e.status && e.status==404)
+            res.boom.notFound();
+        else {
+            console.log(e);
+            res.boom.badImplementation();
+        }
     });
 }

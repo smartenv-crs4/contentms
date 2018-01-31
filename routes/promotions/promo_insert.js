@@ -39,7 +39,7 @@ module.exports = function(req, res, next) {
     promo.idcontent = req.params.id;
     promo.startDate = new Date(req.body.startDate);
     promo.endDate = new Date(req.body.endDate);
-
+    promo.published = true;
     promotion.add(promo)
     .then(newpromo => {
       res.setHeader("Location", 

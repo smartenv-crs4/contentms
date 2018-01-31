@@ -62,8 +62,8 @@ router.post("/contents/:id/promotions/:pid/actions/doiparticipate", security.che
 router.post("/contents/:id/promotions/:pid/actions/unparticipate",  security.checkAuthorization, require('./promotions/promo_actions').unparticipate);
 router.post("/contents/:id/promotions/:pid/actions/participants",   require('./promotions/promo_actions').participants);
 router.post("/contents/:id/promotions/:pid/actions/rate",           security.checkAuthorization, require('./promotions/promo_actions').rate);
-//router.post("/contents/:id/promotions/:pid/actions/lock",           security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').lock);
-//router.post("/contents/:id/promotions/:pid/actions/unlock",         security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').unlock);
+router.post("/contents/:id/promotions/:pid/actions/lock",           security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').lock);
+router.post("/contents/:id/promotions/:pid/actions/unlock",         security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').unlock);
 
 
 //categories crud

@@ -19,9 +19,12 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let cid = req.params.id
-  let pid = req.params.pid
-  promotion.update(cid, pid, req.body)
+  let cid = req.params.id;
+  let pid = req.params.pid;
+  let upItem = req.body;
+  delete upItem.published //stato published gestito solo tramite action
+
+  promotion.update(cid, pid, upItem)
   .then(up => {
     res.setHeader("Location", req.headers.host + "/api/v1/contents/" + up.idcontent //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
       + "/promotions/" + up._id);

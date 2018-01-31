@@ -1,6 +1,6 @@
 var authField     = require('propertiesmanager').conf.decodedTokenFieldName;
 var involvements  = require('../../schemas/involvement').involvement;
-
+const promos      = require('../../schemas/promotion').promotion;
 
 function involve(req, res, type) {
   let uid = req[authField].token._id
@@ -63,6 +63,19 @@ function count(req, res, type) {
   .catch((e) => {
     console.log(e)
     res.boom.badImplementation();
+  })
+}
+
+//for actions lock/unlock
+//close is boolean, means published or not
+function locker(cid, pid, res, close) {
+  promos.update(cid, pid, {published:close})
+  .then(r => {
+      res.json({published: r.published});
+  })
+  .catch(e => {
+      console.log(e)
+      res.boom.badImplementation();
   })
 }
 
@@ -257,5 +270,45 @@ doiparticipate : (req, res, next) => {
  */
   participants: (req, res, next) => {
     count(req, res, 'participation');
+  },
+
+  /**
+   * @api {POST} /contents/:id/promotions/:pid/actions/lock lock the requested content
+   * @apiGroup Content
+   *
+   * @apiDescription Make the selected content invisible.
+   * @apiParam {String} id The id of the related content.
+   * @apiParam {String} pid The id of the promotion to be locked.
+   *
+   * @apiSuccess (200) {Object} body Json object with the updated published status for the content.
+   * @apiUse Unauthorized
+   * @apiUse BadRequest
+   * @apiUse ServerError
+   */
+  lock: (req, res, next) => {
+    let pid = req.params.pid;
+    let cid = req.params.id;
+    locker(cid, pid, res, false);
+  },
+
+  /**
+  * @api {POST} /contents/:id/promotions/:pid/actions/unlock unlock the requested content
+  * @apiGroup Content
+  *
+  * @apiDescription Make the selected content visible again.
+  * @apiParam {String} id The id of the related content.
+  * @apiParam {String} pid The id of the promotion to be unlocked.
+  *
+  * @apiSuccess (200) {Object} body Json object with the updated published status for the content.
+  * @apiUse Unauthorized
+  * @apiUse BadRequest
+  * @apiUse ServerError
+  */
+  unlock: (req, res, next) => {
+    let pid = req.params.pid;
+    let cid = req.params.id;
+    locker(cid, pid, res, true);
   }
+
+
 }

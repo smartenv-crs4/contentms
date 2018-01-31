@@ -18,27 +18,31 @@ var common = require('../../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "position", "sdate", "edate", "text", "category", "mds", "mde"];
-  let one_instance_keys = ["sdate", "edate", "position", "mds", "mde"]; //viene considerata solo la prima occorrenza nel url
-  let filter = {};
-  let limit = req.query.limit;
-  let skip = req.query.skip;
-  filter['idcontent'] = req.params.id;
+    let allowed_keys = ["type", "position", "sdate", "edate", "text", "category", "mds", "mde"];
+    let one_instance_keys = ["sdate", "edate", "position", "mds", "mde"]; //viene considerata solo la prima occorrenza nel url
+    let filter = {};
+    let limit = req.query.limit;
+    let skip = req.query.skip;
+    filter['idcontent'] = req.params.id;
 
-  common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
+    common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  promotion.findFiltered(filter, limit, skip)
-  .then(result => {
-    for(let rid in result.promos) {
-      result.promos[rid].images = common.uniformImages(result.promos[rid].images);
-    }
-    res.json(result);
-  })
-  .catch(e => { 
-    console.log(e);
-    if(e.status == 400)
-      res.boom.badRequest(e.error);
-    else 
-      res.boom.badImplementation();
-  });
+    promotion.findFiltered(filter, limit, skip)
+    .then(result => {
+        let out = [];
+        for(let rid in result.promos) {
+            if(result.promos[rid].published == true) { //locked contents hidden in search!!!!
+                result.promos[rid].images = common.uniformImages(result.promos[rid].images);
+                out.push(result.promos[rid]);
+            }
+        }
+        res.json({"promos":out});
+    })
+    .catch(e => { 
+        console.log(e);
+        if(e.status == 400)
+            res.boom.badRequest(e.error);
+        else 
+            res.boom.badImplementation();
+    });
 }
