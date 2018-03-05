@@ -1,12 +1,12 @@
 var authField     = require('propertiesmanager').conf.decodedTokenFieldName;
-var involvments  = require('../../schemas/involvment').involvment;
+var involvements  = require('../../schemas/involvement').involvement;
 const promos      = require('../../schemas/promotion').promotion;
 
 function involve(req, res, type) {
   let uid = req[authField].token._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
-    involvments.add(req.params.pid, uid, type)
+    involvements.add(req.params.pid, uid, type)
     .then((r) => {res.json(r)})
     .catch((e) => {
       if(e.status === 409)
@@ -23,7 +23,7 @@ function involved(req, res, type) {
   let uid = req[authField].token._id;
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
-    involvments.exists(req.params.pid, uid, type)
+    involvements.exists(req.params.pid, uid, type)
     .then(isInvolved => {
       let r = {};
       r[type] = isInvolved;
@@ -39,7 +39,7 @@ function uninvolve(req, res, type) {
   let uid = req[authField].token._id
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
-    involvments.delete(req.params.pid, uid, type)
+    involvements.delete(req.params.pid, uid, type)
     .then((r) => {res.json(r)})
     .catch((e) => {
       console.log(e)
@@ -58,7 +58,7 @@ function uninvolve(req, res, type) {
 
 function count(req, res, type) {
   let pid = req.params.pid;
-  involvments.countByType(pid, type)
+  involvements.countByType(pid, type)
   .then((c) => {res.json({"id":pid, "total":c, "type":type})})
   .catch((e) => {
     console.log(e)
@@ -183,7 +183,7 @@ doilike : (req, res, next) => {
         return;
       }
       else {
-        involvments.rate(req.params.pid, uid, rate)
+        involvements.rate(req.params.pid, uid, rate)
         .then((r) => {res.json(r)})
         .catch((e) => {
           console.log(e);

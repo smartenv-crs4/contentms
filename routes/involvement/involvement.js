@@ -1,5 +1,5 @@
 var authField     = require('propertiesmanager').conf.decodedTokenFieldName;
-var involvments  = require('../../schemas/involvment').involvment;
+var involvements  = require('../../schemas/involvement').involvement;
 const promos      = require('../../schemas/promotion').promotion;
 
 
@@ -22,7 +22,7 @@ module.exports = {
         let pid = req.params.pid;
 
         if(pid) {
-            involvments.get(pid, "participation") //TODO mapping con valori numerici!!!!
+            involvements.get(pid, "participation") //TODO mapping con valori numerici!!!!
             .then(r => {
                 res.json(r);
             })
@@ -37,7 +37,7 @@ module.exports = {
         }
     },
     /**
-     * @api {GET} /involvments Get the list of user's participations
+     * @api {GET} /involvements Get the list of user's participations
      * @apiGroup Content
      *
      * @apiDescription Return the list of promotions or events that the user would join
@@ -47,11 +47,11 @@ module.exports = {
      * @apiUse BadRequest
      * @apiUse ServerError
      */
-    involvments : (req, res, next) => {
+    involvements : (req, res, next) => {
         let uid = req[authField].token._id
         if(!uid) {res.boom.badRequest('Missing user id or user not logged');}
         else {
-            involvments.findByUser(uid, "participation") //TODO mapping con valori numerici!!!!
+            involvements.findByUser(uid, "participation") //TODO mapping con valori numerici!!!!
             .then(r => {
                 res.json(r);
             })

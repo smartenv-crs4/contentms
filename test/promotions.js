@@ -598,9 +598,9 @@ describe('--- Testing promotions crud ---', () => {
           })
       });
     
-      it('(involvments per user) respond with 200 and a list of one element', (done) => {
+      it('(involvements per user) respond with 200 and a list of one element', (done) => {
         request
-          .get('involvments' + fakeuidpar)
+          .get('involvements' + fakeuidpar)
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
@@ -608,8 +608,8 @@ describe('--- Testing promotions crud ---', () => {
             else {
               res.body.should.have.property("user");
               res.body.user.should.be.equal(fakeuid);
-              res.body.should.have.property("involvments");
-              res.body.involvments[0].should.be.equal(new_items[0]+'');
+              res.body.should.have.property("involvements");
+              res.body.involvements[0].should.be.equal(new_items[0]+'');
               done()
             }
           })
