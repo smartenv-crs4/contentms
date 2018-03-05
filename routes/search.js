@@ -56,11 +56,14 @@ module.exports = function(req, res, next) {
       content.findFiltered(filter, limit, skip, requiredFields),
       promo.findFiltered(filter, limit, skip, requiredFields)
     ])
-    .then(result => {      
+    .then(result => {
       let wholeresult = {
         contents:result[0].contents,
         promos:result[1].promos,
-        metadata:result[0].metadata
+        //WARNING:
+        //skip e limit si riferiscono alle singole chiamate contents e promo
+        //mentre totalCount e' relativo al totale complessivo
+        _metadata:{limit:limit, skip:skip, totalCount:(result[0].metadata.totalCount + result[1].metadata.totalCount)}
       }
       res.json(wholeresult);
     })

@@ -577,7 +577,46 @@ describe('--- Testing promotions crud ---', () => {
             }
           })
       });
+
+      ////////////////////////////////////////////////////////////////////////////////////////////////
+      //I due test successivi non sono action delle promo, sono inserite in questo set per comodita'//
+      ////////////////////////////////////////////////////////////////////////////////////////////////
+      it('(participants list) respond with 200 and a list of one element', (done) => {
+        request
+          .get('contents/' + father_id + '/promotions/' + new_items[0] +'/participants')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("id");
+              res.body.id.should.be.equal(new_items[0]+'');
+              res.body.should.have.property("participants");
+              res.body.participants[0].should.be.equal(fakeuid);
+              done()
+            }
+          })
+      });
     
+      it('(involvments per user) respond with 200 and a list of one element', (done) => {
+        request
+          .get('involvments' + fakeuidpar)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("user");
+              res.body.user.should.be.equal(fakeuid);
+              res.body.should.have.property("involvments");
+              res.body.involvments[0].should.be.equal(new_items[0]+'');
+              done()
+            }
+          })
+      });
+      ////////////////////////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////////////////////////////
+
       it('(unparticipate) respond with 200 and {success: true}', (done) => {
         request
           .post('contents/' + father_id + '/promotions/' + new_items[0] +'/actions/unparticipate' + fakeuidpar)

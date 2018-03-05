@@ -36,7 +36,7 @@ module.exports = function(req, res, next) {
                 out.push(result.promos[rid]);
             }
         }
-        res.json({"promos":out});
+        res.json({"promos":out, _metadata:{limit:limit, skip:skip, totalCount:result.metadata.totalCount}});
     })
     .catch(e => { 
         console.log(e);

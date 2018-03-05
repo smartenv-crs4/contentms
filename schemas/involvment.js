@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var collectionName = require('propertiesmanager').conf.dbCollections.involvement;
+var collectionName = require('propertiesmanager').conf.dbCollections.involvment;
 
-var InvolvementSchema = new mongoose.Schema({
+var InvolvmentSchema = new mongoose.Schema({
   id      : mongoose.Schema.ObjectId,
   iduser  : mongoose.Schema.ObjectId,
   type    : String, //LIKE, PARTICIPATION, RATE
@@ -9,9 +9,9 @@ var InvolvementSchema = new mongoose.Schema({
 },
 {versionKey:false});
 
-InvolvementSchema.index({id:1, iduser:1, type:1},{unique:true});
+InvolvmentSchema.index({id:1, iduser:1, type:1},{unique:true});
 
-InvolvementSchema.statics.add = function(pid, uid, type) {
+InvolvmentSchema.statics.add = function(pid, uid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -21,7 +21,7 @@ InvolvementSchema.statics.add = function(pid, uid, type) {
       .catch((e) => {
 //        console.log(e);
         if(e.name === 'MongoError' && e.code === 11000)
-          reject({status:409, error:"involvement already set"});
+          reject({status:409, error:"involvment already set"});
         else
           reject({status:500, error:"server error"});
       });
@@ -30,7 +30,7 @@ InvolvementSchema.statics.add = function(pid, uid, type) {
 }
 
 
-InvolvementSchema.statics.exists = function(pid, uid, type) {
+InvolvmentSchema.statics.exists = function(pid, uid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -49,8 +49,50 @@ InvolvementSchema.statics.exists = function(pid, uid, type) {
 }
 
 
+InvolvmentSchema.statics.get = function(pid, type) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {            
+      that.model(collectionName).find({id:pid, type:type}, "iduser", function(e, res) {        
+        if(e) {
+          console.log(e);
+          reject({status:500, error:"server error"});
+        }
+        else {
+          let retarray = [];
+          for(let i=0; i<res.length; i++) {
+            retarray.push(res[i].iduser);
+          }
+          resolve({id: pid, participants: retarray});
+        }
+      });
+    }
+  );
+}
 
-InvolvementSchema.statics.rate = function(pid, uid, rate) {
+InvolvmentSchema.statics.findByUser = function(uid, type) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {            
+      that.model(collectionName).find({iduser:uid, type:type}, "id", function(e, res) {        
+        if(e) {
+          console.log(e);
+          reject({status:500, error:"server error"});
+        }
+        else {
+          let retarray = [];
+          for(let i=0; i<res.length; i++) {
+            retarray.push(res[i].id);
+          }
+          resolve({user: uid, involvments: retarray});
+        }
+      });
+    }
+  );
+}
+
+
+InvolvmentSchema.statics.rate = function(pid, uid, rate) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -67,7 +109,7 @@ InvolvementSchema.statics.rate = function(pid, uid, rate) {
 
 
 
-InvolvementSchema.statics.delete = function(pid, uid, type) {
+InvolvmentSchema.statics.delete = function(pid, uid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -89,7 +131,7 @@ InvolvementSchema.statics.delete = function(pid, uid, type) {
 }
 
  
-InvolvementSchema.statics.countByType = function(pid, type) {
+InvolvmentSchema.statics.countByType = function(pid, type) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -101,4 +143,4 @@ InvolvementSchema.statics.countByType = function(pid, type) {
   );
 }
 
-exports.involvement = mongoose.model(collectionName, InvolvementSchema);
+exports.involvment = mongoose.model(collectionName, InvolvmentSchema);

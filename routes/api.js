@@ -16,10 +16,13 @@ auth.configure({
 
 router.get("/", (req, res, next) => {res.json({ms:"CAPORT2020 Contents microservice", version:require('../package.json').version})});
 
-//search su contents e promotions (auth??????)
+//search su contents e promotions
 router.get("/search", require('./search'));
 
-//opendata api (auth??????)
+//lista partecipate espressi dall'utente (user id nel token)
+router.get("/involvments",  security.checkAuthorization, require('./involvment/involvment').involvments);
+
+//opendata api
 router.get("/od", require('./od'));
 
 
@@ -51,6 +54,7 @@ router.get("/contents/:id/promotions/:pid",     require('./promotions/promo_get'
 router.post("/contents/:id/promotions/",        security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_insert'));
 router.put("/contents/:id/promotions/:pid",     security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_update'));
 router.delete("/contents/:id/promotions/:pid",  security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_delete')); 
+router.get("/contents/:id/promotions/:pid/participants",     security.checkAuthorization, require('./involvment/involvment').participants);
 
 //promotion actions
 router.post("/contents/:id/promotions/:pid/actions/like",           security.checkAuthorization, require('./promotions/promo_actions').like);
