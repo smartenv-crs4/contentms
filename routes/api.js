@@ -27,7 +27,7 @@ router.get("/od", require('./od'));
 
 
 //contents
-router.get("/contents/",        require('./contents/contents_search'));
+router.get("/contents/",        require('./search'));
 router.get("/contents/:id",     security.checkTokenAuthorizationOnReq,   require('./contents/contents_get'));
 router.post("/contents/",       security.checkAuthorization, security.canWrite,       require('./contents/contents_insert'));
 router.put("/contents/:id",     security.checkAuthorization, security.isContentAdmin, require('./contents/contents_update'));
@@ -49,7 +49,7 @@ router.post("/contents/:id/actions/unlock",         security.checkAuthorization,
 
 
 //promotions
-router.get("/contents/:id/promotions/",         require('./promotions/promo_search'));
+router.get("/contents/:id/promotions/",         require('./search'));
 router.get("/contents/:id/promotions/:pid",     require('./promotions/promo_get'));
 router.post("/contents/:id/promotions/",        security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_insert'));
 router.put("/contents/:id/promotions/:pid",     security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_update'));

@@ -38,7 +38,7 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   return new Promise(
     function(resolve, reject) {
       let query = {};
-      query['$and'] = [{'published':true}]; //locked contents hidden in search, use get!!!
+      query['$and'] = [{'published':true}]; //locked contents hidden in search, use GET!!!
       let position = undefined;
       Object.keys(filter).forEach((key) => {
         if(key == "position") {
