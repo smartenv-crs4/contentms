@@ -32,7 +32,7 @@ module.exports = function(req, res, next) {
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
-  let requiredFields = ['name','description','category', 'lastUpdate', 'creationDate', "lat", "lon", "images"]; //field richiesti in output dalla query
+  let requiredFields = ['name','description','category', 'lastUpdate', 'creationDate', "lat", "lon", "images", "position"]; //field richiesti in output dalla query
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
 
