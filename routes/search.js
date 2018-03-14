@@ -31,6 +31,7 @@ module.exports = function(req, res, next) {
   
   if(!type) type = (idcontent ? "promo" : "content"); //per GET su /contents/:id/promotions/
   if(idcontent) filter.idcontent = idcontent;
+  
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
   let requiredFields = ['name','description','category', 'lastUpdate', 'creationDate', "lat", "lon", "images", "position"]; //field richiesti in output dalla query
