@@ -54,6 +54,27 @@ module.exports = exports = {
     });
   },
 
+  uniformPosition: function(obj) {
+    //la query spaziale ereditata da hp usa due campi lat e lon mentre la query 
+    //con indice spaziale di mongo usa un array [lon, lat] quindi e' opportuno 
+    //mantenere sempre i campi allineati
+    if(obj.position && obj.position.length == 2) {
+      if(obj.lat && obj.lon) { //priorita' a lat/lon
+        obj.position[0] = obj.lon;
+        obj.position[1] = obj.lat;
+      }
+      else {
+        obj.lat = obj.position[1];
+        obj.lon = obj.position[0];
+      }
+    }
+    else if(obj.lat && obj.lon) {
+      obj.position[0] = obj.lon;
+      obj.position[1] = obj.lat;
+    }
+    return obj;
+  },
+
   getPosition: (arr) => {
     let position = undefined;
     if(Array.isArray(arr) && arr.length >= 3) {
@@ -65,6 +86,7 @@ module.exports = exports = {
     }
     return position;
   },
+  
 
   //metodo HandyParking, supporta skip/limit e non usa geoIndex quindi si puo' usare con $text
   hpNear: (collectionName, position, query, qlimit, qskip, result_label, cb) => {

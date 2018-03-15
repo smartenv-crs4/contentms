@@ -180,7 +180,7 @@ PromotionSchema.statics.update = function(cid, pid, upd) {
   if(upd.lastUpdate) delete upd.lastUpdate;
   upd.lastUpdate = new Date();
   upd = common.uniformPosition(upd);
-  
+
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {
