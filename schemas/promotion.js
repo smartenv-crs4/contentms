@@ -37,12 +37,13 @@ PromotionSchema.index({
         description: 5
     }
 });
- 
+
 
 PromotionSchema.statics.add = function(newitem) {
     var that = this;
     if(newitem.creationDate) delete newitem.creationDate;
     if(newitem.lastUpdate) delete newitem.lastUpdate;
+    newitem = common.uniformPosition(newitem);
     return new Promise(
         function(resolve, reject) {
             let item = new that(newitem);
@@ -178,6 +179,8 @@ PromotionSchema.statics.update = function(cid, pid, upd) {
   if(upd.creationDate) delete upd.creationDate;
   if(upd.lastUpdate) delete upd.lastUpdate;
   upd.lastUpdate = new Date();
+  upd = common.uniformPosition(upd);
+  
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {
