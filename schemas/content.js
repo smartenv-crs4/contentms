@@ -140,7 +140,6 @@ ContentSchema.statics.update = function(id, upd) {
   var that = this;
   if(upd._id) delete upd._id;
   upd = common.uniformPosition(upd);
-  
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {

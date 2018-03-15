@@ -68,7 +68,8 @@ module.exports = exports = {
         obj.lon = obj.position[0];
       }
     }
-    else if(obj.lat && obj.lon) {
+    else if(obj.lat && obj.lon) { //non esiste position
+      obj.position = [];
       obj.position[0] = obj.lon;
       obj.position[1] = obj.lat;
     }
