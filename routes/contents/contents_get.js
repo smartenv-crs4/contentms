@@ -24,7 +24,7 @@ module.exports = function(req, res, next) {
 
             let isLocked = !result.published;
             if(isLocked) {
-                console.log(req[authField])
+                //console.log(req[authField])
                 if(!req[authField].valid) {//utente non loggato
                     res.boom.locked();
                 }

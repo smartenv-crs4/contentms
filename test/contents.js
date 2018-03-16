@@ -287,8 +287,7 @@ describe('--- Testing contents microservice ---', () => {
         .expect(200)
         .end((err,res) => {
           if(err) done(err);
-          else {
-            console.log(res.body)
+          else {            
             res.body.should.have.property("contents");
             res.body.contents.should.be.instanceOf(Array);
             res.body.contents.length.should.be.equal(1);

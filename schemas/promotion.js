@@ -82,12 +82,15 @@ PromotionSchema.statics.findById = function(cid, pid) {
 PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? Number(limit) : 20;
   const qskip = skip != undefined ? Number(skip) : 0;
-  let skipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde']
+  let skipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde', 'ptype'] //single $and params not to use in $in 
   var that = this;
   return new Promise(
     function(resolve, reject) {
       let query = {};
       query['$and'] = [{'published':true}]; //not published results hidden in search, use get!
+      
+      if(filter.ptype)
+        query['$and'].push({'type':filter.ptype});
 
       if(filter.idcontent) //search solo su promotion di un contenuto
         query['$and'].push({'idcontent':filter.idcontent});
@@ -99,6 +102,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         //distance search
         if(key == "position") {
           position = common.getPosition(filter[key]);
+        }
+
+        else if(key == "ids") {
+          query["$and"].push({_id:{$in:filter[key]}})
         }
 
         //fulltext search

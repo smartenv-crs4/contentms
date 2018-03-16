@@ -44,6 +44,9 @@ ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
         if(key == "position") {
           position = common.getPosition(filter[key]);
         }
+        else if(key == "ids") {
+          query["$and"].push({_id:{$in:filter[key]}})
+        }
         else if(key == "text") {
           let txt = filter[key].join(' ');
           if(txt.trim().length > 0) {

@@ -7,12 +7,17 @@ var common = require('../lib/common.js');
  * @apiGroup Search
  * @apiDescription Parametric search over contents on the portal, including category, distance and full text
  *
- * @apiParam {String} [text] Text to search for in the description and name fields.
- * @apiParam {String} [type] The type of activity.
- * @apiParam {String} [town] The town of the activity.
- * @apiParam {String} [by_uid] The Admin user unique ID.
+ * @apiParam {String} [t] The type of search ("promo" or "content").
  * @apiParam {Number} [category] The category id, based on those present in categories.
- * @apiParam {Number[]} [position] Three element array: lon, lat, distance. Keep the order.
+ * @apiParam {Number[]} [position] Three element array: lon, lat, distance. Mind the order.
+ * @apiParam {String} [text] Text to search for in the description and name fields.
+ * @apiParam {Date} [sdate] The start date for a promo (starts after)
+ * @apiParam {Date} [edate] The end date for a promo (ends before)
+ * @apiParam {Date} [mds] Modify Date Start, content or promo created or modified after
+ * @apiParam {Date} [mde] Modify Date End, content or promo created or modified before
+ * @apiParam {String} [by_uid] The Admin user unique ID.
+ * @apiParam {Number} [ptype] The type of promotion (Offer = 1, Event = 2).
+ * @apiParam {Array} [ids] Array of content/promo id to search for.
  *
  * @apiSuccess (200) {Object[]} body Array of results representing found activities.
  * @apiUse Unauthorized
@@ -20,8 +25,9 @@ var common = require('../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["type", "category", "town", "position", "text", "sdate", "edate", "mds", "mde", "by_uid"];
-  let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent"]; //viene considerata solo la prima occorrenza nel url
+  let allowed_keys = ["category", "position", "text", "by_uid", "ids"];
+  let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde"])
+  let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent", "ptype"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
   let skip  = req.query.skip;
@@ -32,8 +38,8 @@ module.exports = function(req, res, next) {
   if(!type) type = (idcontent ? "promo" : "content"); //per GET su /contents/:id/promotions/
   if(idcontent) filter.idcontent = idcontent;
   
-  common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
-
+  common.allowedKeys((type=="promo" ? allowed_keys_promo : allowed_keys), one_instance_keys, filter, req.query);
+console.log(filter);
   let requiredFields = ['name','description','category', 'lastUpdate', 'creationDate', "lat", "lon", "images", "position"]; //field richiesti in output dalla query
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
