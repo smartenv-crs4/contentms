@@ -1,7 +1,8 @@
+const config = require('propertiesmanager').conf;
+
 var content = require('../schemas/content.js').content;
 var promo = require('../schemas/promotion.js').promotion;
 var common = require('../lib/common.js');
-
 
 module.exports = function(req, res, next) {
   let allowed_keys = ["mds", "mde"];
@@ -9,7 +10,7 @@ module.exports = function(req, res, next) {
   let filter = {};
   let limit = req.query.limit;
   let skip  = req.query.skip;
-  let type = req.query.t;
+  let type = req.query.t || "promo"; //default promo
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
@@ -17,14 +18,14 @@ module.exports = function(req, res, next) {
   if(type == "promo" || type == "content") {
     let pexe = (type == "promo") ? promo : content;
     if(type=='promo') {
-      requiredFields.push('idcontent');
-      requiredFields.push('town');
-      requiredFields.push('startDate');
-      requiredFields.push('endDate');
-      requiredFields.push('images');
-      requiredFields.push('type');
+        requiredFields.push('idcontent');
+        requiredFields.push('town');
+        requiredFields.push('startDate');
+        requiredFields.push('endDate');
+        requiredFields.push('images');
+        requiredFields.push('type');
     }
-
+    
     pexe.findFiltered(filter, limit, skip, requiredFields)
     .then(result => {
         delete result.metadata;
@@ -39,11 +40,18 @@ module.exports = function(req, res, next) {
                 for(let i=0; i<result.promos.length; i++) {
                     for(let j=0; j<contents.length; j++) {
                         
-                        if(""+result.promos[i].idcontent == contents[j]._id) {                        
+                        if(""+result.promos[i].idcontent == contents[j]._id) {
+                            //ATTENZIONE: usa l'uploadms specificato in content!
+                            //ma le immagini sono caricate da contentUI
+                            let img = null;
+                            if(result.promos[i].images && result.promos[i].images.length > 0)
+                                img = config.uploadUrl + "file/" + result.promos[i].images[0];
+                            ////////////////////////////////////////////////////
+
                             delete result.promos[i].idcontent;
                             result.promos[i].type = result.promos[i].type ? result.promos[i].type.name : undefined;
                             result.promos[i].category = result.promos[i].category ? result.promos[i].category.name : undefined;
-                            result.promos[i].images = result.promos[i].images[0] || null;
+                            result.promos[i].images = img;
                             result.promos[i].owner = contents[j].name;
                             if(!(result.promos[i].lat && result.promos[i].lon)) {
                                 result.promos[i].lat = contents[j].lat;
