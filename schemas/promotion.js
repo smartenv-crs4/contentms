@@ -5,7 +5,7 @@ var moment = require('moment');
 
 var PromotionSchema = new mongoose.Schema({
   name          : {type:String, required:true},
-  type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype},
+  type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype, required:true, default:1},
   description   : {type:String, required:true},
   creationDate  : {type:Date, default: Date.now},
   published     : Boolean,
