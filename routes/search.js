@@ -34,7 +34,10 @@ module.exports = function(req, res, next) {
   let type = req.query.t;
   let wholeresult = {};
   let idcontent = req.params.id;
-  
+  let ord = req.query.ord;
+  if(!(ord && ["endDate", "creationDate"].indexOf(ord) != -1))
+    ord = undefined;
+
   if(!type) type = (idcontent ? "promo" : "content"); //per GET su /contents/:id/promotions/
   if(idcontent) filter.idcontent = idcontent;
   
@@ -56,7 +59,7 @@ module.exports = function(req, res, next) {
     }
 
     let singleResult = {};
-    pexe.findFiltered(filter, limit, skip, requiredFields)
+    pexe.findFiltered(filter, limit, skip, requiredFields, ord)
       .then(result => {
         singleResult = result;
         return common.getLikes(result[type+'s']);

@@ -79,10 +79,18 @@ PromotionSchema.statics.findById = function(cid, pid) {
   );
 }
 
-PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
+PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord) {
   const qlimit = limit != undefined ? Number(limit) : 20;
   const qskip = skip != undefined ? Number(skip) : 0;
   let skipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde', 'ptype'] //single $and params not to use in $in 
+  
+  if(ord) {
+    if(ord == "startDate" || ord == "endDate" || ord == "creationDate") {
+      ord[ord] = 1;
+    }
+    else ord = {"endDate":1};
+  }
+console.log(ord);
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -164,7 +172,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields) {
           that.model(collectionName).find(query, fields, options)          
           .populate('type category')
           //.sort({"creationDate":-1}) //ATTENTIION!! ordered by creation date (last first) PER TOURPLANNER CARLO!!!!
-          .sort({"endDate":1}) //ordinati per data di "scadenza"
+          .sort(ord) //ordinati per data di "scadenza"
           .lean()
           .exec(function(e, cont) {
             let result = {};
