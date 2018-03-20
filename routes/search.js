@@ -53,6 +53,7 @@ module.exports = function(req, res, next) {
       requiredFields.push('startDate');
       requiredFields.push('endDate');
       requiredFields.push('type');
+      requiredFields.push('price');
     }
     else if(type == "content" && filter.by_uid) {
         requiredFields.push('admins');
