@@ -25,6 +25,8 @@ router.get("/involvements",  security.checkAuthorization, require('./involvement
 //opendata api
 router.get("/od", require('./od'));
 
+//db initialization must be called once befor start using the system
+router.post("/init/",            security.checkAuthorization, security.isSuperuser,  require('./init'));
 
 //contents
 router.get("/contents/",        require('./search'));

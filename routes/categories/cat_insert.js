@@ -10,6 +10,7 @@ var validator = require('validator');
  *  {
  *    "name"        : "Hotel",
  *    "description" : "Alberghi e strutture ricettive",
+ *    "icon"        : "fa fa-hotel" //css class for graphical purposes on the web
  *  }
  *
  * @apiSuccess (201 - CREATED) {Object} body The Json containing the new activity.

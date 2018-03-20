@@ -1,0 +1,69 @@
+{
+    "categories": [
+        {
+            "name": "Hotel",
+            "description": "strutture ricettive con reception",
+            "icon": "fa fa-hotel"
+        },
+        {
+            "name": "Ristoranti",
+            "description": "strutture per gastronomia a servizio",
+            "icon": "fa fa-cutlery"
+        },
+        {
+            "name": "Musei",
+            "description": "strutture espositive pubbliche e private",
+            "icon": "fa fa-university"
+        },
+        {
+            "name": "Sagre",
+            "description": "na",
+            "icon": "fa fa-flag"
+        },
+        {
+            "name": "Monumenti",
+            "description": "monumenti pubblici",
+            "icon": "icon-travel-149"
+        },
+        {
+            "name": "Feste",
+            "description": "Feste locali, tradizionali e religiose",
+            "icon": "fa fa-users"
+        },
+        {
+            "name": "Tradizioni",
+            "description": "Manifestazioni tradizionali e religiose",
+            "icon": "icon-christmas-051"
+        },
+        {
+            "name": "Istituzioni",
+            "description": "Istituzioni, enti e strutture locali pubbliche",
+            "icon": "icon-education-074"
+        },
+        {
+            "name": "Scienza",
+            "description": "Istituti scientifici, università, centri di ricerca",
+            "icon": "icon-education-058"
+        },
+        {
+            "name": "Sport",
+            "description": "Attività e strutture sportive",
+            "icon": "icon-sport-156"
+        },
+        {
+            "name": "Mare",
+            "description": "Luoghi, spiagge e servizi marittimi",
+            "icon": "icon-travel-006"
+        }
+    ],
+    "promotypes": [
+        {
+            "name": "offer",
+            "description": "offerte, sconti, promozioni"
+        },
+        {
+            "name": "event",
+            "description": "eventi, sagre, feste, celebrazioni"
+        }
+    ]
+}
