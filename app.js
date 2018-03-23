@@ -11,9 +11,13 @@ var config = require('propertiesmanager').conf;
 
 var app = express();
 
+var db = require('./lib/db');
+
 if(app.get('env') != 'test') {
+  db.populate(); //Warning async!!!
   app.use(logger('dev'));
 }
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(boom());
@@ -22,6 +26,7 @@ if (app.get('env') === 'dev' || app.get('env') === 'test' ) {
   app.set('nocheck', true);
   console.log("INFO: Development/test mode, skipping token checks"); 
 }
+
 
 if(config.enableCors === true) {
   console.log("INFO: Enabling cross origin");
