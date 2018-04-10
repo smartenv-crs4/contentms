@@ -90,7 +90,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord
     }
     else ord = {"endDate":1};
   }
-console.log(ord);
+
   var that = this;
   return new Promise(
     function(resolve, reject) {
@@ -265,3 +265,4 @@ function setDateRange (sdate, edate, pnameStart, pnameStop) {
         throw({status:400, error:'wrong date syntax'})
     }
 }
+

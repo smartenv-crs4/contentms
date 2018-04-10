@@ -11,6 +11,7 @@ module.exports = function(req, res, next) {
   let limit = req.query.limit;
   let skip  = req.query.skip;
   let type = req.query.t || "promo"; //default promo
+  let lang = 'it';  //ATTENZIONE usa multilingua di interfaccia!!!
 
   common.allowedKeys(allowed_keys, one_instance_keys, filter, req.query);
 
@@ -48,11 +49,16 @@ module.exports = function(req, res, next) {
                                 img = config.uploadUrl + "file/" + result.promos[i].images[0];
                             ////////////////////////////////////////////////////
 
+                            //ATTENZIONE: usa il multilingua di interfaccia....
+                            result.promos[i].name = common.getTranslation(result.promos[i].name, lang);
+                            result.promos[i].description = common.getTranslation(result.promos[i].description, lang);
+                            ////////////////////////////////////////////////////
+
                             delete result.promos[i].idcontent;
                             result.promos[i].type = result.promos[i].type ? result.promos[i].type.name : undefined;
                             result.promos[i].category = result.promos[i].category ? result.promos[i].category.name : undefined;
                             result.promos[i].images = img;
-                            result.promos[i].owner = contents[j].name;
+                            result.promos[i].owner = common.getTranslation(contents[j].name, lang);
                             if(!(result.promos[i].lat && result.promos[i].lon)) {
                                 result.promos[i].lat = contents[j].lat;
                                 result.promos[i].lon = contents[j].lon;

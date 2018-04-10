@@ -35,6 +35,7 @@ module.exports = function(req, res, next) {
   let wholeresult = {};
   let idcontent = req.params.id;
   let ord = req.query.ord;
+  let lang = req.query.lng;
   if(!(ord && ["endDate", "creationDate"].indexOf(ord) != -1))
     ord = undefined;
 
@@ -68,7 +69,12 @@ module.exports = function(req, res, next) {
       .then(rr => {
         for(let i=0; i<singleResult[type+'s'].length; i++) {
             singleResult[type+'s'][i].likes = rr[i];
+            if(lang) {
+              singleResult[type+'s'][i].name = common.getTranslation(singleResult[type+'s'][i].name, lang);
+              singleResult[type+'s'][i].description = common.getTranslation(singleResult[type+'s'][i].description, lang);
+            }
         }
+        
         res.json(singleResult);
       })
       .catch(e => {
@@ -82,7 +88,7 @@ module.exports = function(req, res, next) {
       promo.findFiltered(filter, limit, skip, requiredFields)
     ])
     .then(result => {
-        //TODO getLikes per wholeresult!!!!
+        //TODO getLikes e translate per wholeresult!!!!
         let wholeresult = {
             contents:result[0].contents,
             promos:result[1].promos,

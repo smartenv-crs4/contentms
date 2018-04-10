@@ -16,13 +16,18 @@ var common = require('../../lib/common.js');
 module.exports = function(req, res, next) {
     let cid = req.params.id;
     let pid = req.params.pid;
+    let lang = req.query.lng;
+
     promotion.findById(cid, pid)
     .then(result => {
         if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
             res.boom.notFound();
         else { 
             result.images = common.uniformImages(result.images);
-
+            if(lang) {
+                result.name = common.getTranslation(result.name, lang);
+                result.description = common.getTranslation(result.description, lang);
+            }
             let isLocked = !result.published;
             if(isLocked) {
                 //console.log(req[authField])
