@@ -193,7 +193,7 @@ PromotionSchema.statics.update = function(cid, pid, upd) {
   if(upd._id) delete upd._id;
   if(upd.creationDate) delete upd.creationDate;
   if(upd.lastUpdate) delete upd.lastUpdate;
-  upd.lastUpdate = new Date();
+  upd.lastUpdate = moment().utc(); //new Date();
   upd = common.uniformPosition(upd);
 
   return new Promise(

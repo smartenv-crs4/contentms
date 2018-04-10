@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var category = require('./category.js');
 var collectionName = require('propertiesmanager').conf.dbCollections.content;
 var common = require('./common');
+var moment = require('moment');
 
 var ContentSchema = new mongoose.Schema({
   name          : String,
@@ -142,7 +143,11 @@ ContentSchema.statics.findById = function(id) {
 ContentSchema.statics.update = function(id, upd) {
   var that = this;
   if(upd._id) delete upd._id;
+  if(upd.lastUpdate) delete upd.lastUpdate;
+  if(upd.creationDate) delete upd.creationDate;
   upd = common.uniformPosition(upd);
+  upd.lastUpdate = moment().utc();
+  console.log(upd.lastUpdate)
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {
