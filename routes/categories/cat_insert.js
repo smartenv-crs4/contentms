@@ -1,6 +1,6 @@
 var category = require('../../schemas/category').category;
 var validator = require('validator');
-
+var config = require('propertiesmanager').conf;
 /**
  * @api {post} /categories/ Add one category
  * @apiGroup Categories
@@ -29,9 +29,9 @@ module.exports = function(req, res, next) {
     else {
       category.add(categoryItem)
       .then(newcat => {
-        res.setHeader("Location", 
-          req.headers.host + "/api/v1/categories/" 
-          + newcat._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+        res.setHeader("Location",
+        config.contentUrl + (config.contentUrl.endsWith('/') ? '' : '/') 
+        + '/categories/' + newcat._id);
 
         res.status(201).json(newcat)
       })

@@ -1,5 +1,6 @@
 var content = require('../../schemas/content.js').content;
 var authField = require('propertiesmanager').conf.decodedTokenFieldName;
+var config = require('propertiesmanager').conf;
 var validator = require('validator');
 
 /**
@@ -44,8 +45,7 @@ module.exports = function(req, res, next) {
         content.add(contentItem)
         .then(newoffer => {
           res.setHeader("Location", 
-            req.headers.host + "/api/v1/contents/" 
-            + newoffer._id); //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
+            config.contentUrl + (config.contentUrl.endsWith("/") ? "":"/") + "contents/" + newoffer._id); 
 
           res.status(201).json(newoffer)
         })

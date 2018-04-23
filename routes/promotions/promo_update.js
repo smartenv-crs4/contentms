@@ -1,5 +1,6 @@
 var promotion = require('../../schemas/promotion.js').promotion;
 var common = require('../../lib/common.js');
+var config = require('propertiesmanager').conf;
 /**
  * @api {put} /contents/:id/promotions/:pid Update one promotion by id 
  * @apiGroup Promotion
@@ -26,8 +27,10 @@ module.exports = function(req, res, next) {
 
   promotion.update(cid, pid, upItem)
   .then(up => {
-    res.setHeader("Location", req.headers.host + "/api/v1/contents/" + up.idcontent //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
-      + "/promotions/" + up._id);
+    res.setHeader("Location", 
+      config.contentUrl + (config.contentUrl.endsWith('/') ? '' : '/') 
+      + '/contents/' + up.idcontent
+      + '/promotions/' + up._id);    
     up.images = common.uniformImages(up.images);
     res.json(up)
   })

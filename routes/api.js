@@ -72,18 +72,16 @@ router.post("/contents/:id/promotions/:pid/actions/unlock",         security.che
 //categories crud
 router.get("/categories/",        require('./categories/cat_search'));
 router.get("/categories/:id",     require('./categories/cat_get'));
-
-//TODO deve essere system admin
-router.post("/categories/",       security.checkAuthorization, require('./categories/cat_insert'));
-router.put("/categories/:id",     security.checkAuthorization, require('./categories/cat_update'));
-router.delete("/categories/:id",  security.checkAuthorization, require('./categories/cat_delete'));
+router.post("/categories/",       security.checkAuthorization, security.isSuperuser, require('./categories/cat_insert'));
+router.put("/categories/:id",     security.checkAuthorization, security.isSuperuser, require('./categories/cat_update'));
+router.delete("/categories/:id",  security.checkAuthorization, security.isSuperuser, require('./categories/cat_delete'));
 
 //promotype crud
 router.get("/promotype/",        require('./promotype/promotype').search);
 router.get("/promotype/:id",     require('./promotype/promotype').get);
-router.post("/promotype/",       security.checkAuthorization, require('./promotype/promotype').insert);
-router.put("/promotype/:id",     security.checkAuthorization, require('./promotype/promotype').update);
-router.delete("/promotype/:id",  security.checkAuthorization, require('./promotype/promotype').delete);
+router.post("/promotype/",       security.checkAuthorization, security.isSuperuser, require('./promotype/promotype').insert);
+router.put("/promotype/:id",     security.checkAuthorization, security.isSuperuser, require('./promotype/promotype').update);
+router.delete("/promotype/:id",  security.checkAuthorization, security.isSuperuser, require('./promotype/promotype').delete);
 
 
 /* GET environment info page. */

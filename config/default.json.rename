@@ -4,6 +4,7 @@
     "dbPort":"27017",
     "dbName":"contents",
     "enableCors":true,
+    "contentUrl":"your_contentms_url",
     "dbCollections": {
       "content"     : "content",
       "promotion"   : "promotion",

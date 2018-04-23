@@ -147,7 +147,7 @@ ContentSchema.statics.update = function(id, upd) {
   if(upd.creationDate) delete upd.creationDate;
   upd = common.uniformPosition(upd);
   upd.lastUpdate = moment().utc();
-  console.log(upd.lastUpdate)
+  
   return new Promise(
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {
@@ -168,6 +168,8 @@ ContentSchema.statics.update = function(id, upd) {
 }
 
 //private - updates a generic array field
+//restituisce { _id:"asdasdasda", list_name:[aaa,bbb,ccc] } 
+//dove list_name è l'array passato
 function updateList(id, newItems, list, op) {
   var that = this;
   return new Promise(

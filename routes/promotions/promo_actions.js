@@ -7,7 +7,9 @@ function involve(req, res, type) {
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.add(req.params.pid, uid, type)
-    .then((r) => {res.json(r)})
+    .then((r) => {
+      res.json(r)
+    })
     .catch((e) => {
       if(e.status === 409)
         res.boom.conflict(e.error);

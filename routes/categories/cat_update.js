@@ -1,5 +1,5 @@
 var category = require('../../schemas/category').category;
-
+var config = require('propertiesmanager').conf;
 /**
  * @api {put} /categories/:id Update category information 
  * @apiGroup Categories
@@ -21,7 +21,9 @@ module.exports = function(req, res, next) {
   let upItem = req.body;
   category.update(id, upItem)
   .then(up => {
-    res.setHeader("Location", req.header.host + "/api/v1/categories/"+up._id); //WARNING, alcuni browser potrebbero non mettere la porta in req.headers.host
+    res.setHeader("Location", 
+      config.contentUrl + (config.contentUrl.endsWith('/') ? '' : '/') 
+      + '/categories/' + up._id);
     res.json(up)
   })
   .catch(e => {

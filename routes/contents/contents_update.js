@@ -1,4 +1,5 @@
 var content = require('../../schemas/content.js').content;
+var config = require('propertiesmanager').conf;
 
 /**
  * @api {put} /contents/:id Update one activity 
@@ -25,7 +26,7 @@ module.exports = function(req, res, next) {
   delete upItem.published //stato published gestito solo tramite action
   content.update(id, upItem)
   .then(up => {
-    res.setHeader("Location", req.header.host + "/api/v1/contents/"+up._id); //WARNING, alcuni browser potrebbero non mettere la porta in req.headers.host
+    res.setHeader("Location", config.contentUrl + (config.contentUrl.endsWith('/') ? '':'/') + "contents/" + up._id); //WARNING, alcuni browser potrebbero non mettere la porta in req.headers.host
     res.json(up)
   })
   .catch(e => {

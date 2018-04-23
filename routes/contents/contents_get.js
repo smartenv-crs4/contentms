@@ -21,7 +21,7 @@ module.exports = function(req, res, next) {
         if(result == null || result == undefined || Object.getOwnPropertyNames(result).length === 0)
             res.boom.notFound();
         else {
-            result.images = common.uniformImages(result.images); //TODO rimuovere, le src delle img vanno ricostruite in UI!
+            result.images = common.uniformImages(result.images); 
             if(lang) {
                 result.name = common.getTranslation(result.name, lang);
                 result.description = common.getTranslation(result.description, lang)

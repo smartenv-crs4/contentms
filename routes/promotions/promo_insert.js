@@ -1,5 +1,6 @@
 var promotion = require('../../schemas/promotion.js').promotion;
 var common = require('../../lib/common.js');
+var config = require('propertiesmanager').conf;
 
 /**
  * @api {post} /contents/:id/promotions/ Add one promotion to an activity
@@ -43,9 +44,9 @@ module.exports = function(req, res, next) {
     promotion.add(promo)
     .then(newpromo => {
       res.setHeader("Location", 
-        req.headers.host + '/api/v1/contents/' //WARNING alcuni browser potrebbero non mettere la porta in req.headers.host
-        + newpromo.idcontent
-        + "/promotions/" + newpromo._id);
+        config.contentUrl + (config.contentUrl.endsWith('/') ? '' : '/') 
+        + '/contents/' + newpromo.idcontent
+        + '/promotions/' + newpromo._id);
       newpromo.images = common.uniformImages(newpromo.images);
       res.status(201).json(newpromo)
     })
