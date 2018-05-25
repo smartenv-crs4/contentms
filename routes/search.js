@@ -26,7 +26,7 @@ var common = require('../lib/common.js');
  */
 module.exports = function(req, res, next) {
   let allowed_keys = ["category", "position", "text", "by_uid", "ids"];
-  let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde"])
+  let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde", "idcontent"])
   let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent", "ptype"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;

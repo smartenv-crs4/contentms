@@ -100,9 +100,10 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord
       if(filter.ptype)
         query['$and'].push({'type':filter.ptype});
 
-      if(filter.idcontent) //search solo su promotion di un insieme di contenuti
+      if(filter.idcontent) {//search solo su promotion di un insieme di contenuti
+        console.log(filter.idcontent)
         query['$and'].push({'idcontent': {$in: filter.idcontent}});
-
+      }
       let position = undefined;
       let skipTime = false;
       let skipUpdateTime = false;
