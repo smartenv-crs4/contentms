@@ -236,6 +236,25 @@ describe('--- Testing promotions crud ---', () => {
           }
         })
       });
+    it('perform a search by idcontent', (done) => {
+        request
+          .get('search' + fakeuidpar + '&t=promo&idcontent=' + father_id)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err,res) => {
+            if(err) done(err);
+            else {
+              res.body.should.have.property("promos");
+              res.body.promos.should.be.instanceOf(Array);
+              res.body.promos.length.should.be.aboveOrEqual(1);
+              for(let i=0; i<res.body.promos.length; i++) {
+                res.body.promos[i].should.have.property('idcontent');
+                res.body.promos[i].idcontent.should.containEql(father_id);
+              }
+              done();
+            }
+          })
+        });
     it('perform a text and daterange search and respond with an empty array', (done) => {
         let text_search = "funghi porcini";
         let date_search = "2016-10-15"
