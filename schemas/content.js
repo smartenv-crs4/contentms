@@ -22,7 +22,7 @@ var ContentSchema = new mongoose.Schema({
   lon           : {type: Number, index: true},
   images        : [String], //puo' contenere url o objectid TODO rifinire
   avatar        : String,
-  phone         : Number,
+  phone         : String,
   email         : String,
   facebook      : String,
   twitter       : String,
