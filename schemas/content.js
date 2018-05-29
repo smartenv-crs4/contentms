@@ -6,6 +6,7 @@ var moment = require('moment');
 
 var ContentSchema = new mongoose.Schema({
   name          : String,
+  vat           : {type:String, max:16},
   lastUpdate    : Date,
   creationDate  : {type: Date, default: Date.now},
   owner         : {type: mongoose.Schema.ObjectId, required:true},
