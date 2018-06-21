@@ -1,3 +1,4 @@
+
 var promotion = require('../../schemas/promotion.js').promotion;
 var common = require('../../lib/common.js');
 var config = require('propertiesmanager').conf;
