@@ -26,8 +26,8 @@ var common = require('../lib/common.js');
  */
 module.exports = function(req, res, next) {
   let allowed_keys = ["category", "position", "text", "by_uid", "ids"];
-  let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde", "idcontent"])
-  let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent", "ptype"]; //viene considerata solo la prima occorrenza nel url
+  let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde", "idcontent", "recurrency"])
+  let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent", "ptype", "recurrency"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
   let skip  = req.query.skip;
@@ -55,8 +55,10 @@ module.exports = function(req, res, next) {
       requiredFields.push('endDate');
       requiredFields.push('type');
       requiredFields.push('price');
+      requiredFields.push('recurrency_group');
+      requiredFields.push('recurrency_type');
     }
-    else if(type == "content" && filter.by_uid) {
+    else if(type == "content" && filter.by_uid) { //TODO check per token admin???
         requiredFields.push('admins');
     }
 

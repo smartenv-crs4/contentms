@@ -210,6 +210,7 @@ doilike : (req, res, next) => {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
+  //TODO VERIFICARE SE IL TIPO UTENTE DA AGGIUNGERE E' CONTENTADMIN CON CHIAMATA A USERMS
   addAdmin: (req, res, next) => {
     let uid = req.body.userId;
     actionWrap(content.addAdmin(req.params.id, [uid]), res);

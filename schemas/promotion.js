@@ -8,6 +8,8 @@ var PromotionSchema = new mongoose.Schema({
   type          : {type: Number, ref:require('propertiesmanager').conf.dbCollections.promotype, required:true, default:1},
   description   : {type:String, required:true},
   creationDate  : {type:Date, default: Date.now},
+  recurrency_type   : Number,
+  recurrency_group  : mongoose.Schema.ObjectId,
   published     : Boolean,
   lastUpdate    : Date,
   startDate     : {type: Date, required:true},
@@ -82,7 +84,8 @@ PromotionSchema.statics.findById = function(cid, pid) {
 PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord) {
   const qlimit = limit != undefined ? Number(limit) : 20;
   const qskip = skip != undefined ? Number(skip) : 0;
-  let skipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde', 'ptype'] //single $and params not to use in $in 
+  //single $and params not to use with $in - list all the parameters you want to search for by one value only
+  let inSkipKeys = ['sdate', 'text', 'edate', 'sdate', 'mds', 'mde', 'ptype', 'recurrency'] 
   
   if(ord) {
     if(ord == "startDate" || ord == "endDate" || ord == "creationDate") {
@@ -101,7 +104,7 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord
         query['$and'].push({'type':filter.ptype});
 
       if(filter.idcontent) {//search solo su promotion di un insieme di contenuti
-        console.log(filter.idcontent)
+        //console.log(filter.idcontent)
         query['$and'].push({'idcontent': {$in: filter.idcontent}});
       }
       let position = undefined;
@@ -145,8 +148,14 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord
             query["$and"].push(q);
         }
 
-        //other search params, multiple instances allowed        
-        else if(skipKeys.indexOf(key) == -1) {
+        //ricerca per raggruppamento promo ricorrenti
+        else if(key == "recurrency") {
+            let q = {'recurrency_group': filter[key]}
+            query["$and"].push(q);
+        }
+
+        //other search params, multiple instances allowed
+        else if(inSkipKeys.indexOf(key) == -1) {
             query[key] = {'$in' : filter[key]}
         }
       });
