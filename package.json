@@ -21,7 +21,7 @@
     "propertiesmanager": "^2.0.2",
     "request": "^2.74.0",
     "request-promise": "^4.0.2",
-    "tokenmanager": "^3.1.0",
+    "tokenmanager": "^3.1.1",
     "underscore": "^1.8.3",
     "validator": "^6.1.0"
   },
