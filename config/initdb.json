@@ -26,6 +26,11 @@
             "icon": "icon-travel-149"
         },
         {
+            "name" : "Archeologia",
+            "description" : "Scavi e rovine archeologiche",
+            "icon" : "icon-travel-050"
+        },
+        {
             "name": "Feste",
             "description": "Feste locali, tradizionali e religiose",
             "icon": "fa fa-users"
