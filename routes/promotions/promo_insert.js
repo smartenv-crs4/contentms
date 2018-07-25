@@ -38,7 +38,7 @@ module.exports = function(req, res, next) {
   }
   else {
     let promo = req.body;
-    promo.idcontent = req.params.id;
+    promo.idcontent = req.params.id; //IMPORTANT: do not use the one in req.body to avoid injection
     promo.startDate = new Date(req.body.startDate);
     promo.endDate = new Date(req.body.endDate);
     promo.published = true;

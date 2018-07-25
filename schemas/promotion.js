@@ -10,6 +10,7 @@ var PromotionSchema = new mongoose.Schema({
   creationDate  : {type:Date, default: Date.now},
   recurrency_type   : Number,
   recurrency_group  : mongoose.Schema.ObjectId,
+  deleteImages  : {type: Boolean, default:true},
   published     : Boolean,
   lastUpdate    : Date,
   startDate     : {type: Date, required:true},
@@ -45,6 +46,9 @@ PromotionSchema.statics.add = function(newitem) {
     var that = this;
     if(newitem.creationDate) delete newitem.creationDate;
     if(newitem.lastUpdate) delete newitem.lastUpdate;
+    if(newitem.deleteImages) delete newitem.deleteImages;
+    if(newitem.recurrency_group) newitem.deleteImages = false;
+
     newitem = common.uniformPosition(newitem);
     return new Promise(
         function(resolve, reject) {
@@ -63,7 +67,66 @@ PromotionSchema.statics.add = function(newitem) {
         }
     );
 }
- 
+
+PromotionSchema.statics.update = function(cid, pid, upd) {
+  var that = this;
+  if(upd._id) delete upd._id;
+  if(upd.idcontent) upd.idcontent = cid; //to avoid injection
+
+  //update is not allowed for recurrent events, if it happens then the promo exits the batch
+  upd.recurrency_group = undefined; 
+  if(upd.creationDate) delete upd.creationDate;
+  if(upd.deleteImages) delete upd.deleteImages; //to avoid deletion of shared images. FIXME: new images wont be deleted neither!!!!!
+  
+  upd.lastUpdate = moment().utc(); //new Date();
+  upd = common.uniformPosition(upd);
+
+  return new Promise(
+    function(resolve, reject) {
+      that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {
+        if(e) {
+          switch(e.name) { 
+            case 'CastError':
+              reject({status:400, error:"model violation"});
+              break;
+            default:
+              reject({status:500, error:"server error"});
+              break;
+          }
+        }
+        else resolve(cont);
+      });
+    }
+  );
+}
+
+
+PromotionSchema.statics.delete = function(cid, pid) {
+  var that = this;
+  if(!Array.isArray(pid))
+    pid = [pid];
+    
+  return new Promise(
+    function(resolve, reject) {
+//      that.model(collectionName).findOneAndRemove({_id:pid, idcontent:cid}, function(e, removed) {
+      that.model(collectionName).remove({_id:{$in: pid}, idcontent:cid}, function(e, removed) {
+        if(e) {
+          switch(e.name) { 
+            case 'CastError':
+              reject({status:404, error:"not found"});
+              break;
+            default:
+              reject({status:500, error:"server error"});
+              break;
+          }
+        }
+        else resolve(removed);
+      });
+    }
+  )
+}
+
+
 PromotionSchema.statics.findById = function(cid, pid) {
   var that = this;
   return new Promise(
@@ -197,55 +260,6 @@ PromotionSchema.statics.findFiltered = function(filter, limit, skip, fields, ord
   );
 }
 
-  
-PromotionSchema.statics.update = function(cid, pid, upd) {
-  var that = this;
-  if(upd._id) delete upd._id;
-  if(upd.creationDate) delete upd.creationDate;
-  if(upd.lastUpdate) delete upd.lastUpdate;
-  upd.lastUpdate = moment().utc(); //new Date();
-  upd = common.uniformPosition(upd);
-
-  return new Promise(
-    function(resolve, reject) {
-      that.model(collectionName).findOneAndUpdate({_id:pid, idcontent:cid}, upd, {new:true, runValidators:true}, function(e, cont) {
-        if(e) {
-          switch(e.name) { 
-            case 'CastError':
-              reject({status:400, error:"model violation"});
-              break;
-            default:
-              reject({status:500, error:"server error"});
-              break;
-          }
-        }
-        else resolve(cont);
-      });
-    }
-  );
-}
-
-
-PromotionSchema.statics.delete = function(cid, pid) {
-  var that = this;
-  return new Promise(
-    function(resolve, reject) {
-      that.model(collectionName).findOneAndRemove({_id:pid, idcontent:cid}, function(e, removed) {
-        if(e) {
-          switch(e.name) { 
-            case 'CastError':
-              reject({status:404, error:"not found"});
-              break;
-            default:
-              reject({status:500, error:"server error"});
-              break;
-          }
-        }
-        else resolve(removed);
-      });
-    }
-  )
-}
 
 exports.promotion = mongoose.model(collectionName, PromotionSchema);
 

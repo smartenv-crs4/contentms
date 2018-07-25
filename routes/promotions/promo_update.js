@@ -24,6 +24,8 @@ module.exports = function(req, res, next) {
   let pid = req.params.pid;
   let upItem = req.body;
   delete upItem.published //stato published gestito solo tramite action
+  delete upItem.deleteImages;
+  delete upItem.recurrency_group;
 
   promotion.update(cid, pid, upItem)
   .then(up => {
