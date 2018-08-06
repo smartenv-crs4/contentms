@@ -24,8 +24,17 @@ module.exports = function(req, res, next) {
   let pid = req.params.pid;
   let upItem = req.body;
   delete upItem.published //stato published gestito solo tramite action
-  delete upItem.deleteImages;
-  delete upItem.recurrency_group;
+    
+  //update is not allowed for recurrent events, if it happens then the promo exits the batch
+  upItem.recurrency_group = null;
+  if(upItem.recurrency_type == 0)
+    upItem.recurrency_end = null;
+
+  if(upItem.deleteImages) delete upItem.deleteImages; //to avoid deletion of shared images. FIXME: new images wont be deleted neither!!!
+
+  //updated picture so it's the owner !!!works only for single-images promotions!!!
+  else if(upItem.images && upItem.images.length == 1)// || upItem.recurrency_type == 0)
+    upItem.deleteImages = true;
 
   promotion.update(cid, pid, upItem)
   .then(up => {

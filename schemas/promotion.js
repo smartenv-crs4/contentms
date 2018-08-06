@@ -10,6 +10,7 @@ var PromotionSchema = new mongoose.Schema({
   creationDate  : {type:Date, default: Date.now},
   recurrency_type   : Number,
   recurrency_group  : mongoose.Schema.ObjectId,
+  recurrency_end    : Date,
   deleteImages  : {type: Boolean, default:true},
   published     : Boolean,
   lastUpdate    : Date,
@@ -47,7 +48,8 @@ PromotionSchema.statics.add = function(newitem) {
     if(newitem.creationDate) delete newitem.creationDate;
     if(newitem.lastUpdate) delete newitem.lastUpdate;
     if(newitem.deleteImages) delete newitem.deleteImages;
-    if(newitem.recurrency_group) newitem.deleteImages = false;
+    if(newitem.recurrency_group || newitem.recurrency_type != 0) 
+      newitem.deleteImages = false; //otherwise batch promos lose the picture when deleting the father only
 
     newitem = common.uniformPosition(newitem);
     return new Promise(
@@ -72,12 +74,7 @@ PromotionSchema.statics.update = function(cid, pid, upd) {
   var that = this;
   if(upd._id) delete upd._id;
   if(upd.idcontent) upd.idcontent = cid; //to avoid injection
-
-  //update is not allowed for recurrent events, if it happens then the promo exits the batch
-  upd.recurrency_group = undefined; 
   if(upd.creationDate) delete upd.creationDate;
-  if(upd.deleteImages) delete upd.deleteImages; //to avoid deletion of shared images. FIXME: new images wont be deleted neither!!!!!
-  
   upd.lastUpdate = moment().utc(); //new Date();
   upd = common.uniformPosition(upd);
 
@@ -105,7 +102,7 @@ PromotionSchema.statics.delete = function(cid, pid) {
   var that = this;
   if(!Array.isArray(pid))
     pid = [pid];
-    
+
   return new Promise(
     function(resolve, reject) {
 //      that.model(collectionName).findOneAndRemove({_id:pid, idcontent:cid}, function(e, removed) {
@@ -269,6 +266,8 @@ function setDateRange (sdate, edate, pnameStart, pnameStop) {
         let query = {};
         let qStart  = sdate ? new Date(sdate) : undefined; //TODO usare moment con locale???
         let qEnd    = edate ? new Date(edate) : undefined;
+        if(qStart && !isValidDate(qStart) || qEnd && !isValidDate(qEnd))
+          throw({});
 
         // promo che intersecano il periodo sdate-edate
         if(edate && sdate) {
@@ -290,3 +289,6 @@ function setDateRange (sdate, edate, pnameStart, pnameStop) {
     }
 }
 
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}

@@ -57,6 +57,7 @@ module.exports = function(req, res, next) {
       requiredFields.push('price');
       requiredFields.push('recurrency_group');
       requiredFields.push('recurrency_type');
+      requiredFields.push('recurrency_end');
     }
     else if(type == "content" && filter.by_uid) { //TODO check per token admin???
         requiredFields.push('admins');
@@ -81,7 +82,10 @@ module.exports = function(req, res, next) {
       })
       .catch(e => {
         console.log(e);
-        res.boom.badImplementation();
+        if(e.status && e.status == 400)
+          res.boom.badRequest("Invalid Query");
+        else
+          res.boom.badImplementation();
       });
   }
   else {
