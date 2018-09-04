@@ -130,7 +130,30 @@ InvolvementSchema.statics.delete = function(pid, uid, type) {
   );
 }
 
- 
+//Removes all the involvements of any type for a promo. 
+//Should be used only on promo deletion
+InvolvementSchema.statics.deleteAll = function(pid) {
+  var that = this;
+  return new Promise(
+    function(resolve, reject) {
+      that.model(collectionName).remove({id:pid}, function(e, removed) {
+        if(e) {
+          switch(e.name) { 
+            case 'CastError':
+              reject({status:404, error:"not found"});
+              break;
+            default:
+              reject({status:500, error:"server error"});
+              break;
+          }
+        }
+        else resolve({success:true});
+      });
+    }
+  );
+}
+
+
 InvolvementSchema.statics.countByType = function(pid, type) {
   var that = this;
   return new Promise(

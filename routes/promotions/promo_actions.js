@@ -38,7 +38,7 @@ function involved(req, res, type) {
 }
 
 function uninvolve(req, res, type) {
-  let uid = req[authField].token._id
+  let uid = req[authField].token._id; //user can remove only involvents with the id in its token
   if(!uid) {res.boom.badRequest('Missing user id');}
   else {
     involvements.delete(req.params.pid, uid, type)
@@ -56,7 +56,6 @@ function uninvolve(req, res, type) {
     });
   }
 }
-
 
 function count(req, res, type) {
   let pid = req.params.pid;
@@ -310,7 +309,39 @@ doiparticipate : (req, res, next) => {
     let pid = req.params.pid;
     let cid = req.params.id;
     locker(cid, pid, res, true);
-  }
+  },
 
+  /**
+  * @api {POST} /contents/:id/promotions/:pid/actions/uninvolve remove all the involvements for a promotion
+  * @apiGroup Content
+  *
+  * @apiDescription Removes all the involvements for a promotion, should be used only on a promotion deletion 
+  * and must be called by the content Administrator.
+  * @apiParam {String} pid The id of the promotion the involvements refer to.
+  *
+  * @apiSuccess (200) {Object} body Json object with the exit status of the operation.
+  * @apiUse Unauthorized
+  * @apiUse BadRequest
+  * @apiUse ServerError
+  */
+  uninvolve: (req, res, type) => {
+    if(!req.params.pid || req.params.pid.length == 0)
+      res.boom.badRequest();
+    else {
+      involvements.deleteAll(req.params.pid)
+        .then((r) => {res.json(r)})
+        .catch((e) => {
+          console.log(e)
+          switch(e.status) {
+            case 400: 
+            res.boom.badRequest();
+              break;
+            default:
+              res.boom.badImplementation(e.error);
+              break;
+          }
+      });
+    }
+  }
 
 }

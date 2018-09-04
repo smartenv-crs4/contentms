@@ -67,7 +67,7 @@ router.post("/contents/:id/promotions/:pid/actions/participants",   require('./p
 router.post("/contents/:id/promotions/:pid/actions/rate",           security.checkAuthorization, require('./promotions/promo_actions').rate);
 router.post("/contents/:id/promotions/:pid/actions/lock",           security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').lock);
 router.post("/contents/:id/promotions/:pid/actions/unlock",         security.checkAuthorization, security.isSuperuser, require('./promotions/promo_actions').unlock);
-
+router.post("/contents/:id/promotions/:pid/actions/uninvolve",      security.checkAuthorization, security.isContentAdmin, require('./promotions/promo_actions').uninvolve); 
 
 //categories crud
 router.get("/categories/",        require('./categories/cat_search'));
