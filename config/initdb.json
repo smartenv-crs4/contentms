@@ -59,6 +59,31 @@
             "name": "Mare",
             "description": "Luoghi, spiagge e servizi marittimi",
             "icon": "icon-travel-006"
+        },
+        {
+            "name": "Bar",
+            "description": "breakfast, drinks",
+            "icon": "icon-food-004"
+        },
+        {
+            "name": "Street Food",
+            "description": "sandwiches, hot dogs",
+            "icon": "icon-food-061"
+        },
+        {
+            "name": "Gelateria",
+            "description": "ice cream",
+            "icon": "icon-food-031"
+        },
+        {
+            "name": "Take Away",
+            "description": "Luoghi, spiagge e servizi marittimi",
+            "icon": "icon-food-105"
+        },
+        {
+            "name": "Pizza",
+            "description": "pizzeria, pizza al taglio",
+            "icon": "icon-food-059"
         }
     ],
     "promotypes": [
