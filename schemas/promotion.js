@@ -128,7 +128,7 @@ PromotionSchema.statics.findById = function(cid, pid) {
   var that = this;
   return new Promise(
     function(resolve, reject) {
-      that.model(collectionName).findOne({_id:pid, idcontent:cid}).lean().exec(function(e, cont) {
+      that.model(collectionName).findOne({_id:pid, idcontent:cid}).populate('category').lean().exec(function(e, cont) {
         if(e) {
           if(e.name == "CastError")
             reject({status:404})
