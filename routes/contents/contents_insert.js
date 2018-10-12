@@ -19,6 +19,7 @@ var validator = require('validator');
  *    "category"    : [3,6],
  *    "lat"         : 40.080108,
  *    "lon"         : 9.666168
+ *    "vat"         : "123456789ab"
  *  }
  *
  * @apiSuccess (201 - CREATED) {Object} body The Json containing the new activity.
@@ -41,6 +42,8 @@ module.exports = function(req, res, next) {
     else {
       if(!contentItem.name || validator.isEmpty(contentItem.name))
         res.boom.badRequest("missing name field");
+      else if(!contentItem.vat || validator.isEmpty(contentItem.vat))
+        res.boom.badRequest("missing vat field");
       else {
         content.add(contentItem)
         .then(newoffer => {
@@ -51,7 +54,7 @@ module.exports = function(req, res, next) {
         })
         .catch(e => {
           console.log(e);
-          res.boom.badImplementation();
+          res.status(e.status||500).send({error:e.error||"server error"});
         });
       }
     }
