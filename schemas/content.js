@@ -157,7 +157,7 @@ ContentSchema.statics.update = function(id, upd) {
       that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {
         if(e) {
           if(e.name == 'CastError')
-            reject({status:404, error:"not found"});
+            reject({status:404, error:"Model violation"});
           else if(e.code == 11000 )
             reject({status:409, error:"Duplicated vat value"});
           else 
