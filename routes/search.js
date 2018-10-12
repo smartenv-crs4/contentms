@@ -18,6 +18,7 @@ var common = require('../lib/common.js');
  * @apiParam {String} [by_uid] The Admin user unique ID.
  * @apiParam {Number} [ptype] The type of promotion (Offer = 1, Event = 2).
  * @apiParam {Array} [ids] Array of content/promo id to search for.
+ * @apiParam {String} [vat] The vat number of the activity.
  *
  * @apiSuccess (200) {Object[]} body Array of results representing found activities.
  * @apiUse Unauthorized
