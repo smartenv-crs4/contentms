@@ -25,7 +25,7 @@ var common = require('../lib/common.js');
  * @apiUse ServerError
  */
 module.exports = function(req, res, next) {
-  let allowed_keys = ["category", "position", "text", "by_uid", "ids"];
+  let allowed_keys = ["category", "position", "text", "by_uid", "ids", "vat"];
   let allowed_keys_promo = allowed_keys.concat(["ptype", "sdate", "edate", "mds", "mde", "idcontent", "recurrency"])
   let one_instance_keys = ["position", "edate", "sdate", "mds", "mde", "idcontent", "ptype", "recurrency"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
@@ -58,6 +58,9 @@ module.exports = function(req, res, next) {
       requiredFields.push('recurrency_group');
       requiredFields.push('recurrency_type');
       requiredFields.push('recurrency_end');
+    }
+    else if(type == "content") {
+      requiredFields.push('vat');
     }
     else if(type == "content" && filter.by_uid) { //TODO check per token admin???
         requiredFields.push('admins');
