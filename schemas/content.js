@@ -6,7 +6,7 @@ var moment = require('moment');
 
 var ContentSchema = new mongoose.Schema({
   name          : String,
-  vat           : {type:String, max:16},
+  vat           : {type:String, max:16, unique : true, required: true},
   lastUpdate    : Date,
   creationDate  : {type: Date, default: Date.now},
   owner         : {type: mongoose.Schema.ObjectId, required:true},
@@ -31,7 +31,7 @@ var ContentSchema = new mongoose.Schema({
 },
 {versionKey:false});
 
-ContentSchema.index({ name: 'text', description: 'text', town: 'text'}, {name: 'text_index', weights: {name: 10, town: 8, description: 5}});
+ContentSchema.index({ name: 'text', description: 'text', town: 'text', vat:"text"}, {name: 'text_index', weights: {name: 10, town: 8, description: 5}});
 
 ContentSchema.statics.findFiltered = function(filter, limit, skip, fields) {
   const qlimit = limit != undefined ? Number(limit) : 20;
@@ -113,7 +113,10 @@ ContentSchema.statics.add = function(newitem) {
       })
       .catch(e => {
         console.log(e);
-        reject({status:500, error:"server error"});
+        if(e.code == 11000) {
+          reject({status:409, error:"Duplicate value on vat number"});
+        }
+        else reject({status:500, error:"server error"});
       });
     }
   );
@@ -153,14 +156,12 @@ ContentSchema.statics.update = function(id, upd) {
     function(resolve, reject) {
       that.model(collectionName).findOneAndUpdate({_id:id}, upd, {new:true, runValidators:true}, function(e, cont) {
         if(e) {
-          switch(e.name) { 
-            case 'CastError':
-              reject({status:400, error:"model violation"});
-              break;
-            default:
-              reject({status:500, error:"server error"});
-              break;
-          }
+          if(e.name == 'CastError')
+            reject({status:404, error:"Model violation"});
+          else if(e.code == 11000 )
+            reject({status:409, error:"Duplicated vat value"});
+          else 
+            reject({status:500, error:"server error"});
         }
         else resolve(cont);
       });
