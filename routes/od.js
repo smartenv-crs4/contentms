@@ -5,7 +5,7 @@ var promo = require('../schemas/promotion.js').promotion;
 var common = require('../lib/common.js');
 
 module.exports = function(req, res, next) {
-  let allowed_keys = ["mds", "mde", "ptype", "sdate", "edate"];
+  let allowed_keys = ["mds", "mde", "ptype", "sdate", "edate", "idcontent"];
   let one_instance_keys = ["mds", "mde", "ptype", "sdate", "edate"]; //viene considerata solo la prima occorrenza nel url
   let filter = {};
   let limit = req.query.limit;
