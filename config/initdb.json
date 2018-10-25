@@ -1,89 +1,94 @@
 {
     "categories": [
         {
-            "name": "Hotel",
+            "name": "[[it]]Albergo[[/it]][[en]]Hotel[[/en]]",
             "description": "strutture ricettive con reception",
             "icon": "fa fa-hotel"
         },
         {
-            "name": "Ristoranti",
+            "name": "[[it]]Ristorante[[/it]][[en]]Restaurant[[/en]]",
             "description": "strutture per gastronomia a servizio",
             "icon": "fa fa-cutlery"
         },
         {
-            "name": "Musei",
+            "name": "[[it]]Museo[[/it]][[en]]Museum[[/en]]",
             "description": "strutture espositive pubbliche e private",
             "icon": "fa fa-university"
         },
         {
-            "name": "Sagre",
+            "name": "[[it]]Sagra[[/it]][[en]]Festival[[/en]]",
             "description": "na",
             "icon": "fa fa-flag"
         },
         {
-            "name": "Monumenti",
+            "name": "[[it]]Monumento[[/it]][[en]]Monument[[/en]]",
             "description": "monumenti pubblici",
             "icon": "icon-travel-149"
         },
         {
-            "name" : "Archeologia",
+            "name" : "[[it]]Archeologia[[/it]][[en]]Archeology[[/en]]",
             "description" : "Scavi e rovine archeologiche",
             "icon" : "icon-travel-050"
         },
         {
-            "name": "Feste",
+            "name": "[it]]Festa[[/it]][[en]]Party[[/en]]",
             "description": "Feste locali, tradizionali e religiose",
             "icon": "fa fa-users"
         },
         {
-            "name": "Tradizioni",
+            "name": "[[it]]Tradizione[[/it]][[en]]Tradition[[/en]]",
             "description": "Manifestazioni tradizionali e religiose",
             "icon": "icon-christmas-051"
         },
         {
-            "name": "Istituzioni",
+            "name": "[[it]]Istituzione[[/it]][[en]]Institution[[/en]]",
             "description": "Istituzioni, enti e strutture locali pubbliche",
             "icon": "icon-education-074"
         },
         {
-            "name": "Scienza",
+            "name": "[[it]]Scienza[[/it]][[en]]Science[[/en]]",
             "description": "Istituti scientifici, università, centri di ricerca",
             "icon": "icon-education-058"
         },
         {
-            "name": "Sport",
+            "name": "[[it]]Sport[[/it]][[en]]Sport[[/en]]",
             "description": "Attività e strutture sportive",
             "icon": "icon-sport-156"
         },
         {
-            "name": "Mare",
+            "name": "[[it]]Mare[[/it]][[en]]Sea[[/en]]",
             "description": "Luoghi, spiagge e servizi marittimi",
             "icon": "icon-travel-006"
         },
         {
-            "name": "Bar",
+            "name": "[[it]]Bar[[/it]][[en]]Bar[[/en]]",
             "description": "breakfast, drinks",
             "icon": "icon-food-004"
         },
         {
-            "name": "Street Food",
+            "name": "[[it]]Cibo di Strada[[/it]][[en]]Street Food[[/en]]",
             "description": "sandwiches, hot dogs",
             "icon": "icon-food-061"
         },
         {
-            "name": "Gelateria",
+            "name": "[[it]]Gelateria[[/it]][[en]]Ice Cream[[/en]]",
             "description": "ice cream",
             "icon": "icon-food-031"
         },
         {
-            "name": "Take Away",
+            "name": "[[it]]Asporto[[/it]][[en]]Take Away[[/en]]",
             "description": "Luoghi, spiagge e servizi marittimi",
             "icon": "icon-food-105"
         },
         {
-            "name": "Pizza",
+            "name": "[[it]]Pizza[[/it]][[en]]Pizza[[/en]]",
             "description": "pizzeria, pizza al taglio",
             "icon": "icon-food-059"
+        },
+        {
+            "name" : "[[it]]Natura[[/it]][[en]]Nature[[/en]]",
+            "description" : "Luoghi legati alla natura",
+            "icon" : "icon-travel-006"
         }
     ],
     "promotypes": [
