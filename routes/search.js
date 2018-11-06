@@ -11,14 +11,17 @@ var common = require('../lib/common.js');
  * @apiParam {Number} [category] The category id, based on those present in categories.
  * @apiParam {Number[]} [position] Three element array: lon, lat, distance. Mind the order.
  * @apiParam {String} [text] Text to search for in the description and name fields.
- * @apiParam {Date} [sdate] The start date for a promo (starts after)
- * @apiParam {Date} [edate] The end date for a promo (ends before)
- * @apiParam {Date} [mds] Modify Date Start, content or promo created or modified after
- * @apiParam {Date} [mde] Modify Date End, content or promo created or modified before
+ * @apiParam {Date} [sdate] The start date for a promo (starts after) (only with t=promo)
+ * @apiParam {Date} [edate] The end date for a promo (ends before) (only with t=promo)
+ * @apiParam {Date} [mds] Modify Date Start, content or promo created or modified after (only with t=promo)
+ * @apiParam {Date} [mde] Modify Date End, content or promo created or modified before (only with t=promo)
  * @apiParam {String} [by_uid] The Admin user unique ID.
- * @apiParam {Number} [ptype] The type of promotion (Offer = 1, Event = 2).
+ * @apiParam {Number} [ptype] The type of promotion: Offer = 1, Event = 2 (only with t=promo).
  * @apiParam {Array} [ids] Array of content/promo id to search for.
- * @apiParam {String} [vat] The vat number of the activity.
+ * @apiParam {String} [vat] The vat number of the activity (only with t=content).
+ * @apiParam {String} [idcontent] The id of the owner of the promotions you are looking for (only with t=promo)
+ * @apiParam {String} [recurrency] The id of the father promo in a batch of events (only with t=promo)
+ * 
  *
  * @apiSuccess (200) {Object[]} body Array of results representing found activities.
  * @apiUse Unauthorized
