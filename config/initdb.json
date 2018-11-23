@@ -89,6 +89,11 @@
             "name" : "[[it]]Natura[[/it]][[en]]Nature[[/en]]",
             "description" : "Luoghi legati alla natura",
             "icon" : "icon-travel-006"
+        },
+        {
+            "name" : "[[it]]Vela[[/it]][[en]]Sailing[[/en]]",
+            "description" : "vela e nautica",
+            "icon" : "icon-sport-017"
         }
     ],
     "promotypes": [
