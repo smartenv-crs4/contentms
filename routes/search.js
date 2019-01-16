@@ -65,9 +65,11 @@ module.exports = function(req, res, next) {
     }
     else if(type == "content") {
       requiredFields.push('vat');
-    }
-    else if(type == "content" && filter.by_uid) { //TODO check per token admin???
+        
+      if(filter.by_uid) { //TODO check per token admin???
         requiredFields.push('admins');
+        requiredFields.push('owner');
+      }
     }
 
     let singleResult = {};

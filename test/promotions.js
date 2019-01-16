@@ -64,6 +64,7 @@ describe('--- Testing promotions crud ---', () => {
         let content_father = {
           "name"        : "Da Gianni",
           "type"        : "activity",
+          "vat"         : "22222222222",
           "description" : "Ristorante tipico inserimento di test",
           "published"   : "true",
           "town"        : "Cagliari",
@@ -408,8 +409,8 @@ describe('--- Testing promotions crud ---', () => {
         .end((err,res) => {
           if(err) done(err);
           else {
-            res.body.should.have.property("_id");
-            res.body._id.should.be.equal(new_items[1]+'');
+            res.body.should.have.property("n");
+            res.body.n.should.be.equal(1);
             done();
           }
         })

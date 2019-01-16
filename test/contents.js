@@ -23,6 +23,7 @@ let search_items = [
       "type" : "activity",
       "description" : "Ristorante tipico",
       "published" : true,
+      "vat":"11111111111",
       "town" : "baunei",
       "address" : "localita' il golgo",
       "position" : [ 
@@ -39,6 +40,7 @@ let search_items = [
   {
       "name" : "hotel bue marino",
       "type" : "activity",
+      "vat":"11111111112",
       "description" : "hotel con terrazza panoramica vista porto",
       "published" : true,
       "town" : "calagonone",
@@ -57,6 +59,7 @@ let search_items = [
 let test_item = {
   "name" : "hotel la baia",
   "type" : "activity",
+  "vat":"11111111113",
   "description" : "hotel con terrazza panoramica vista baia santa caterina",
   "published" : true,
   "town" : "santa caterina di pittinuri",
@@ -196,7 +199,7 @@ describe('--- Testing contents microservice ---', () => {
   describe('GET /contents/', () => {
     it('respond with json Object containing contents array', (done) => {
       request
-        .get('contents' + fakeuidpar)
+        .get('search' + fakeuidpar)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -217,7 +220,7 @@ describe('--- Testing contents microservice ---', () => {
     it('perform a text search and respond with a one element array', (done) => {
       let text_search = "terrazza panoramica";
       request
-        .get('contents' + fakeuidpar + '&text=' + text_search)
+        .get('search' + fakeuidpar + '&text=' + text_search)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -235,7 +238,7 @@ describe('--- Testing contents microservice ---', () => {
     it('perform a search by admin id and responds with a three element array', (done) => {
       let by_uid = fakeuid;
       request
-        .get('contents' + fakeuidpar + '&by_uid=' + by_uid)
+        .get('search' + fakeuidpar + '&by_uid=' + by_uid)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
@@ -251,15 +254,15 @@ describe('--- Testing contents microservice ---', () => {
     it('perform a search by admin id and responds with one element', (done) => {
       let by_uid = admin1;
       request
-        .get('contents' + fakeuidpar + '&by_uid=' + by_uid)
+        .get('search?by_uid=' + by_uid)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
           if(err) done(err);
-          else {
+          else {            
             res.body.should.have.property("contents");
             res.body.contents.should.be.instanceOf(Array);
-            res.body.contents.length.should.be.equal(1);
+            res.body.contents.length.should.be.equal(1);            
             res.body.contents[0].admins[0].should.be.equal(admin1);
             done();
           }
@@ -267,7 +270,7 @@ describe('--- Testing contents microservice ---', () => {
     });
     it('perform a search by multiple admin ids and responds with a two elements array', (done) => {
       request
-        .get('contents' + fakeuidpar + '&by_uid=' + admin1 + '&by_uid=' + admin2)
+        .get('search' + fakeuidpar + '&by_uid=' + admin1 + '&by_uid=' + admin2)
         .expect('Content-Type', /json/)
         .expect(200)
         .end((err,res) => {
