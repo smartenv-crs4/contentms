@@ -20,6 +20,7 @@
     "decodedTokenFieldName": "contentms"
   },
   "test": {
+    "contentUrl":"your_contentms_url",
     "dbHost":"your_db_host",
     "dbPort":"27017",
     "dbName":"contents_test",
